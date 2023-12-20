@@ -1,0 +1,50 @@
+import middy from '@middy/core'
+import doNotWaitForEmptyEventLoop from '@middy/do-not-wait-for-empty-event-loop'
+import httpSecurityHeaders from '@middy/http-security-headers'
+import inputOutputLogger from '@middy/input-output-logger'
+import { configure as serverlessExpress } from '@vendia/serverless-express'
+import { APIGatewayEvent, Callback, Context, Handler } from 'aws-lambda'
+import ow from 'ow'
+import { asyncContextStorage } from './asyncContextStorage.js'
+import { initNestApp } from './nestApp.js'
+
+let serverlessExpressInstance: Handler
+
+async function bootstrapNestServer(event: APIGatewayEvent, context: Context): Promise<Handler> {
+  asyncContextStorage.enterWith({ context, event })
+
+  if (serverlessExpressInstance) {
+    return serverlessExpressInstance
+  }
+
+  const nestApp = await initNestApp()
+
+  serverlessExpressInstance = serverlessExpress({
+    app: nestApp.getHttpAdapter().getInstance()
+  })
+
+  return serverlessExpressInstance
+}
+
+export async function startServer(event: APIGatewayEvent, context: Context, callback: Callback): Promise<Handler> {
+  const server = await bootstrapNestServer(event, context)
+
+  return server(event, context, callback)
+}
+
+ow(process.env.REGION, ow.string.not.empty)
+
+export const bootstrapNestServerHandler = middy(startServer)
+bootstrapNestServerHandler.use(doNotWaitForEmptyEventLoop({ runOnError: true }))
+bootstrapNestServerHandler.use(httpSecurityHeaders())
+bootstrapNestServerHandler.use(
+  inputOutputLogger({
+    logger: (request: { event: string; response: string }) => {
+      // TODO: setup proper log level for production
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug(JSON.stringify(request.event ?? request.response))
+      }
+    },
+    awsContext: true
+  })
+)

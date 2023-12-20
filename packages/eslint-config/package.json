@@ -1,0 +1,13 @@
+{
+    "name": "@dbbs/eslint-config",
+    "version": "0.0.0",
+    "private": true,
+    "license": "MIT",
+    "files": ["react.js", "react-native.js", "node.js"],
+    "devDependencies": {
+        "eslint-config-turbo": "latest"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

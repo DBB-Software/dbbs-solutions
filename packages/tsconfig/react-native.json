@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./base.json",
+  "display": "MobileApp",
+  "compilerOptions": {
+    "jsx": "react-native",
+    "lib": ["es2017"],
+    "moduleResolution": "node",
+    "types": ["node"],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "removeComments": true,
+  },
+}

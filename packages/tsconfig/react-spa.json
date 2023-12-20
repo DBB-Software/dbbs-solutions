@@ -1,0 +1,30 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "extends": "./base.json",
+    "display": "ReactSPA",
+    "compilerOptions": {
+      "target": "ES6",
+      "useDefineForClassFields": true,
+      "lib": ["ES2021", "DOM", "DOM.Iterable"],
+      "module": "esnext",
+      "skipLibCheck": true,
+      "allowImportingTsExtensions": true,
+      "allowSyntheticDefaultImports": true,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "noEmit": true,
+      "jsx": "react-jsx",
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true
+    },
+    "include": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.tsx"
+    ],
+    "exclude": ["./dist"]
+  }
+  

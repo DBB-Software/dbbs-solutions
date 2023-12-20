@@ -1,0 +1,14 @@
+{
+  "extends": "@dbbs/tsconfig/nestjs.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "preserveWatchOutput": true
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

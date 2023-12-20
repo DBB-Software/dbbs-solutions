@@ -1,0 +1,65 @@
+name: 'Build and Tests'
+description: 'Execute common steps'
+
+inputs:
+  ref:
+    description: Ref for checkout. Use the github.ref
+    required: true
+  aws_credentials:
+    description: Credentials for the AWS. Should be the github secret AWS_CREDENTIALS
+    required: true
+  aws_config:
+    description: Config for the AWS. Should be the github secret AWS_CONFIG
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.ref }}
+
+    - name: Set up NodeJs
+      uses: actions/setup-node@v3
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: v1-node_modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Install NPM dependencies
+      run: |
+        node -v
+        npm -v
+        npm install
+      shell: bash
+
+    - name: Verify npm dependencies are unchanged
+      run: |
+        (git diff --exit-code package-lock.json && git diff --exit-code package.json) || echo \
+          "::error::There was a dependency updated during installation. Install locally and commit changes"
+      shell: bash
+
+    - name: Install AWS CLI
+      uses: unfor19/install-aws-cli-action@master
+
+    - name: Configure AWS Credentials
+      run: |
+        mkdir -p ~/.aws/
+        echo "${{ inputs.aws_credentials }}" > ~/.aws/credentials
+        echo "${{ inputs.aws_config }}" > ~/.aws/config
+      shell: bash
+
+    - name: Run tests
+      run: |
+        npm run download:env
+        npm test
+      env:
+        STAGE: development
+        AWS_PROFILE: dbbs-development
+      shell: bash

@@ -1,0 +1,21 @@
+{
+  "name": "@dbbs/web-features",
+  "version": "1.0.0",
+  "private": true,
+  "description": "React based integrations",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "clean": "npx rimraf .turbo node_modules dist bin *.tsbuildinfo",
+    "test": "jest --coverage --verbose",
+    "lint": "eslint . --ext ts,tsx --max-warnings 0"
+  },
+  "dependencies": {
+    "@auth0/auth0-react": "2.2.3",
+    "react": "18.2.0"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

@@ -1,0 +1,42 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "globalDotEnv": [".env"],
+    "globalDependencies": [
+        ".env.*",
+        "tsconfig.json"
+    ],
+    "pipeline": {
+        "lint": {
+            "outputs": []
+        },
+        "build": {
+            "cache": false,
+            "dependsOn": [
+                "lint",
+                "^build"
+            ]
+        },
+        "test": {
+            "dependsOn": [
+                "build",
+                "^test"
+            ]
+        },
+        "cypress:run": {
+            "dependsOn": ["build"]
+        },
+        "cypress:open": {
+            "persistent": true,
+            "dependsOn": ["build"]
+        },
+        "clean": {
+            "cache": false
+        },
+        "dev": {
+            "persistent": true,
+            "dependsOn": [
+                "build"
+            ]
+        }
+    }
+}
