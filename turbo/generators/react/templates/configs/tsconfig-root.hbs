@@ -1,0 +1,21 @@
+{
+  "extends": "@dbbs/tsconfig/react-spa.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {{#if isAPP}}
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./cypress/tsconfig.json"
+    }
+    {{else}}
+    {
+      "path": "./tsconfig.lib.json"
+    }
+    {{/if}}
+  ]
+}

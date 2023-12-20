@@ -1,0 +1,111 @@
+service: serverless-api
+useDotenv: true
+variablesResolutionMode: 20210219
+configValidationMode: error
+
+plugins:
+  - serverless-offline
+  - serverless-deployment-bucket
+  - serverless-esm-layer
+  - serverless-plugin-aws-alerts
+  - serverless-plugin-monorepo
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  architecture: arm64
+  stage: ${opt:stage}
+  region: ${env:REGION}
+  versionFunctions: false
+  memorySize: 1024
+  timeout: 30
+  tracing:
+    lambda: true
+  logRetentionInDays: 7
+  lambdaHashingVersion: 20201221
+  environment:
+    STAGE: ${opt:stage}
+    REGION: ${env:REGION}
+    NODE_ENV: ${env:NODE_ENV}
+  deploymentBucket:
+    name: ${env:DEPLOYMENT_BUCKET}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: arn:aws:logs:*:*:*
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+            - xray:PutTelemetryRecords
+          Resource: '*'
+
+  vpc:
+    securityGroupIds:
+      - ${env:SECURITY_GROUP_ID}
+    subnetIds:
+      - ${env:SUBNET_ID}
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - package.json
+    - dist/**
+    - '!.*'
+    - '!node_modules/**'
+    - '!__tests__/**'
+    - '!src/**'
+    - '!test/**'
+    - '!static/**'
+    - '!*.sh'
+    - '!*config*'
+    - '!coverage'
+    - '!.turbo'
+    - '!package-lock.json'
+    - '.build'
+    - '!nest-cli.json'
+    - '!*.md'
+
+custom:
+  serverless-offline:
+    httpPort: 3003
+  alerts:
+    stages: # Optionally - select which stages to deploy alarms to
+      - ${opt:stage}
+    dashboards: true
+    nameTemplate: $[functionName]-$[metricName]-Alarm # Optionally - naming template for alarms, can be overwritten in definitions
+    prefixTemplate: $[stackName] # Optionally - override the alarm name prefix
+    topics:
+      alarm: arn:aws:sns:${aws:region}:${aws:accountId}:Default_CloudWatch_Alarms_Topic
+    alarms:
+      - functionThrottles
+      - functionErrors
+      - functionInvocations
+      - functionDuration
+
+layers:
+  DBBsServerlessNodeModules:
+    path: ../../serverless-layer
+    compatibleRuntimes:
+      - nodejs18.x
+
+functions:
+  api:
+    handler: dist/lambda.bootstrapNestServerHandler
+    description: DBBs Serverless API
+    layers:
+      - { Ref: DBBsServerlessNodeModulesLambdaLayer }
+    events:
+    - http:
+        cors: true
+        path: '{proxy+}'
+        method: any
+    - http:
+        cors: true
+        path: /
+        method: GET

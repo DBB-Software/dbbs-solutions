@@ -1,0 +1,8 @@
+import { defineConfig } from 'cypress'
+
+export default defineConfig({
+  e2e: {
+    baseUrl: process.env.{{ appName }}_CYPRESS_BASE_URL,
+    supportFile: false
+  }
+})

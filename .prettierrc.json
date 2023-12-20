@@ -1,0 +1,24 @@
+{
+	"printWidth": 120,
+	"singleQuote": true,
+	"parser": "typescript",
+	"useTabs": false,
+	"trailingComma": "none",
+	"semi": false,
+	"overrides": [
+		{
+			"files": ["package.json"],
+			"options": {
+				"useTabs": true
+			},
+			"excludeFiles": [
+				"node_modules",
+				".git",
+				"dist",
+				"build",
+				"lib",
+				"coverage"
+			]
+		}
+	]
+}

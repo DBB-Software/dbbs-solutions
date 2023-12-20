@@ -1,0 +1,22 @@
+import { AuthzModule } from '@dbbs/nestjs-module-authz'
+import { HealthModule } from '@dbbs/nestjs-module-health'
+import { LoggerModule } from '@dbbs/nestjs-module-logger'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { asyncContextStorage } from './asyncContextStorage.js'
+import { ExampleModule } from './example-module/example.module.js'
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    LoggerModule.forRoot({}, asyncContextStorage),
+    AuthzModule,
+    ExampleModule,
+    HealthModule
+  ]
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    console.log(consumer)
+  }
+}

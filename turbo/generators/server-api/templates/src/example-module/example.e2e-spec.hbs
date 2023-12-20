@@ -1,0 +1,39 @@
+import { LoggerModule } from '@dbbs/nestjs-module-logger'
+import { afterAll, beforeEach, describe, expect, it } from '@jest/globals'
+import { INestApplication } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { Test, TestingModule } from '@nestjs/testing'
+import supertest from 'supertest'
+import { ExampleModule } from './example.module.js'
+
+describe('ExampleController (e2e)', () => {
+  let app: INestApplication
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule.forRoot({ isGlobal: true }), LoggerModule.forRoot({}), ExampleModule]
+    }).compile()
+
+    app = moduleFixture.createNestApplication()
+    await app.init()
+  })
+
+  afterAll(async () => {
+    await app.close()
+  })
+
+  it('Example /:id (GET)', (done) => {
+    expect(process.env.NODE_ENV).toBe('test')
+
+    supertest(app.getHttpServer())
+      .get('/examples/testID')
+      .expect(200)
+      .then((response) => {
+        console.log('response.body', response.body)
+        expect(response.body.example).toEqual({ id: 'testID', watermark: 'DBBs watermark' })
+
+        done()
+      })
+      .catch((err) => done(err))
+  })
+})

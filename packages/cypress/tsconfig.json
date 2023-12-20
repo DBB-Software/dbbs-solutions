@@ -1,0 +1,16 @@
+{
+    "extends": "@dbbs/tsconfig/react-library.json",
+    "files": [],
+    "compilerOptions": {
+      "types": ["node", "cypress"]
+    },
+    "references": [
+      {
+        "path": "./tsconfig.lib.json"
+      },
+      {
+        "path": "./tsconfig.spec.json"
+      }
+    ]
+  }
+  
