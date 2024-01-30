@@ -3,7 +3,11 @@
     "version": "0.0.0",
     "private": true,
     "license": "MIT",
-    "files": ["react.js", "react-native.js", "node.js"],
+    "files": [
+        "react.js",
+        "react-native.js",
+        "node.js"
+    ],
     "devDependencies": {
         "eslint-config-turbo": "latest"
     },

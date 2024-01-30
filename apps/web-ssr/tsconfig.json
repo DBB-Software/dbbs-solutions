@@ -1,6 +1,5 @@
 {
   "extends": "@dbbs/tsconfig/nextjs.json",
-  "files": [],
   "exclude": [],
   "include": [
     ".next/types/**/*.ts"

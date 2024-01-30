@@ -3,13 +3,13 @@ import { HealthModule } from '@dbbs/nestjs-module-health'
 import { LoggerModule } from '@dbbs/nestjs-module-logger'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { asyncContextStorage } from './asyncContextStorage.js'
 import { ExampleModule } from './example-module/example.module.js'
+import { loggerOptions } from './logger.config.js'
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    LoggerModule.forRoot({}, asyncContextStorage),
+    LoggerModule.forRoot(loggerOptions),
     AuthzModule,
     ExampleModule,
     HealthModule

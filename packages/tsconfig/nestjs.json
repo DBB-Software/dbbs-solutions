@@ -1,10 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Nest.js",
   "extends": "./base.json",
+  "display": "Nest.js",
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "forceConsistentCasingInFileNames": true
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "preserveWatchOutput": true
   }
 }

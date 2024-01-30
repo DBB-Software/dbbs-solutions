@@ -13,11 +13,11 @@
     "build": "npx tsc --build tsconfig.json",
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo",
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
-    "watch": "npx tsc -w --preserveWatchOutput",
-    "test": "echo \"no test specified\" && exit 0"
+    "test": "echo \"no test specified\" && exit 0",
+    "watch": "npx tsc -w --preserveWatchOutput"
   },
   "dependencies": {
-    "@nestjs/common": "10.2.10",
+    "@nestjs/common": "10.3.0",
     "@nestjs/config": "3.1.1",
     "@nestjs/passport": "10.0.3",
     "jwks-rsa": "3.1.0",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "@dbbs/jest-config": "*"
   }
 }
