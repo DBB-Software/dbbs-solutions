@@ -1,0 +1,12 @@
+import { render, screen } from '@testing-library/react'
+import App from './App'
+
+describe('<App />', () => {
+  it('should render properly', () => {
+    render(<App />)
+
+    const title = screen.getByTestId('app-title')
+    expect(title).toBeVisible()
+    expect(title).toHaveTextContent('Sample APP')
+  })
+})
