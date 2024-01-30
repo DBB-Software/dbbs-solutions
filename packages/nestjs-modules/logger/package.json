@@ -13,17 +13,18 @@
     "build": "npx tsc --build tsconfig.json",
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo",
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
-    "watch": "npx tsc -w --preserveWatchOutput",
-    "test": "jest --coverage --verbose"
+    "test": "jest --coverage --verbose",
+    "watch": "npx tsc -w --preserveWatchOutput"
   },
   "dependencies": {
-    "@nestjs/common": "10.2.10",
+    "@nestjs/common": "10.3.0",
     "nestjs-pino": "3.5.0",
-    "pino": "8.16.2",
-    "pino-http": "8.5.1"
+    "pino": "8.17.2",
+    "pino-http": "9.0.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "@dbbs/jest-config": "*"
   }
 }

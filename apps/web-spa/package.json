@@ -1,27 +1,28 @@
 {
   "name": "@dbbs/web-spa",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --max-warnings 0",
-    "test": "jest --coverage --verbose",
-    "preview": "vite preview",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "dev": "vite",
+    "lint": "eslint . --ext ts,tsx --max-warnings 0",
+    "preview": "vite preview",
+    "test": "jest --coverage --verbose"
   },
   "dependencies": {
     "@dbbs/web-components": "*",
     "@emotion/styled": "11.11.0",
-    "@mui/styled-engine": "5.14.20",
+    "@mui/styled-engine": "5.15.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@dbbs/cypress": "*",
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "@dbbs/jest-config": "*"
   }
 }

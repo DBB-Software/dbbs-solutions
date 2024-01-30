@@ -3,22 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "test": "jest --coverage --verbose",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "dev": "next dev",
+    "lint": "next lint",
+    "start": "next start",
+    "test": "jest --coverage --verbose"
   },
   "dependencies": {
     "@dbbs/web-components": "*",
-    "next": "14.0.1",
+    "next": "14.0.4",
     "react": "18.2.0"
   },
   "devDependencies": {
     "@dbbs/cypress": "*",
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "@dbbs/jest-config": "*"
   }
 }

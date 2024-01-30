@@ -13,7 +13,7 @@ describe('ExampleController (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule, LoggerModule.forRoot(), ExampleModule, AuthzModule]
+      imports: [ConfigModule, LoggerModule.forRoot({}), ExampleModule, AuthzModule]
     })
       .overrideGuard(AuthGuard('jwt'))
       .useValue({

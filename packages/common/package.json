@@ -13,30 +13,31 @@
     "build": "npx tsc --build tsconfig.json",
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo",
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
-    "watch": "npx tsc -w --preserveWatchOutput",
-    "test": "jest --coverage --verbose"
+    "test": "jest --coverage --verbose",
+    "watch": "npx tsc -w --preserveWatchOutput"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.465.0",
-    "@aws-sdk/client-eventbridge": "3.465.0",
-    "@aws-sdk/client-lambda": "3.465.0",
-    "@aws-sdk/client-s3": "3.465.0",
-    "@aws-sdk/client-sns": "3.465.0",
-    "@aws-sdk/client-sqs": "3.465.0",
+    "@aws-sdk/client-dynamodb": "3.485.0",
+    "@aws-sdk/client-eventbridge": "3.485.0",
+    "@aws-sdk/client-lambda": "3.485.0",
+    "@aws-sdk/client-s3": "3.485.0",
+    "@aws-sdk/client-sns": "3.485.0",
+    "@aws-sdk/client-sqs": "3.485.0",
     "@aws-sdk/util-utf8-node": "3.259.0",
     "@middy/core": "4.6.5",
-    "@nestjs/common": "10.2.10",
+    "@nestjs/common": "10.3.0",
     "aws-lambda": "1.0.7",
     "aws-xray-sdk-core": "3.5.3",
     "express": "4.18.2",
     "http-status-codes": "2.3.0",
-    "pino": "8.16.2",
+    "pino": "8.17.2",
     "pino-lambda": "4.4.0",
     "typescript-lru-cache": "2.0.0",
-    "uuid": "8.3.2"
+    "uuid": "9.0.1"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "@dbbs/jest-config": "*"
   }
 }

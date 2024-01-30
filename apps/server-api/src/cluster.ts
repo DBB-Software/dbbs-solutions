@@ -1,6 +1,29 @@
+import { pino } from 'pino'
 import pm2 from 'pm2'
+import {
+  AWS_S3_LOGS_BUCKET,
+  AWS_S3_LOGS_FOLDER,
+  AWS_S3_LOGS_REGION,
+  LOGS_BUTCH_SIZE,
+  LOGS_UPLOAD_INTERVAL_MS
+} from './constants.js'
 
-const logger = console
+const logger = pino({
+  transport: {
+    targets: [
+      {
+        target: '@dbbs/s3-log-transport',
+        options: {
+          region: AWS_S3_LOGS_REGION,
+          uploadInterval: LOGS_UPLOAD_INTERVAL_MS,
+          batchSize: LOGS_BUTCH_SIZE,
+          bucket: AWS_S3_LOGS_BUCKET,
+          folder: AWS_S3_LOGS_FOLDER
+        }
+      }
+    ]
+  }
+})
 
 const INSTANCES = process.env.APP_INSTANCES_NUMBER || -1
 const MAX_MEMORY = process.env.APP_MAX_MEMORY || 2048

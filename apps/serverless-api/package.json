@@ -20,19 +20,20 @@
     "@dbbs/nestjs-module-authz": "*",
     "@dbbs/nestjs-module-health": "*",
     "@dbbs/nestjs-module-logger": "*",
-    "@middy/core": "5.1.0",
-    "@middy/do-not-wait-for-empty-event-loop": "5.1.0",
-    "@middy/http-security-headers": "5.1.0",
-    "@middy/input-output-logger": "5.1.0",
+    "@dbbs/s3-log-transport": "*",
+    "@middy/core": "4.6.5",
+    "@middy/do-not-wait-for-empty-event-loop": "4.6.5",
+    "@middy/http-security-headers": "4.6.5",
+    "@middy/input-output-logger": "4.6.5",
     "@nestjs/axios": "3.0.1",
-    "@nestjs/common": "10.2.10",
+    "@nestjs/common": "10.3.0",
     "@nestjs/config": "3.1.1",
-    "@nestjs/core": "10.2.10",
+    "@nestjs/core": "10.3.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "10.0.3",
-    "@nestjs/platform-express": "10.2.10",
+    "@nestjs/platform-express": "10.3.0",
     "@nestjs/terminus": "10.2.0",
-    "@vendia/serverless-express": "4.10.4",
+    "@vendia/serverless-express": "4.12.6",
     "aws-lambda": "1.0.7",
     "express": "4.18.2",
     "form-data": "4.0.0",
@@ -41,12 +42,12 @@
     "ow": "1.1.1",
     "passport": "0.7.0",
     "passport-jwt": "4.0.1",
-    "reflect-metadata": "0.1.13",
-    "rxjs": "7.8.1",
-    "uuid": "9.0.1"
+    "reflect-metadata": "0.1.14",
+    "rxjs": "7.8.1"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "@dbbs/jest-config": "*"
   }
 }

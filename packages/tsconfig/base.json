@@ -4,8 +4,8 @@
     "compilerOptions": {
         "baseUrl": ".",
         "target": "ESNext",
-        "moduleResolution": "node",
-        "module": "esnext",
+        "moduleResolution": "Node",
+        "module": "ESNext",
         "outDir": "dist",
         "incremental": true,
         "composite": true,
@@ -23,7 +23,8 @@
         "strict": true,
         "sourceMap": true,
         "allowUnreachableCode": true,
-        "jsx": "preserve"
+        "jsx": "preserve",
+        "forceConsistentCasingInFileNames": true
     },
     "exclude": ["node_modules", "serverless-layer"]
 }

@@ -123,14 +123,14 @@ The DBBS Platform Base offers a set of commands to manage and operate your monor
 4. **Starting Applications**
    To start a specific application in a production environment, use the start command.
    ```bash
-   npm run start -- --target=<app-name>
+   npm run start --target=<app-name>
    ```
    Replace `<app-name>` with the name of the application you wish to start.
 
 5. **Development Mode**
    For a development environment with hot reloading, use the dev command. This is particularly useful during the development phase for immediate feedback.
    ```bash
-   npm run dev -- --target=<app-name>
+   npm run dev --target=<app-name>
    ```
    Replace `<app-name>` with the name of the application you're developing.
 
@@ -146,12 +146,12 @@ With these commands and tips, you can fully leverage the capabilities of the DBB
 - `npm run dev`
 
 #### Targeted Commands:
-- `npm start --target=web-app`
-- `npm run dev --target=web-app`
+- `npm start --target=web-spa`
+- `npm run dev --target=web-spa`
 
 In addition to the standard development commands, the DBBS Platform includes Cypress testing commands to facilitate end-to-end testing. These commands leverage the Cypress testing framework for interactive and headless test execution.
-- `npm run cypress:open --target=web-app` - Launches the Cypress Test Runner in an interactive mode, allowing developers to visually inspect and debug tests.
-- `npm run cypress:run --target=web-app` - Executes Cypress tests in a headless mode, suitable for automated test runs in continuous integration (CI) pipelines.
+- `npm run cypress:open --target=web-spa` - Launches the Cypress Test Runner in an interactive mode, allowing developers to visually inspect and debug tests.
+- `npm run cypress:run --target=web-spa` - Executes Cypress tests in a headless mode, suitable for automated test runs in continuous integration (CI) pipelines.
 
 ## Repository Structure
 The DBBS Platform Base monorepo is structured to facilitate ease of navigation and development across various components. Below is an outline of the key directories and files, along with their purpose:

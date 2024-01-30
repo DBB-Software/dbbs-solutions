@@ -6,9 +6,16 @@ import { ConfigModule } from '@nestjs/config'
 import { AppController } from './app.controller.js'
 import { AppService } from './app.service.js'
 import { ExampleModule } from './example-module/example.module.js'
+import { loggerOptions } from './logger.config.js'
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), LoggerModule.forRoot(), HealthModule, AuthzModule, ExampleModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    LoggerModule.forRoot(loggerOptions),
+    HealthModule,
+    AuthzModule,
+    ExampleModule
+  ],
   controllers: [AppController],
   providers: [AppService]
 })
