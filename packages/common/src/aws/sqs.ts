@@ -19,7 +19,7 @@ export class CustomSqsHandler {
   async sendToSQS(data: object, queueUrl?: string): Promise<SendMessageCommandOutput> {
     const commandInput: SendMessageCommandInput = {
       MessageBody: JSON.stringify(data),
-      QueueUrl: queueUrl || this.queueUrl
+      QueueUrl: queueUrl ?? this.queueUrl
     }
     const command = new SendMessageCommand(commandInput)
 

@@ -41,7 +41,7 @@ export const ProtectedContent: FC<ProtectedContentProps> = ({
     getIdTokenClaims
   ])
 
-  if (isLoading) {
+  if (isLoading && loadingComponent) {
     return loadingComponent
   }
 

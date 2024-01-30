@@ -2,10 +2,8 @@ import { Context } from 'aws-lambda'
 import { Logger } from 'pino'
 import { LambdaEvent } from 'pino-lambda'
 
-export interface ILogger extends Logger {}
-
 export interface ICustomContext extends Context {
-  logger: ILogger
+  logger: Logger<never>
   awsRequestId: string
 }
 

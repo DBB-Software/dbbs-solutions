@@ -48,7 +48,7 @@ export class CustomS3Handler {
 
   async downloadJSONfromS3({ bucket, key }: IDownloadJsonFromS3Input): Promise<IDownloadJsonFromS3Output> {
     const fileObj = await this.getObject({ bucket, key })
-    const fileString = (await fileObj.Body?.transformToString()) || ''
+    const fileString = (await fileObj.Body?.transformToString()) ?? ''
 
     if (!isJSONString(fileString)) {
       console.log(`Invalid json string: ${fileString}`) // to replace with our own logger later
@@ -75,7 +75,7 @@ export class CustomS3Handler {
       Bucket: bucket,
       Key: key,
       Body: pass,
-      ContentType: contentType || 'application/json',
+      ContentType: contentType ?? 'application/json',
       ACL: acl,
       CacheControl: cacheControl
     }

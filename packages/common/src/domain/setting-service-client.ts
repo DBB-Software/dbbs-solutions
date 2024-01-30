@@ -43,7 +43,7 @@ export class SettingServiceClient implements ISettingServiceClient {
     // Useful if a value is needed but the order of the cache should not be changed.
     const cachedSettings = this.cache.peek(tenantId)
     if (cachedSettings) {
-      return cachedSettings as object
+      return cachedSettings
     }
 
     const invocationParams: InvokeCommandInput = {
