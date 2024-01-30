@@ -11,6 +11,12 @@ inputs:
   aws_config:
     description: Config for the AWS. Should be the github secret AWS_CONFIG
     required: true
+  sonar_token:
+    description: Token for SonarCloud.
+    required: false
+  github_token:
+    description: Github token for SonarCloud.
+    required: false
 
 runs:
   using: "composite"
@@ -63,3 +69,10 @@ runs:
         STAGE: development
         AWS_PROFILE: dbbs-development
       shell: bash
+
+    - name: Sonarcloud Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ inputs.sonar_token }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        SONAR_HOST_URL: "https://sonarcloud.io"

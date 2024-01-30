@@ -9,7 +9,7 @@ concurrency:
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -26,3 +26,5 @@ jobs:
           ref: ${{ github.ref }}
           aws_credentials: ${{ secrets.AWS_CREDENTIALS }}
           aws_config: ${{ secrets.AWS_CONFIG }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
