@@ -13,9 +13,7 @@ describe('Test Logger Response (e2e)', () => {
 
   @Controller('/')
   class TestController {
-    constructor(
-      @InjectLogger() private readonly logger: Logger
-    ) {}
+    constructor(@InjectLogger() private readonly logger: Logger) {}
 
     @Get()
     get() {
@@ -24,11 +22,11 @@ describe('Test Logger Response (e2e)', () => {
   }
 
   beforeEach(async () => {
-    captureConsole.startCapture(process.stdout, (log) => logResponse = log)
+    captureConsole.startCapture(process.stdout, (log) => (logResponse = log))
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule.forRoot()],
-      controllers: [TestController],
+      imports: [LoggerModule.forRoot({})],
+      controllers: [TestController]
     }).compile()
 
     app = moduleFixture.createNestApplication()
@@ -36,7 +34,7 @@ describe('Test Logger Response (e2e)', () => {
   })
 
   afterEach(() => {
-   captureConsole.stopCapture(process.stdout)
+    captureConsole.stopCapture(process.stdout)
   })
 
   afterAll(async () => {

@@ -9,7 +9,7 @@ export abstract class HttpErrorBase extends Error implements IHttpError {
 
   constructor(message: string, options?: ErrorOptions, statusCode?: number) {
     super(message)
-    this.statusCode = statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+    this.statusCode = statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR
     Object.setPrototypeOf(this, HttpErrorBase.prototype)
   }
 }
