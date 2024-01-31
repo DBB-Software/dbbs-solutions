@@ -1,0 +1,24 @@
+{
+  "name": "@dbbs/{{ name }}",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/handler.js",
+  "types": "./dist/handler.d.ts",
+  "scripts": {
+    "build": "npx tsc --build tsconfig.json",
+    "clean": "npx rimraf coverage .serverless .turbo node_modules dist *.tsbuildinfo",
+    "dev": "npm run build && sls offline start --noTimeout --stage local --lambdaPort 3032",
+    "lint": "npx eslint \"src/**/*.ts*\" --fix",
+    "start": "npm run test",
+    "test": "echo \"no test specified\" && exit 0",
+    "watch": "npx tsc -w --preserveWatchOutput"
+  },
+  "dependencies": {
+    "@dbbs/common": "*",
+    "@middy/core": "5.0.3"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

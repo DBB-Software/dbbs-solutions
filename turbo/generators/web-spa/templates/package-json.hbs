@@ -1,0 +1,26 @@
+{
+  "name": "@dbbs/{{ name }}",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --max-warnings 0",
+    {{#if isAPP}}
+    "test": "jest --coverage --verbose",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+    {{else}}
+    "test": "jest --coverage --verbose"
+    {{/if}}
+  }{{#if isAPP}},{{/if}}
+  {{#if isAPP}}
+  "dependencies": {
+    "@dbbs/web-components": "*"
+  },
+  "devDependencies": {
+    "@dbbs/cypress": "*"
+  }
+  {{/if}}
+}

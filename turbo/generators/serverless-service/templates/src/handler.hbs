@@ -1,0 +1,7 @@
+import { loggerMiddleware } from '@dbbs/common'
+import middy from '@middy/core'
+
+function exampleFunction() {}
+
+export const getSettingsHandler = middy(exampleFunction)
+getSettingsHandler.use(loggerMiddleware())
