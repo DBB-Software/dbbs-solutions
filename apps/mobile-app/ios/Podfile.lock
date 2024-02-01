@@ -944,7 +944,7 @@ PODS:
   - React-Mapbuffer (0.73.1):
     - glog
     - React-debug
-  - react-native-safe-area-context (4.8.1):
+  - react-native-safe-area-context (4.8.2):
     - React-Core
   - React-nativeconfig (0.73.1)
   - React-NativeModulesApple (0.73.1):
@@ -1371,7 +1371,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 369048694e39942063c5d08e9580b43e2edd379a
   React-logger: e0c1e918d9588a9f39c9bc62d9d6bfe9ca238d9d
   React-Mapbuffer: 9731a0a63ebaf8976014623c4d637744d7353a7c
-  react-native-safe-area-context: cd1169d797a2ef722a00bfc5af10748d5b6c94f9
+  react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
   React-nativeconfig: 37aecd26d64b79327c3f10e43b2e9a6c425e0a60
   React-NativeModulesApple: 9ca6d2eaa1dd5606588262195b46d0774bdec83a
   React-perflogger: 5ffc4d6ccb74eaac7b8b2867e58a447232483d6d

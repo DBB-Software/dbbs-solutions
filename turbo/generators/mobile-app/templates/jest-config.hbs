@@ -1,0 +1,28 @@
+import { defaults as tsjPreset } from 'ts-jest/presets'
+import { pathsToModuleNameMapper, type JestConfigWithTsJest } from 'ts-jest'
+import { compilerOptions } from './tsconfig.json'
+
+const jestConfig: JestConfigWithTsJest = {
+  ...tsjPreset,
+  preset: 'react-native',
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: './tsconfig.spec.json'
+      }
+    ]
+  },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  transformIgnorePatterns: ['node_modules/(tamagui|@tamagui|@tamagui/animations-moti)'],
+  testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
+  setupFilesAfterEnv: [
+    '../../node_modules/react-native-gesture-handler/jestSetup.js',
+    './__tests__/testUtils/setupTests.ts'
+  ],
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
+  coverageDirectory: './coverage',
+  coveragePathIgnorePatterns: ['/node_modules/', '/.node/', '/jest/']
+}
+
+export default jestConfig

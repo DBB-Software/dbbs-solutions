@@ -1,0 +1,20 @@
+{
+  "extends": "@dbbs/tsconfig/react-native.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@navigators/*": ["src/app/navigators/*"],
+      "@screens/*": ["src/screens/*"]
+    }
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}

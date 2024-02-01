@@ -6,6 +6,7 @@ import webSsrGenerators from './web-ssr/generators'
 import serverApiGenerators from './server-api/generators'
 import serverlessApiGenerators from './serverless-api/generators'
 import serverlessServiceGenerators from './serverless-service/generators'
+import mobileAppGenerators from './mobile-app/generators'
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
   webSpaGenerators(plop)
@@ -13,4 +14,5 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
   serverlessApiGenerators(plop)
   serverApiGenerators(plop)
   serverlessServiceGenerators(plop)
+  mobileAppGenerators(plop)
 }
