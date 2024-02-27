@@ -3,23 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
-    "dev": "next dev",
-    "lint": "next lint",
-    "start": "next start",
-    "test": "jest --coverage --verbose"
+    "build": "npx next build",
+    "cypress:open": "npx cypress open",
+    "cypress:run": "npx cypress run",
+    "dev": "npx next dev",
+    "lint": "npx next lint",
+    "dev:sst": "npx sst bind next dev",
+    "build:sst": "npx sst bind next build",
+    "start": "npx next start",
+    "test": "npx jest --coverage --verbose"
   },
   "dependencies": {
     "@dbbs/web-components": "*",
-    "next": "14.0.4",
+    "next": "14.1.0",
     "react": "18.2.0"
   },
   "devDependencies": {
     "@dbbs/cypress": "*",
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*",
-    "@dbbs/jest-config": "*"
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
   }
 }

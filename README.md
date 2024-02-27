@@ -71,15 +71,26 @@ Setting up the DBBS Platform Base is straightforward. Follow these steps to get 
    ```
    This command clones the DBBS Platform Base repository from GitHub.
 2. **Install Dependencies**
-   Navigate to the root directory of the cloned repository and install the necessary dependencies.
+   Makefile is designed to automate the setup of dependencies for project. 
+   It uses Homebrew, asdf, and Yarn to manage installations and versions of tools and packages. Required steps:
+   Navigate to the root directory of the cloned repository.
    ```bash
    cd dbbs-platform-base
-   npm install
    ```
+   Install all dependencies while in the root directory of the cloned repository.
+   ```bash
+   make setup-dependencies
+   ```
+   Check the versions of installed tools while in the root directory of the cloned repository.
+   ```bash
+   make check-versions
+   ```
+   Ensure that Homebrew and asdf are correctly set in your PATH. If not, the script will open instructions for installation and adding Homebrew and asdf to your shell.
+   If Yarn is not installed or is outdated, the Makefile will install or update it using Corepack.
 3. **Build the Monorepo**
    Once the dependencies are installed, build the entire monorepo to ensure all components are properly compiled.
    ```bash
-   npm run build
+   yarn build
    ```
 4. **AWS Credentials Setup**
    For deploying applications and accessing AWS services, set your AWS credentials. Replace `<AWS_ACCESS_KEY_ID>` and `<AWS_SECRET_ACCESS_KEY>` with your actual AWS credentials.
@@ -90,7 +101,7 @@ Setting up the DBBS Platform Base is straightforward. Follow these steps to get 
 5. **Run Example Applications**
    To start all example applications, use the following command:
    ```bash
-   npm run dev
+   yarn dev
    ```
 6. **Generate New Applications**
    If you want to create a new application, use the `npx turbo gen` command and follow the instructions in the console.
@@ -105,53 +116,63 @@ The DBBS Platform Base offers a set of commands to manage and operate your monor
 1. **Linting**
    To ensure code quality and consistency, use the lint command. This will check your code for any stylistic or programming errors.
    ```bash
-   npm run lint
+   yarn lint
    ```
 
 2. **Building**
    To compile your code and prepare it for deployment, use the build command. This is essential for making sure your applications are ready for production.
    ```bash
-   npm run build
+   yarn build
    ```
 
 3. **Testing**
    Running tests is crucial for maintaining code quality. Use the test command to execute your test suites.
    ```bash
-   npm run test
+   yarn test
    ```
 
 4. **Starting Applications**
    To start a specific application in a production environment, use the start command.
    ```bash
-   npm run start --target=<app-name>
+   target=<app-name> yarn start
    ```
    Replace `<app-name>` with the name of the application you wish to start.
 
 5. **Development Mode**
    For a development environment with hot reloading, use the dev command. This is particularly useful during the development phase for immediate feedback.
    ```bash
-   npm run dev --target=<app-name>
+   target=<app-name> yarn dev
    ```
    Replace `<app-name>` with the name of the application you're developing.
 
 ### Additional Tips
 
-- **Targeted Commands:** Most commands support a `--target` variable to specify which package or app the command should run for. This allows for more granular control over your development workflow.
+- **Targeted Commands:** Most commands support a `target` env variable at the beginning of command to specify which package or app the command should run for. This allows for more granular control over your development workflow.
 - **Custom Scripts:** You can also define custom scripts in your `package.json` to streamline your workflow further.
 
 With these commands and tips, you can fully leverage the capabilities of the DBBS Platform Base to streamline your development process.
 
 #### Commands:
-- `npm start`
-- `npm run dev`
+- `yarn dev`
 
 #### Targeted Commands:
-- `npm start --target=web-spa`
-- `npm run dev --target=web-spa`
+- `target=web-spa yarn start`
+- `target=web-spa yarn dev`
 
 In addition to the standard development commands, the DBBS Platform includes Cypress testing commands to facilitate end-to-end testing. These commands leverage the Cypress testing framework for interactive and headless test execution.
-- `npm run cypress:open --target=web-spa` - Launches the Cypress Test Runner in an interactive mode, allowing developers to visually inspect and debug tests.
-- `npm run cypress:run --target=web-spa` - Executes Cypress tests in a headless mode, suitable for automated test runs in continuous integration (CI) pipelines.
+- `target=web-spa yarn cypress:open` - Launches the Cypress Test Runner in an interactive mode, allowing developers to visually inspect and debug tests.
+- `target=web-spa yarn cypress:run` - Executes Cypress tests in a headless mode, suitable for automated test runs in continuous integration (CI) pipelines.
+
+#### Makefile Targets:
+- `setup-dependencies` - The main target for setting up all dependencies. It runs the following targets in order: `check-brew`, `asdf-install`, and `install-deps`.
+- `check-brew` - Checks if Homebrew is installed on the system. If not, it prompts the user to install Homebrew by providing the installation instructions.
+- `asdf-install` - Installs asdf and its plugins for managing Node.js, Ruby, and Cocoapods versions. It also updates all asdf plugins and installs the specified versions of the tools.
+- `install-deps` - Installs the project's dependencies, which include Node.js modules and the AWS CLI. It runs the `install-node-modules` and `install-awscli` targets.
+- `install-node-modules` - Installs the required Node.js modules using Yarn.
+- `check-asdf-path` - Checks if asdf is correctly set in the system's PATH. If not, it opens instructions for adding asdf to the shell.
+- `check-yarn` - Checks if Yarn is installed and up to date. If not, it installs Yarn using Corepack. It also updates local Yarn to the stable version if the installed version is lower than 4.0.
+- `install-awscli` - Installs the AWS CLI using Homebrew.
+- `check-versions` - Checks and prints the versions of installed tools, including asdf, Node.js, Ruby, Cocoapods, Yarn and the AWS CLI.
 
 ## Repository Structure
 The DBBS Platform Base monorepo is structured to facilitate ease of navigation and development across various components. Below is an outline of the key directories and files, along with their purpose:
@@ -159,7 +180,7 @@ The DBBS Platform Base monorepo is structured to facilitate ease of navigation a
 - **`/packages`**: Contains shared packages or libraries that are used across multiple applications within the monorepo. This promotes code reusability and consistency.
 - **`/serverless-layer`**: Specific to serverless applications, this directory hosts the common layers used in serverless deployments, such as shared libraries and utilities.
 - **`/turbo`**: This directory contains configurations and scripts related to the Turbo repository management tool, which helps in managing and scaling the monorepo efficiently.
-- **`package-lock.json` & `package.json`**: These files manage the npm dependencies for the entire monorepo.
+- **`yarn.lock` & `package.json`**: These files manage dependencies for the entire monorepo.
 - **`tsconfig.json`**: Configuration file for TypeScript, setting compiler options for the projects.
 - **`turbo.json`**: Configuration file for the Turbo tool, defining the build dependencies and optimizations.
 
@@ -327,7 +348,7 @@ This section aims to address common questions and provide solutions to frequent 
    A: Use the `git pull` command to fetch and merge the latest changes from the main repository.
 
 2. **Q: What should I do if I encounter npm dependency conflicts?**
-   A: Ensure that you are using the same npm version as specified in the project. If the issue persists, try removing the `node_modules` directory and the `package-lock.json` file, then run `npm install` again.
+   A: Ensure that you are using the same npm version as specified in the project. If the issue persists, try removing the `node_modules` directory and the `yarn.lock` file, then run `yarn` again.
 
 3. **Q: Can I contribute to a feature or bugfix without being assigned?**
    A: Absolutely! Feel free to pick up any unassigned issues. We recommend commenting on the issue to let others know you're working on it.

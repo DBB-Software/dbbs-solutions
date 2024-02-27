@@ -6,19 +6,17 @@
   "main": "src/index.ts",
   "types": "src/index.d.ts",
   "scripts": {
-    "clean": "npx rimraf .turbo node_modules dist bin *.tsbuildinfo",
-    "lint": "eslint . --ext ts,tsx --max-warnings 0",
+    "clean": "npx rimraf .turbo node_modules dist bin",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
     "test": "echo \"no test specified\" && exit 0"
   },
   "dependencies": {
-    "@tamagui/animations-moti": "1.79.13",
-    "@tamagui/config": "1.79.13",
-    "react-native-reanimated": "3.6.1",
-    "tamagui": "1.79.13"
+    "react-native-paper": "5.12.3",
+    "react-native-vector-icons": "10.0.3"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*",
-    "@dbbs/jest-config": "*"
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
   }
 }

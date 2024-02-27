@@ -1,3 +1,4 @@
-export * from 'tamagui'
+export * from 'react-native-paper'
+export * from 'react-native-paper/react-navigation'
 
-export { config } from './config/tamagui.config'
+export * from './core'

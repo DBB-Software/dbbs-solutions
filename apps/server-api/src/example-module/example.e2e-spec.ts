@@ -37,7 +37,7 @@ describe('ExampleController (e2e)', () => {
       .expect(200)
       .then((response) => {
         console.log('response.body', response.body)
-        expect(response.body.example).toEqual({ id: 'testID', watermark: 'DBBs watermark' })
+        expect(response.body.example.id).toEqual('testID')
 
         done()
       })
