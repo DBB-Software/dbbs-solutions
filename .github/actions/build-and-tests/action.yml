@@ -21,16 +21,14 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Set up Yarn
-      run: |
-        corepack enable
-        yarn set version stable  
-      shell: bash  
-
     - name: Checkout
       uses: actions/checkout@v3
       with:
         ref: ${{ inputs.ref }}
+
+    - name: Set up Yarn
+      run: make check-yarn
+      shell: bash
 
     - name: Set up NodeJs
       uses: actions/setup-node@v3
