@@ -3800,7 +3800,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dbbs/nestjs-module-decorators@npm:*, @dbbs/nestjs-module-decorators@workspace:packages/nestjs-modules/decorators":
+"@dbbs/nestjs-module-decorators@workspace:packages/nestjs-modules/decorators":
   version: 0.0.0-use.local
   resolution: "@dbbs/nestjs-module-decorators@workspace:packages/nestjs-modules/decorators"
   dependencies:
@@ -3822,18 +3822,6 @@ __metadata:
     "@nestjs/common": "npm:10.3.3"
     "@nestjs/terminus": "npm:10.2.3"
     nestjs-pino: "npm:4.0.0"
-  languageName: unknown
-  linkType: soft
-
-"@dbbs/nestjs-module-healthcheck@workspace:packages/nestjs-modules/healthcheck":
-  version: 0.0.0-use.local
-  resolution: "@dbbs/nestjs-module-healthcheck@workspace:packages/nestjs-modules/healthcheck"
-  dependencies:
-    "@dbbs/eslint-config": "npm:*"
-    "@dbbs/jest-config": "npm:*"
-    "@dbbs/nestjs-module-decorators": "npm:*"
-    "@dbbs/tsconfig": "npm:*"
-    "@nestjs/common": "npm:10.3.3"
   languageName: unknown
   linkType: soft
 
