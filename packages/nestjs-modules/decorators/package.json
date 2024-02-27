@@ -11,17 +11,17 @@
   ],
   "scripts": {
     "build": "npx tsc --build tsconfig.json",
-    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
     "test": "echo \"no test specified\" && exit 0",
     "watch": "npx tsc -w --preserveWatchOutput"
   },
   "dependencies": {
-    "@nestjs/common": "10.3.0"
+    "@nestjs/common": "10.3.3"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*",
-    "@dbbs/jest-config": "*"
-  }  
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
 }

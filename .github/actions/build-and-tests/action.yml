@@ -21,6 +21,12 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Set up Yarn
+      run: |
+        corepack enable
+        yarn set version stable  
+      shell: bash  
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -30,24 +36,24 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version-file: '.nvmrc'
-        cache: 'npm'
+        cache: 'yarn'
 
     - name: Cache node_modules
       uses: actions/cache@v3
       with:
         path: node_modules
-        key: v1-node_modules-${{ hashFiles('package-lock.json') }}
+        key: v1-node_modules-${{ hashFiles('yarn.lock') }}
 
-    - name: Install NPM dependencies
+    - name: Install project dependencies
       run: |
         node -v
         npm -v
-        npm install
+        yarn --immutable
       shell: bash
 
-    - name: Verify npm dependencies are unchanged
+    - name: Verify dependencies are unchanged
       run: |
-        (git diff --exit-code package-lock.json && git diff --exit-code package.json) || echo \
+        (git diff --exit-code yarn.lock && git diff --exit-code package.json) || echo \
           "::error::There was a dependency updated during installation. Install locally and commit changes"
       shell: bash
 
@@ -63,8 +69,9 @@ runs:
 
     - name: Run tests
       run: |
-        npm run download:env
-        npm test
+        yarn download:env
+        yarn test
+
       env:
         STAGE: development
         AWS_PROFILE: dbbs-development

@@ -4,25 +4,25 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc && vite build",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
-    "dev": "vite",
-    "lint": "eslint . --ext ts,tsx --max-warnings 0",
-    "preview": "vite preview",
-    "test": "jest --coverage --verbose"
+    "build": "npx tsc && npx vite build",
+    "cypress:open": "npx cypress open",
+    "cypress:run": "npx cypress run",
+    "dev": "npx vite",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
+    "preview": "npx vite preview",
+    "test": "npx jest --coverage --verbose"
   },
   "dependencies": {
     "@dbbs/web-components": "*",
     "@emotion/styled": "11.11.0",
-    "@mui/styled-engine": "5.15.3",
+    "@mui/styled-engine": "5.15.9",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@dbbs/cypress": "*",
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*",
-    "@dbbs/jest-config": "*"
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
   }
 }

@@ -1,3 +1,4 @@
+import { FeatureFlagService, FeatureFlags } from '@dbbs/feature-config'
 import {
   AWS_CLOUDWATCH_LOGS_GROUP,
   AWS_CLOUDWATCH_LOGS_PREFIX,
@@ -10,32 +11,40 @@ import {
   LOG_LEVEL
 } from './constants.js'
 
+const featureFlagService = new FeatureFlagService()
+
+let loggerTransports
+
+if (featureFlagService.isEnabled(FeatureFlags.API_LOG_TRANSPORTS)) {
+  loggerTransports = {
+    targets: [
+      {
+        target: 'pino-cloudwatch',
+        options: {
+          group: AWS_CLOUDWATCH_LOGS_GROUP,
+          aws_region: AWS_CLOUDWATCH_REGION,
+          prefix: AWS_CLOUDWATCH_LOGS_PREFIX,
+          interval: LOGS_UPLOAD_INTERVAL_MS
+        },
+        level: LOG_LEVEL
+      },
+      {
+        target: '@dbbs/s3-log-transport',
+        options: {
+          region: AWS_S3_LOGS_REGION,
+          uploadInterval: LOGS_UPLOAD_INTERVAL_MS,
+          batchSize: LOGS_BUTCH_SIZE,
+          bucket: AWS_S3_LOGS_BUCKET,
+          folder: AWS_S3_LOGS_FOLDER
+        },
+        level: LOG_LEVEL
+      }
+    ]
+  }
+}
+
 export const loggerOptions = {
   pinoHttp: {
-    transport: {
-      targets: [
-        {
-          target: 'pino-cloudwatch',
-          options: {
-            group: AWS_CLOUDWATCH_LOGS_GROUP,
-            aws_region: AWS_CLOUDWATCH_REGION,
-            prefix: AWS_CLOUDWATCH_LOGS_PREFIX,
-            interval: LOGS_UPLOAD_INTERVAL_MS
-          },
-          level: LOG_LEVEL
-        },
-        {
-          target: '@dbbs/s3-log-transport',
-          options: {
-            region: AWS_S3_LOGS_REGION,
-            uploadInterval: LOGS_UPLOAD_INTERVAL_MS,
-            batchSize: LOGS_BUTCH_SIZE,
-            bucket: AWS_S3_LOGS_BUCKET,
-            folder: AWS_S3_LOGS_FOLDER
-          },
-          level: LOG_LEVEL
-        }
-      ]
-    }
+    transport: loggerTransports
   }
 }

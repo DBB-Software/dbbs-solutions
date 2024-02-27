@@ -6,9 +6,9 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "clean": "npx rimraf .turbo node_modules dist bin *.tsbuildinfo",
-    "lint": "eslint . --ext ts,tsx --max-warnings 0",
-    "test": "jest --coverage --verbose"
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
+    "test": "npx jest --coverage --verbose"
   },
   "dependencies": {
     "@auth0/auth0-react": "2.2.4",
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*",
-    "@dbbs/jest-config": "*"
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
   }
 }

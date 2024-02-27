@@ -6,12 +6,13 @@ import { compilerOptions } from './tsconfig.json'
 const jestConfig: JestConfigWithTsJest = {
   ...baseConfig,
   ...tsjPreset,
+  displayName: 'mobile-app',
   preset: 'react-native',
   transformIgnorePatterns: ['node_modules/(tamagui|@tamagui|@tamagui/animations-moti)'],
   testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
   setupFilesAfterEnv: [
-    '../../node_modules/react-native-gesture-handler/jestSetup.js',
-    './__tests__/testUtils/setupTests.ts'
+    './__tests__/testUtils/setupTests.ts',
+    '../../node_modules/react-native-gesture-handler/jestSetup.js'
   ],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' })
 }
