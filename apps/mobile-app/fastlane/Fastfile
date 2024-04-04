@@ -2,6 +2,7 @@
 team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
 team_name = CredentialsManager::AppfileConfig.try_fetch_value(:team_name)
 app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+package_name = CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
 json_key_file = CredentialsManager::AppfileConfig.try_fetch_value(:json_key_file)
 
 app_connect_key_id = ENV["APP_CONNECT_KEY_ID"]
@@ -9,45 +10,41 @@ app_connect_issuer_id = ENV["APP_CONNECT_ISSUER_ID"]
 android_app_id = ENV["ANDROID_APP_ID"]
 ios_app_id = ENV["IOS_APP_ID"]
 application_version = ENV["APPLICATION_VERSION"]
+application_build_number = ENV["APPLICATION_BUILD_NUMBER"]
+fastlane_keychain_name = ENV["FASTLANE_KEYCHAIN_NAME"]
 keychain_password = ENV["FASTLANE_KEYCHAIN_PASSWORD"]
 
 build_folder = "fastlane/builds"
-fastlane_keychain_name = "fastlane"
+xcodeproj_path = "ios/MobileApp.xcodeproj"
+gradle_path = "android/app/build.gradle"
+entitlements_file_path = "MobileApp/MobileApp.entitlements"
 
 platform :ios do
   desc "Increment Build number"
   lane :increment_build do
-    latest_release = firebase_app_distribution_get_latest_release(
-      app: ios_app_id,
-      service_credentials_file: json_key_file,
+    increment_build_number(
+      xcodeproj: xcodeproj_path,
+      build_number: application_build_number
     )
-    puts "Latest release: #{latest_release.inspect}"
+    increment_version_number(
+      xcodeproj: xcodeproj_path,
+      version_number: application_version
+    )
+  end
 
-    xcodeproj_path = "ios/MobileApp.xcodeproj"
-  
-    if latest_release.nil?
-      UI.error("No releases found in Firebase App Distribution.")
-    else
-      new_build = latest_release[:buildVersion].to_i + 1
-      puts "Incrementing version code to: #{new_build}"
-      increment_build_number(
-        xcodeproj: xcodeproj_path,
-        build_number: new_build
-      )
-      increment_version_number(
-        xcodeproj: xcodeproj_path,
-        version_number: application_version
-      )
-    end
+  desc "Increment Build number in TestFlight"
+  lane :increment_build_testflight do
+    increment_build_number(
+      xcodeproj: xcodeproj_path,
+      build_number: application_build_number
+    )
   end
 
   desc 'Fetch certificates and provisioning profiles'
   lane :certificates do |options|
-    raise ArgumentError, "build variant is required!" unless options[:variant]
+    raise ArgumentError, "build type is required!" unless options[:type]
 
-    variant = options[:variant]
     type = options[:type]
-    app_variant = variant == "prod" ? app_identifier : "#{app_identifier}.dev"
 
     api_key = app_store_connect_api_key(
       key_id: app_connect_key_id,
@@ -59,14 +56,13 @@ platform :ios do
     create_keychain(
       name: fastlane_keychain_name,
       password: keychain_password,
-      default_keychain: true,
       unlock: true,
       timeout: 0
     )
 
     match(
       api_key: api_key,
-      app_identifier: app_variant,
+      app_identifier: app_identifier,
       type: type == "appstore" ? "appstore" : "adhoc",
       keychain_name: fastlane_keychain_name,
       keychain_password: keychain_password
@@ -75,7 +71,7 @@ platform :ios do
     get_provisioning_profile(
       api_key: api_key,
       team_id: team_id,
-      app_identifier: app_variant,
+      app_identifier: app_identifier,
       adhoc: type == "appstore" ? false : true,
     )
   end
@@ -87,46 +83,53 @@ platform :ios do
 
     variant = options[:variant]
     type = options[:type]
-    configuration = variant == "prod" ? "Release Prod" : "Release Dev"
-    app_variant = variant == "prod" ? app_identifier : "#{app_identifier}.dev"
+    scheme = variant == "prod" ? "MobileApp Prod" : "MobileApp Dev"
 
-    certificates(variant: variant)
+    certificates(variant: variant, type: type)
     increment_build(variant: variant)
 
+    profile_uuid = lane_context[SharedValues::SIGH_UDID]
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: xcodeproj_path,
+      team_id: team_id,
+      bundle_identifier: app_identifier,
+      entitlements_file_path: entitlements_file_path,
+      profile_uuid: profile_uuid,
+      code_sign_identity: "iPhone Distribution",
+      sdk: "iphoneos*",
+    )
+
     build_ios_app(
-      scheme: "MobileApp",
+      scheme: scheme,
       workspace: "ios/MobileApp.xcworkspace",
       export_method: type == "appstore" ? "app-store" : "ad-hoc",
       export_team_id: team_id,
       output_directory: build_folder,
-      output_name: "#{app_variant}.ipa",
-      configuration: configuration,
-      skip_codesigning: true,
+      output_name: "#{app_identifier}.ipa",
+      configuration: "Release",
+      build_path: "#{build_folder}/ios_build_path",
+      build_timing_summary: true,
+      silent: true,
     )
   end
 
   desc "Firebase distribution of iOS"
   lane :distribution do |options|
-    raise ArgumentError, "build variant is required!" unless options[:variant]
-
-    variant = options[:variant]
-    bild_varinat = variant == "prod" ? "#{app_identifier}.ipa" : "#{app_identifier}.dev.ipa"
 
     firebase_app_distribution(
       app: ios_app_id,
       service_credentials_file: json_key_file,
-      ipa_path: "#{build_folder}/#{bild_varinat}",
+      ipa_path: "#{build_folder}/#{app_identifier}.ipa",
       groups: "qa-team",
-      release_notes_file: "./CHANGELOG.md",
+      release_notes_file: "../../CHANGELOG.md",
     )
   end
 
   desc "Upload to Test Flight"
   lane :beta do |options|
 
-    variant = options[:variant]
-    app_variant = variant == "prod" ? app_identifier : "#{app_identifier}.dev"
-    bild_name = "#{app_variant}.ipa"
+    bild_name = "#{app_identifier}.ipa"
 
     api_key = app_store_connect_api_key(
 			key_id: app_connect_key_id,
@@ -137,25 +140,15 @@ platform :ios do
 
 		upload_to_testflight(
 			api_key: api_key,
-			app_identifier: app_variant,
+			app_identifier: app_identifier,
 			team_name: team_name,
 			ipa: "#{build_folder}/#{bild_name}",
 			skip_submission: true,
 		)
   end
 
-  desc "Push a Privacy Data for iOS"
-  lane :update_privacy do
-    upload_app_privacy_details_to_app_store(
-      username: "username_for_app_connect",
-      team_name: team_name,
-      app_identifier: iapp_identifier,
-      json_path: "path/to/app_privacy_details.json"
-    )
-  end
-
   desc "Upload release to App Store"
-  lane :beta do |options|
+  lane :release do |options|
 
     bild_name = "#{app_identifier}.ipa"
 
@@ -169,11 +162,39 @@ platform :ios do
     deliver(
       api_key: api_key,
       app_version: application_version,
-      app_identifier: iapp_identifier,
+      app_identifier: app_identifier,
       team_name: team_name,
       ipa: "#{build_folder}/#{bild_name}",
       overwrite_screenshots: true,
       force: true
+    )
+  end
+
+  desc "Create new app for App Store"
+  lane :create_app do |options|
+    raise ArgumentError, "New app identifier is required!" unless options[:id]
+    raise ArgumentError, "New app name is required!" unless options[:name]
+    raise ArgumentError, "New app main language is required!" unless options[:lang]
+
+    new_app_id = options[:id]
+    new_app_name = options[:name]
+    language = options[:lang]
+    init_app_version = "0.0.1"
+
+    produce(
+      app_identifier: new_app_id,
+      app_name: new_app_name,
+      language: language,
+      team_id: team_id,
+      team_name: team_name,
+      company_name: team_name,
+      sku: new_app_id,
+      itc_team_name: team_name,
+      app_version: init_app_version,
+      enable_services: {
+        push_notification: "on",
+        game_center: "off"
+      }
     )
   end
 end
@@ -181,31 +202,17 @@ end
 platform :android do
   desc "Increment Build number"
   lane :increment_build do
-    latest_release = firebase_app_distribution_get_latest_release(
-      app: android_app_id,
-      service_credentials_file: json_key_file,
+    increment_version_code(
+      gradle_file_path: gradle_path,
+      version_code: application_build_number
     )
-    puts "Latest release: #{latest_release.inspect}"
-
-    gradle_path = "android/app/build.gradle"
-  
-    if latest_release.nil?
-      UI.error("No releases found in Firebase App Distribution.")
-    else
-      new_build = latest_release[:buildVersion].to_i + 1
-      puts "Incrementing version code to: #{new_build}"
-      increment_version_code(
-        gradle_file_path: gradle_path,
-        version_code: new_build
-      )
-      increment_version_name(
-        gradle_file_path: gradle_path,
-        version_name: application_version
-      )
-    end
+    increment_version_name(
+      gradle_file_path: gradle_path,
+      version_name: application_version
+    )
   end
 
-  desc "Build a Release artifact (.aab)"
+  desc "Build a Release artifact (.aab and .apk)"
   lane :build do |options|
     raise ArgumentError, "build variant is required!" unless options[:variant]
 
@@ -213,7 +220,7 @@ platform :android do
     type = options[:type]
     android_dir = File.expand_path("../android")
     gradlew_path = File.join(android_dir, "gradlew")
-    aap_output_variant = variant == "prod" ? "prodRelease" : "devRelease"
+    aab_output_variant = variant == "prod" ? "prodRelease" : "devRelease"
     apk_output_variant = variant == "prod" ? "prod/release" : "dev/release"
     bild_varinat = variant == "prod" ? "app-prod-release" : "app-dev-release"
     gradle_assemble_task =  variant == "prod" ? "assembleProdRelease" : "assembleDevRelease"
@@ -231,7 +238,7 @@ platform :android do
 
     FileUtils.mkdir_p(fastlane_build_directory)
 
-    aab_file_path = File.join(Dir.pwd, "..", "android", "app", "build", "outputs", "bundle", aap_output_variant, "#{bild_varinat}.aab")
+    aab_file_path = File.join(Dir.pwd, "..", "android", "app", "build", "outputs", "bundle", aab_output_variant, "#{bild_varinat}.aab")
     apk_file_path = File.join(Dir.pwd, "..", "android", "app", "build", "outputs", "apk", apk_output_variant, "#{bild_varinat}.apk")
 
     build_to_copy = type == "APK" ? apk_file_path : aab_file_path
@@ -264,10 +271,9 @@ platform :android do
 
     variant = options[:variant]
     bild_varinat = variant == "prod" ? "app-prod-release" : "app-dev-release"
-    app_variant = variant == "prod" ? app_identifier : "#{app_identifier}.dev"
 
 		upload_to_play_store(
-			package_name: app_variant,
+			package_name: package_name,
 			track: "internal",
 			version_name: application_version,
 			aab: "#{build_folder}/#{bild_varinat}.aab",

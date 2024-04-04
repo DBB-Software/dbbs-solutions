@@ -9,7 +9,7 @@
         "node.js"
     ],
     "devDependencies": {
-        "eslint-config-turbo": "^1.12.4"
+        "eslint-config-turbo": "^1.13.2"
     },
     "publishConfig": {
         "access": "public"

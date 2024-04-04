@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@dbbs/web-components']
+  {{#ifCond cssFramework '===' 'tailwind'}}
+  transpilePackages: ['@dbbs/tailwind-components']
+  {{/ifCond}}
+  {{#ifCond cssFramework '===' 'mui'}}
+  transpilePackages: ['@dbbs/mui-components']
+  {{/ifCond}}
 }
 
 module.exports = nextConfig

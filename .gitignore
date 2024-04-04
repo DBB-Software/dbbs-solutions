@@ -181,6 +181,9 @@ local.properties
 **/fastlane/screenshots
 **/fastlane/test_output
 **/fastlane/builds
+**/fastlane/google-play-sa.json
+**/fastlane/api_key.p8
+**/*.mobileprovision
 
 # Bundle artifact
 *.jsbundle

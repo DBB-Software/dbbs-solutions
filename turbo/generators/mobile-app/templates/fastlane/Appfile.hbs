@@ -1,8 +1,7 @@
 # IOS
-app_identifier("") # The bundle identifier of your app
-itc_team_id("") # App Store Connect Team ID
-team_id("") # Developer Portal Team ID
-team_name("")
+app_identifier(ENV["{{ appNameUpperCase }}_APPLE_APP_IDENTIFIER"]) # The bundle identifier of your app
+team_id(ENV["{{ appNameUpperCase }}_TEAM_ID"]) # Developer Portal Team ID
+team_name(ENV["{{ appNameUpperCase }}_TEAM_NAME"]) # Developer Portal Team Name
 # android
 json_key_file("fastlane/google-play-sa.json")
-package_name("")
+package_name(ENV["{{ appNameUpperCase }}_ANDROID_APP_IDENTIFIER"])

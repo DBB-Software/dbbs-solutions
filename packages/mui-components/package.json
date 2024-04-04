@@ -1,0 +1,28 @@
+{
+  "name": "@dbbs/mui-components",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MUI based UI library",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
+    "test": "echo \"Error: no test specified\""
+  },
+  "dependencies": {
+    "@emotion/cache": "11.11.0",
+    "@emotion/react": "11.11.4",
+    "@emotion/styled": "11.11.5",
+    "@mui/material": "5.15.15",
+    "@mui/styled-engine": "5.15.14",
+    "@mui/system": "5.15.15"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "@dbbs/strapi",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A Strapi application",
+  "scripts": {
+    "lint": "npx eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "dev": "npx strapi develop",
+    "start": "npx strapi start",
+    "build": "npx strapi build",
+    "strapi": "npx strapi"
+  },
+  "dependencies": {
+    "@strapi/plugin-cloud": "4.22.0",
+    "@strapi/plugin-i18n": "4.22.0",
+    "@strapi/plugin-users-permissions": "4.22.0",
+    "@strapi/strapi": "4.22.0",
+    "better-sqlite3": "9.4.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "5.3.4",
+    "styled-components": "5.3.3"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/tsconfig": "*"
+  },
+  "author": {
+    "name": "DBBSoftware"
+  },
+  "strapi": {
+    "uuid": "708210f4-8a26-4f8f-a8df-3d1a5053950d"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=20.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

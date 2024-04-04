@@ -1,5 +1,5 @@
-import { Typography } from '@dbbs/web-components'
+import { Button } from '@dbbs/tailwind-components'
 
 export default function Home() {
-  return <Typography data-testid="app-title">Hello from NextJS!</Typography>
+  return <Button data-testid="app-title">Hello from NextJS!</Button>
 }

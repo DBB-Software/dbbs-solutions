@@ -1,4 +1,13 @@
-import { ThemeProvider, Typography, theme } from '@dbbs/web-components'
+{{#ifCond cssFramework '===' 'tailwind'}}
+import { Button } from '@dbbs/tailwind-components'
+import './index.css'
+
+function App() {
+  return <Button>Sample APP</Button>
+}
+{{/ifCond}}
+{{#ifCond cssFramework '===' 'mui'}}
+import { ThemeProvider, Typography, theme } from '@dbbs/mui-components'
 
 function App() {
   return (
@@ -7,5 +16,6 @@ function App() {
     </ThemeProvider>
   )
 }
+{{/ifCond}}
 
 export default App

@@ -38,12 +38,6 @@ runs:
         node-version-file: '.nvmrc'
         cache: 'yarn'
 
-    - name: Cache node_modules
-      uses: actions/cache@v3
-      with:
-        path: node_modules
-        key: v1-node_modules-${{ hashFiles('yarn.lock') }}
-
     - name: Install project dependencies
       run: |
         node -v

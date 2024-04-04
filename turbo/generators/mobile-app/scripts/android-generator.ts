@@ -4,31 +4,37 @@ export const generateAndroid = (answers: Parameters<PlopTypes.DynamicActionsFunc
   if (!answers) return []
 
   const appName = answers.name
-
-  const regexPathToRNCommands = /react {/gi
-  const regexPathToNativeModulesGradle =
-    /\.\.\/\.\.\/node_modules\/@react-native-community\/cli-platform-android\/native_modules\.gradle/gi
+  const appNameInLowerCase = answers.name.toLowerCase()
+  const appNameInUpperCase = answers.name.toUpperCase()
+  const templateProps = { appNameInLowerCase, appNameInUpperCase, appName }
 
   return [
     {
       type: 'append',
-      path: `{{ turbo.paths.root }}/apps/${appName}/android/app/build.gradle`,
-      pattern: regexPathToRNCommands,
-      separator: '\n    ',
-      template: 'reactNativeDir = file("../../../../node_modules/react-native")'
-    },
-    {
-      type: 'append',
-      path: `{{ turbo.paths.root }}/apps/${appName}/android/app/build.gradle`,
-      pattern: regexPathToRNCommands,
-      separator: '\n    ',
-      template: 'hermesCommand = "../../../../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"'
+      path: `{{ turbo.paths.root }}/apps/${appName}/android/settings.gradle`,
+      pattern: /includeBuild\('\.\.\/node_modules\/@react-native\/gradle-plugin'\)/,
+      separator: '\n',
+      template:
+        "include ':react-native-vector-icons'\nproject(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')"
     },
     {
       type: 'modify',
+      path: `{{ turbo.paths.root }}/apps/${appName}/android/settings.gradle`,
+      pattern: /\.\.\//gi,
+      template: '../../../'
+    },
+    {
+      type: 'append',
+      path: `{{ turbo.paths.root }}/apps/${appName}/android/app/src/main/java/com/${appName.toLowerCase()}/MainApplication.kt`,
+      pattern: /import com.facebook.soloader.SoLoader/,
+      separator: '\n',
+      template: 'import com.oblador.vectoricons.VectorIconsPackage'
+    },
+    {
+      type: 'add',
       path: `{{ turbo.paths.root }}/apps/${appName}/android/app/build.gradle`,
-      pattern: regexPathToNativeModulesGradle,
-      template: '../../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle'
+      templateFile: 'mobile-app/templates/android/build-gradle.hbs',
+      data: templateProps
     }
   ]
 }

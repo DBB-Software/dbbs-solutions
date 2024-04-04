@@ -13,6 +13,29 @@ export const generateIos = (answers: Parameters<PlopTypes.DynamicActionsFunction
       path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
       pattern: pathToReactNativeScripts,
       template: '../../../node_modules/react-native/scripts/'
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/Info.plist`,
+      templateFile: 'mobile-app/templates/ios/Info-plist.hbs',
+      data: { appName }
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/${appName}.entitlements`,
+      templateFile: 'mobile-app/templates/ios/Entitlements.hbs'
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Prod.xcscheme`,
+      templateFile: 'mobile-app/templates/ios/MobileApp Prod.xcscheme.hbs',
+      data: { appName }
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Dev.xcscheme`,
+      templateFile: 'mobile-app/templates/ios/MobileApp Dev.xcscheme.hbs',
+      data: { appName }
     }
   ]
 }

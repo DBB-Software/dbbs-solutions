@@ -34,22 +34,6 @@ export const generateFastlane = (answers: Parameters<PlopTypes.DynamicActionsFun
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/android/default/full_description.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/android/default/short_description.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/android/default/title.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/android/default/changelogs/default.txt`
-    },
-    {
-      type: 'add',
       path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/primary_category.txt`
     },
     {

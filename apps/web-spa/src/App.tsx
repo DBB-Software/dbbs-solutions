@@ -1,11 +1,8 @@
-import { ThemeProvider, Typography, theme } from '@dbbs/web-components'
+import { Button } from '@dbbs/tailwind-components'
+import './index.css'
 
 function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <Typography data-testid="app-title">Sample APP</Typography>
-    </ThemeProvider>
-  )
+  return <Button>Sample APP</Button>
 }
 
 export default App

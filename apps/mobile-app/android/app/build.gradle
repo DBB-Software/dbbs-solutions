@@ -6,7 +6,7 @@ react {
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '..'
     // root = file("../")
-    hermesCommand = "../../../../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"
+    hermesCommand = "../../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"
     reactNativeDir = file("../../../../node_modules/react-native")
     // codegenDir = file("../../node_modules/@react-native/codegen")
     // cliFile = file("../../node_modules/react-native/cli.js")
@@ -53,16 +53,31 @@ android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
-
-    namespace "com.mobile_app"
+    flavorDimensions "default"
+    namespace "com.dbbs.mobile_app"
     defaultConfig {
-        applicationId "com.mobile_app"
+        applicationId "com.dbbs.mobile_app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
+    }
+    productFlavors {
+        prod {
+            resValue "string", "app_name", "DBBS Software"
+        }
+        dev {
+            resValue "string", "app_name", "DBBS Software"
+            applicationIdSuffix ".dev"
+        }
     }
     signingConfigs {
+        release {
+            storeFile file(System.getenv("UPLOAD_STORE_FILE"))
+            keyAlias System.getenv("UPLOAD_KEY_ALIAS")
+            storePassword System.getenv("UPLOAD_STORE_PASSWORD")
+            keyPassword System.getenv("UPLOAD_KEY_PASSWORD")
+        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -77,7 +92,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

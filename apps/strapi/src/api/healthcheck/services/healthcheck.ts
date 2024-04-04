@@ -1,0 +1,5 @@
+/**
+ * healthcheck service
+ */
+
+export default () => ({})

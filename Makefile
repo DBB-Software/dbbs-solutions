@@ -46,19 +46,21 @@ check-yarn:
 	@echo "Checking if yarn is installed and up to date..."
 	@command -v yarn >/dev/null || { \
 		echo "Yarn not found. Installing yarn via corepack..."; \
+		yarn_version=$$(grep '"packageManager": "yarn@' package.json | sed 's/.*yarn@\(.*\)".*/\1/'); \
 		asdf reshim nodejs; \
 		corepack enable; \
-		corepack prepare yarn@stable --activate; \
-		echo "Yarn has been installed. Please reopen your terminal and check the yarn version with 'yarn -v'."; \
+		corepack prepare yarn@$$yarn_version --activate; \
+		echo "Yarn version $$yarn_version has been installed. Please reopen your terminal and check the yarn version with 'yarn -v'."; \
 		exit 0; \
 	}
 	@{ \
-		yarn_version=$$(yarn -v); \
-		if [ "$$(echo "$$yarn_version 4.0" | awk '{print ($$1 < $$2)}')" -eq 1 ]; then \
-			echo "Yarn version $$yarn_version is lower than 4.0. Installing stable version..."; \
-			corepack prepare yarn@stable --activate; \
-			yarn set version stable; \
-			echo "Yarn has been updated to the stable version. Please reopen your terminal and check the yarn version with 'yarn -v'."; \
+		yarn_version=$$(grep '"packageManager": "yarn@' package.json | sed 's/.*yarn@\(.*\)".*/\1/'); \
+		current_yarn_version=$$(yarn -v); \
+		if [ "$$current_yarn_version" != "$$yarn_version" ]; then \
+			echo "Yarn version $$current_yarn_version is not $$yarn_version. Installing version $$yarn_version..."; \
+			corepack prepare yarn@$$yarn_version --activate; \
+			yarn set version $$yarn_version; \
+			echo "Yarn has been updated to version $$yarn_version. Please reopen your terminal and check the yarn version with 'yarn -v'."; \
 			exit 0; \
 		fi; \
 	}
@@ -98,3 +100,18 @@ check-versions: check-brew check-yarn
 		echo "AWS CLI version:"; \
 		aws --version; \
 	) || echo "AWS CLI not installed"
+
+install-gems-%:
+	cd apps/$(*F) && bundle install
+
+install-pods-%:
+	cd apps/$(*F) && npx pod-install
+
+fastlane-build-%:
+	cd apps/$(*F) && bundle exec fastlane $(P) build variant:$(V) type:$(T)
+
+firebase-distribution-%:
+	cd apps/$(*F) && bundle exec fastlane $(P) distribution variant:$(V)
+
+beta-distribution-%:
+	cd apps/$(*F) && bundle exec fastlane $(P) beta variant:$(V)

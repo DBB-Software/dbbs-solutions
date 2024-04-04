@@ -2,7 +2,7 @@
 
 import { useState, type PropsWithChildren } from 'react'
 import { useServerInsertedHTML } from 'next/navigation'
-import { createCache, CacheProvider, ThemeProvider, theme, CssBaseline } from '@dbbs/web-components'
+import { createCache, CacheProvider, ThemeProvider, theme, CssBaseline } from '@dbbs/mui-components'
 
 export default function ThemeRegistry({ children }: PropsWithChildren<object>) {
   const [{ cache, flush }] = useState(() => {

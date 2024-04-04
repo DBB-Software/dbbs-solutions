@@ -1,5 +1,14 @@
-import { Typography } from '@dbbs/web-components'
+{{#ifCond cssFramework '===' 'tailwind'}}
+import { Button } from '@dbbs/tailwind-components'
+
+export default function Home() {
+  return <Button data-testid="app-title">Hello from NextJS!</Button>
+}
+{{/ifCond}}
+{{#ifCond cssFramework '===' 'mui'}}
+import { Typography } from '@dbbs/mui-components'
 
 export default function Home() {
   return <Typography data-testid="app-title">Hello from NextJS!</Typography>
 }
+{{/ifCond}}
