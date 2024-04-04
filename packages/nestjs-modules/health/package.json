@@ -18,9 +18,8 @@
   },
   "dependencies": {
     "@nestjs/axios": "3.0.2",
-    "@nestjs/common": "10.3.3",
-    "@nestjs/terminus": "10.2.3",
-    "nestjs-pino": "4.0.0"
+    "@nestjs/common": "10.3.7",
+    "@nestjs/terminus": "10.2.3"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

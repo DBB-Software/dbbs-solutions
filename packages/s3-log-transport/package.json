@@ -17,7 +17,7 @@
     "watch": "npx tsc -w --preserveWatchOutput"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.515.0"
+    "@aws-sdk/client-s3": "3.540.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

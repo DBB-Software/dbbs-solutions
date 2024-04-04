@@ -1,14 +1,13 @@
+import { reactConfig } from '@dbbs/jest-config'
 import type { Config } from 'jest'
 
-const config: Config = {
-  displayName: '{{ name }}',
-  testEnvironment: 'jsdom',
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  transform: {
-    '^.+\\.[tj]sx?$': ['ts-jest', { tsconfig: './tsconfig.spec.json' }]
-  },
-  transformIgnorePatterns: ['node_modules/'],
-  setupFilesAfterEnv: ['./src/testUtils/setupTests.ts']
-}
-
-export default config
+export default async (): Promise<Config> => ({
+ {{#ifCond cssFramework '===' 'tailwind'}}
+  ...reactConfig,
+  moduleNameMapper: {
+    '\\.(css|scss)$': '<rootDir>/src/testUtils/emptyCss.ts'
+  }
+  {{else}}
+  ...reactConfig
+ {{/ifCond}}
+})

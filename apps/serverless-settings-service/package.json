@@ -10,7 +10,7 @@
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "dev": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032",
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
-    "start": "yarn test",
+    "start": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032",
     "test": "npx jest --coverage --verbose",
     "watch": "npx tsc -w --preserveWatchOutput"
   },

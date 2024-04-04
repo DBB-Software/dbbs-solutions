@@ -1,0 +1,1 @@
+web: ln -s @strapi/strapi/dist node_modules/dist && npm run start

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "clean": "npx rimraf .turbo node_modules .next bin coverage *.tsbuildinfo || exit 0",
     "build": "npx next build",
     "cypress:open": "npx cypress open",
     "cypress:run": "npx cypress run",
@@ -10,18 +11,22 @@
     "lint": "npx next lint",
     "dev:sst": "npx sst bind next dev",
     "build:sst": "npx sst bind next build",
+    "deploy": "npx sst deploy --stage $STAGE",
     "start": "npx next start",
     "test": "npx jest --coverage --verbose"
   },
   "dependencies": {
-    "@dbbs/web-components": "*",
-    "next": "14.1.0",
+    "@dbbs/tailwind-components": "*",
+    "next": "14.1.4",
     "react": "18.2.0"
   },
   "devDependencies": {
     "@dbbs/cypress": "*",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3"
   }
 }

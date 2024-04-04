@@ -1,4 +1,4 @@
-package com.mobile_app
+package com.dbbs.mobile_app
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -1,9 +1,13 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { type PlopTypes } from '@turbo/gen'
 
 enum Applications {
   SPA = 'web-spa',
   PACKAGE = 'web-spa-package'
+}
+
+enum StylingFrameworks {
+  MUI = 'mui',
+  TAILWIND = 'tailwind'
 }
 
 const appBasePaths: Record<Applications, string> = {
@@ -30,7 +34,7 @@ const generateConfigs = (
   const basePath = `{{ turbo.paths.root }}/${appBasePaths[type]}/{{name}}`
   const isAPP = type === Applications.SPA
   const transformedAppName = answers?.name.replace(/-/g, '_').toUpperCase()
-  const templateProps = { isAPP, appName: transformedAppName }
+  const templateProps = { isAPP, appName: transformedAppName, cssFramework: answers?.cssFramework }
 
   const actions: PlopTypes.ActionType[] = [
     {
@@ -59,7 +63,8 @@ const generateConfigs = (
     {
       type: 'add',
       path: `${basePath}/jest.config.ts`,
-      templateFile: 'web-spa/templates/configs/jest-config.hbs'
+      templateFile: 'web-spa/templates/configs/jest-config.hbs',
+      data: templateProps
     },
     {
       type: 'add',
@@ -69,59 +74,106 @@ const generateConfigs = (
   ]
 
   if (isAPP) {
-    const appActions: PlopTypes.ActionType[] = [
-      {
-        type: 'add',
-        path: `${basePath}/vite-config.ts`,
-        templateFile: 'web-spa/templates/configs/vite-config.hbs',
-        data: templateProps
-      },
-      {
-        type: 'add',
-        path: `${basePath}/cypress.config.ts`,
-        templateFile: 'web-spa/templates/configs/cypress.hbs',
-        data: templateProps
-      },
-      {
-        type: 'add',
-        path: `${basePath}/cypress/tsconfig.json`,
-        templateFile: 'web-spa/templates/configs/tsconfig-cypress.hbs'
-      }
-    ]
+    actions.push(
+      ...([
+        {
+          type: 'add',
+          path: `${basePath}/vite.config.ts`,
+          templateFile: 'web-spa/templates/configs/vite-config.hbs',
+          data: templateProps
+        },
+        {
+          type: 'add',
+          path: `${basePath}/cypress.config.ts`,
+          templateFile: 'web-spa/templates/configs/cypress.hbs',
+          data: templateProps
+        },
+        {
+          type: 'add',
+          path: `${basePath}/cypress/tsconfig.json`,
+          templateFile: 'web-spa/templates/configs/tsconfig-cypress.hbs'
+        }
+      ] satisfies PlopTypes.ActionType[])
+    )
+  }
 
-    actions.push(...appActions)
+  if (answers?.cssFramework === StylingFrameworks.TAILWIND) {
+    actions.push(
+      ...([
+        {
+          type: 'add',
+          path: `${basePath}/tailwind.config.js`,
+          templateFile: 'web-spa/templates/configs/tailwind-config.hbs'
+        },
+        {
+          type: 'add',
+          path: `${basePath}/postcss.config.js`,
+          templateFile: 'web-spa/templates/configs/postcss-config.hbs'
+        }
+      ] satisfies PlopTypes.ActionType[])
+    )
   }
 
   return actions
 }
 
-const generateSPAFiles = (): PlopTypes.ActionType[] => [
-  {
-    type: 'add',
-    path: '{{ turbo.paths.root }}/apps/{{ name }}/index.html',
-    templateFile: 'web-spa/templates/spa/main-html.hbs'
-  },
-  {
-    type: 'add',
-    path: '{{ turbo.paths.root }}/apps/{{ name }}/src/main.tsx',
-    templateFile: 'web-spa/templates/spa/main-entry.hbs'
-  },
-  {
-    type: 'add',
-    path: '{{ turbo.paths.root }}/apps/{{ name }}/src/App.tsx',
-    templateFile: 'web-spa/templates/spa/app-component.hbs'
-  },
-  {
-    type: 'add',
-    path: '{{ turbo.paths.root }}/apps/{{ name }}/src/App.spec.tsx',
-    templateFile: 'web-spa/templates/spa/app-test.hbs'
-  },
-  {
-    type: 'add',
-    path: '{{ turbo.paths.root }}/apps/{{ name }}/src/testUtils/setupTests.ts',
-    templateFile: 'web-spa/templates/utils/test-utils.hbs'
+const generateSPAFiles = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): PlopTypes.ActionType[] => {
+  const templateProps = { cssFramework: answers?.cssFramework }
+
+  const actions: PlopTypes.ActionType[] = [
+    {
+      type: 'add',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/index.html',
+      templateFile: 'web-spa/templates/spa/main-html.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/src/main.tsx',
+      templateFile: 'web-spa/templates/spa/main-entry.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/src/App.tsx',
+      templateFile: 'web-spa/templates/spa/app-component.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/src/App.spec.tsx',
+      templateFile: 'web-spa/templates/spa/app-test.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/src/testUtils/setupTests.ts',
+      templateFile: 'web-spa/templates/utils/test-utils.hbs',
+      data: templateProps
+    }
+  ]
+
+  if (answers?.cssFramework === StylingFrameworks.TAILWIND) {
+    actions.push(
+      ...([
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/testUtils/emptyCss.ts',
+          templateFile: 'web-spa/templates/utils/test-utils.hbs',
+          data: templateProps
+        },
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/index.css',
+          templateFile: 'web-spa/templates/spa/css.hbs',
+          data: templateProps
+        }
+      ] satisfies PlopTypes.ActionType[])
+    )
   }
-]
+
+  return actions
+}
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
   plop.setGenerator(Applications.SPA, {
@@ -138,11 +190,17 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
           return true
         }
+      },
+      {
+        type: 'list',
+        name: 'cssFramework',
+        message: 'Choose the UI library what you want to use',
+        choices: [StylingFrameworks.MUI, StylingFrameworks.TAILWIND]
       }
     ],
     actions: (answers) => [
       ...generateConfigs(Applications.SPA, answers),
-      ...generateSPAFiles(),
+      ...generateSPAFiles(answers),
       ...generateCypressActions(Applications.SPA)
     ]
   })

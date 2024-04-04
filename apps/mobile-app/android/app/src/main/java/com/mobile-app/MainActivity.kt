@@ -1,4 +1,4 @@
-package com.mobile_app
+package com.dbbs.mobile_app
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

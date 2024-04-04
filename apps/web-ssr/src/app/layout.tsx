@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { type ReactNode } from 'react'
-import ThemeRegistry from './ThemeRegistry'
+import './global.css'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -14,9 +14,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body>
-        <ThemeRegistry>{children}</ThemeRegistry>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }

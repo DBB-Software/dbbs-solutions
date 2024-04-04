@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "build": "npx tsc && npx vite build",
     "cypress:open": "npx cypress open",
     "cypress:run": "npx cypress run",
@@ -13,9 +14,7 @@
     "test": "npx jest --coverage --verbose"
   },
   "dependencies": {
-    "@dbbs/web-components": "*",
-    "@emotion/styled": "11.11.0",
-    "@mui/styled-engine": "5.15.9",
+    "@dbbs/tailwind-components": "*",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
@@ -23,6 +22,8 @@
     "@dbbs/cypress": "*",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "postcss": "8.4.38",
+    "tailwindcss": "3.4.3"
   }
 }

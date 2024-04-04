@@ -4,20 +4,28 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "lint": "eslint . --ext ts,tsx --max-warnings 0",
     {{#if isAPP}}
-    "test": "jest --coverage --verbose",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "dev": "npx vite",
+    "build": "npx tsc && vite build",
+    "test": "npx jest --coverage --verbose",
+    "cypress:open": "npx cypress open",
+    "cypress:run": "npx cypress run"
     {{else}}
-    "test": "jest --coverage --verbose"
+    "test": "echo \"Error: no test specified\""
     {{/if}}
   }{{#if isAPP}},{{/if}}
   {{#if isAPP}}
   "dependencies": {
-    "@dbbs/web-components": "*"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    {{#ifCond cssFramework '===' 'mui'}}
+    "@dbbs/mui-components": "*"
+    {{/ifCond}}
+    {{#ifCond cssFramework '===' 'tailwind'}}
+    "@dbbs/tailwind-components": "*"
+    {{/ifCond}}
   },
   "devDependencies": {
     "@dbbs/cypress": "*"

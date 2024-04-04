@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Increment Build number
 
+### ios increment_build_testflight
+
+```sh
+[bundle exec] fastlane ios increment_build_testflight
+```
+
+Increment Build number in TestFlight
+
 ### ios certificates
 
 ```sh
@@ -55,6 +63,22 @@ Firebase distribution of iOS
 
 Upload to Test Flight
 
+### ios release
+
+```sh
+[bundle exec] fastlane ios release
+```
+
+Upload release to App Store
+
+### ios create_app
+
+```sh
+[bundle exec] fastlane ios create_app
+```
+
+Create new app for App Store
+
 ----
 
 
@@ -74,7 +98,7 @@ Increment Build number
 [bundle exec] fastlane android build
 ```
 
-Build a Release artifact (.aab)
+Build a Release artifact (.aab and .apk)
 
 ### android distribution
 
@@ -84,13 +108,21 @@ Build a Release artifact (.aab)
 
 Firebase distribution of Android
 
+### android beta
+
+```sh
+[bundle exec] fastlane android beta
+```
+
+Upload to Play Store beta
+
 ### android release
 
 ```sh
 [bundle exec] fastlane android release
 ```
 
-Upload to Play Store beta
+Upload release to Play Store
 
 ----
 

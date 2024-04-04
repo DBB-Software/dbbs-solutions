@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@dbbs/web-components']
+  transpilePackages: ['@dbbs/tailwind-components']
 }
 
 module.exports = nextConfig

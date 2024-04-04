@@ -1,6 +1,11 @@
 import type { Metadata } from 'next'
 import { type ReactNode } from 'react'
+{{#ifCond cssFramework '===' 'mui'}}
 import ThemeRegistry from './ThemeRegistry'
+{{/ifCond}}
+{{#ifCond cssFramework '===' 'tailwind'}}
+import './global.css'
+{{/ifCond}}
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -10,9 +15,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      {{#ifCond cssFramework '===' 'mui'}}
       <body>
         <ThemeRegistry>{children}</ThemeRegistry>
       </body>
+      {{else}}
+      <body>{children}</body>
+      {{/ifCond}}
     </html>
   )
 }

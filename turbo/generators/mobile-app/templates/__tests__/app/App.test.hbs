@@ -4,6 +4,10 @@ import { App } from '../../src/app'
 
 describe('App', () => {
   test('should render properly', () => {
-    render(<App />)
+    const { getByTestId } = render(<App />)
+    const appComponent = getByTestId('test')
+
+    expect(appComponent).toBeDefined()
+    expect(appComponent).toBeVisible()
   })
 })
