@@ -1,13 +1,21 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-      "rootDir": "./src",
-      "preserveWatchOutput": true
-    },
-    "include": ["src"],
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+      "types": ["node"]
+  },
+  "include": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.tsx",
+    ],
     "exclude": [
-      "node_modules",
-      "__tests__"
+      "dist/",
+      "jest.config.ts",
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/*.test.tsx",
+      "**/*.spec.tsx",
+      "./src/testUtils/**/*"
     ]
-  }
-  
+}

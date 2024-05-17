@@ -1,22 +1,16 @@
-import { SSTConfig } from 'sst'
-import { NextjsSite } from 'sst/constructs'
+/* eslint-disable no-undef */
+/* eslint-disable no-new */
+/// <reference path="./.sst/platform/config.d.ts" />
 
-export default {
-  config() {
+export default $config({
+  app(input) {
     return {
       name: 'web-ssr',
-      region: 'eu-central-1'
+      removal: input?.stage === 'production' ? 'retain' : 'remove',
+      home: 'aws'
     }
   },
-  stacks(app) {
-    app.stack(({ stack }) => {
-      const site = new NextjsSite(stack, 'site', {
-        edge: true
-      })
-
-      stack.addOutputs({
-        SiteUrl: site.url
-      })
-    })
+  async run() {
+    new sst.aws.Nextjs('WebSSR')
   }
-} satisfies SSTConfig
+})

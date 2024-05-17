@@ -1,8 +1,10 @@
 import { CustomS3Handler, ICustomContext, loggerMiddleware } from '@dbbs/common'
 import middy from '@middy/core'
 
+const LOCAL_STAGE = 'local'
+
 export async function getSettings(event: { tenantId?: string }, context: ICustomContext): Promise<object> {
-  const { SETTINGS_BUCKET, SETTINGS_FILE, REGION } = process.env
+  const { SETTINGS_BUCKET, SETTINGS_FILE, REGION, STAGE } = process.env
 
   if (!REGION) {
     throw new Error('No REGION variable provided')
@@ -16,7 +18,7 @@ export async function getSettings(event: { tenantId?: string }, context: ICustom
     throw new Error('No SETTINGS_FILE variable provided')
   }
 
-  const s3Handler = new CustomS3Handler(REGION as string)
+  const s3Handler = new CustomS3Handler(REGION as string, STAGE === LOCAL_STAGE)
 
   const { logger } = context
 

@@ -1,25 +1,70 @@
-# @dbbs/settings
+## Name: settings
 
-Repository with settings configurations
+## Description
 
-After commit file should be uploaded to s3 bucket
+The package comprises templates for configuring tenant settings across various environments within a multi-tenant system.
 
-### Deploying configuration
+## Usage
 
-Development:
+Commit settings file and upload to s3 bucket. Use the settings file as a context for your application.
+
+## Examples
+
+To upload the settings file to s3 bucket use the following command:
 
 ```shell
 aws s3 cp development/settings.json s3://dbbs-settings-development/settings.json
 ```
 
-Staging:
-
+Upload settings for local development
 ```shell
-aws s3 cp staging/settings.json s3://dbbs-settings-staging/settings.json
+awslocal s3api create-bucket --bucket dbbs-settings-local --create-bucket-configuration LocationConstraint=eu-central-1
+awslocal s3 cp local/settings.json s3://dbbs-settings-local/settings.json
 ```
 
-Production:
+## Features
 
-```shell
-aws s3 cp production/settings.json s3://dbbs-settings-production/settings.json
-```
+The package offers template settings tailored for various environments within a multi-tenant system.
+
+## Feature Keywords
+
+- multi-tenant-settings
+
+## Language and framework
+
+- *
+
+## Type
+
+- Package
+
+## Tech Category
+
+- Back-end
+- Front-end
+- Mobile-app
+
+## Domain Category
+
+- multi-tenant-system
+
+## License
+
+The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+
+## Authors and owners
+
+- asa-dbb
+- vks-dbb
+
+## Links
+
+[AWS S3 CLI](https://docs.aws.amazon.com/cli/latest/reference/s3/)
+
+## Relations
+
+- /apps/*
+
+## External dependencies
+
+N/A

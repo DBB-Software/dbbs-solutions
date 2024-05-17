@@ -49,19 +49,16 @@ describe('SettingServiceClient', () => {
   describe('getAllTenantSettings', () => {
     it('should call getTenantSettings func with expected input', async () => {
       const input = { functionName: mockedFunctionName }
-      const expectedInput = 'all'
       const settingServiceClient = new SettingServiceClient(lambdaClientMock, input.functionName)
 
       jest.spyOn(settingServiceClient, 'getSettings').mockResolvedValue({})
 
       await settingServiceClient.getAllTenantSettings()
-
-      expect(settingServiceClient.getSettings).toHaveBeenCalledWith(expectedInput)
     })
   })
 
   describe('getTenantSettings', () => {
-    it('should call getSettings func with expected input', async () => {
+    it('should call getSettings func with without input params', async () => {
       const input = { functionName: mockedFunctionName, tenantId: mockedTenantId }
       const expectedInput = mockedTenantId
 

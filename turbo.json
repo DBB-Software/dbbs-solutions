@@ -46,6 +46,13 @@
             "dependsOn": [
                 "build"
             ]
+        },
+        "start:localstack": {
+            "cache": false,
+            "persistent": true,
+            "dependsOn": [
+                "^start:localstack"
+            ]
         }
     }
 }

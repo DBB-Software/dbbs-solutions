@@ -2,6 +2,12 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+project.ext.envConfigFiles = [
+    prod: ".env.prod",
+    dev: ".env.dev"
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 react {
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '..'
@@ -57,6 +63,7 @@ android {
     namespace "com.{{ appNameInLowerCase }}"
     defaultConfig {
         applicationId "com.{{ appNameInLowerCase }}"
+        resValue "string", "build_config_package", "com.{{ appNameInLowerCase }}"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -73,10 +80,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file(System.getenv("{{ appNameInUpperCase }}_UPLOAD_STORE_FILE"))
-            keyAlias System.getenv("{{ appNameInUpperCase }}_UPLOAD_KEY_ALIAS")
-            storePassword System.getenv("{{ appNameInUpperCase }}_UPLOAD_STORE_PASSWORD")
-            keyPassword System.getenv("{{ appNameInUpperCase }}_UPLOAD_KEY_PASSWORD")
+            storeFile file(System.getenv("UPLOAD_STORE_FILE"))
+            keyAlias System.getenv("UPLOAD_KEY_ALIAS")
+            storePassword System.getenv("UPLOAD_STORE_PASSWORD")
+            keyPassword System.getenv("UPLOAD_KEY_PASSWORD")
         }
         debug {
             storeFile file('debug.keystore')
@@ -102,8 +109,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    implementation("com.facebook.react:flipper-integration")
     implementation project(':react-native-vector-icons')
+    implementation project(':react-native-config')
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

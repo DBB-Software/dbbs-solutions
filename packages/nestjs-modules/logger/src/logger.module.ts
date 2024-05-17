@@ -8,7 +8,7 @@ import { createProvidersForDecorated } from './injectLogger.js'
 import { Logger } from './logger.js'
 import { lambdaRequestTracker, serverRequestTracker } from './requestTrackers.js'
 
-interface ILoggerOptions extends Params {
+export interface ILoggerOptions extends Params {
   asyncContext?: AsyncLocalStorage<unknown>
 }
 

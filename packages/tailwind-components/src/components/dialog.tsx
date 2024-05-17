@@ -6,7 +6,7 @@ import { X } from 'lucide-react'
 
 import { cn } from '../utils'
 
-const Dialog = DialogPrimitive.Root
+const Dialog: typeof DialogPrimitive.Root = (props) => <DialogPrimitive.Root {...props} />
 
 const DialogTrigger = DialogPrimitive.Trigger
 

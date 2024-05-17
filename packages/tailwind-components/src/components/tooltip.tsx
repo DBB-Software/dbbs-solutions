@@ -7,7 +7,7 @@ import { cn } from '../utils'
 
 const TooltipProvider = TooltipPrimitive.Provider
 
-const Tooltip = TooltipPrimitive.Root
+const Tooltip: typeof TooltipPrimitive.Root = (props) => <TooltipPrimitive.Root {...props} />
 
 const TooltipTrigger = TooltipPrimitive.Trigger
 

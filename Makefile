@@ -25,7 +25,7 @@ asdf-install: check-brew check-asdf-path
 	asdf reshim
 
 # Install Node.js modules and AWS CLI
-install-deps: install-node-modules install-awscli
+install-deps: install-node-modules install-awscli install-awscli-local install-sst-cli
 
 # Install Node.js modules
 install-node-modules: check-asdf-path check-yarn
@@ -74,6 +74,24 @@ install-awscli: check-brew
 		exit 1; \
 	)
 
+# Install LocalStack AWS CLI using Homebrew
+install-awscli-local: check-brew
+	@echo "Installing LocalStack AWS CLI using Homebrew..."
+	@brew install awscli-local
+	@command -v awslocal >/dev/null 2>&1 && echo "LocalStack AWS CLI installed successfully" || ( \
+		echo "LocalStack AWS CLI installation failed. Please check the Homebrew installation or try installing it manually."; \
+		exit 1; \
+	)
+
+# Install SST
+install-sst-cli: check-brew
+	@echo "Installing SST CLI using Homebrew..."
+	@brew install sst/tap/sst
+	@command sst version >/dev/null 2>&1 && echo "SST CLI installed successfully" || ( \
+		echo "SST CLI installation failed. Please check the Homebrew installation or try installing it manually."; \
+		exit 1; \
+	)	
+
 # Check versions
 check-versions: check-brew check-yarn
 	# Check if asdf is installed
@@ -115,3 +133,17 @@ firebase-distribution-%:
 
 beta-distribution-%:
 	cd apps/$(*F) && bundle exec fastlane $(P) beta variant:$(V)
+
+localstack-up: local-network-up
+	docker compose -f docker-compose/docker-compose.localstack.yml --env-file ./.env --project-name backend-localstack up --build -d
+localstack-down: local-network-down
+	docker compose -f docker-compose/docker-compose.localstack.yml --env-file ./.env --project-name backend-localstack down
+
+local-network-up:
+	docker network create dbb-backend-network || true
+
+local-network-down:
+	docker network remove dbb-backend-network || true
+
+set-docker-volume-permissions:
+	chmod -R 777 docker-compose/volume

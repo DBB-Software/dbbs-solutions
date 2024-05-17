@@ -4,21 +4,18 @@ import { ExampleService } from './example.service.js'
 
 describe('ExampleService', () => {
   describe('getExample', () => {
-    const configService = new ConfigService({ DBB_WATERMARK: 'DBBs watermark' })
     const logger = new Logger({})
-    const exampleService = new ExampleService(configService, logger)
+    const exampleService = new ExampleService(logger)
 
     const testCases = [
       {
         description: 'should receive an example',
         id: 'valid ID',
-
-        expectedResult: { id: 'valid ID', watermark: 'DBBs watermark' }
       }
     ]
 
-    test.each(testCases)('$description', async ({ id, expectedResult }) => {
-      expect(exampleService.getExample(id)).toEqual(expectedResult)
+    test.each(testCases)('$description', async ({ id }) => {
+      expect(exampleService.getExample(id).id).toEqual(id)
     })
   })
 })

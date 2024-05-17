@@ -7,7 +7,7 @@ import { X } from 'lucide-react'
 
 import { cn } from '../utils'
 
-const Sheet = SheetPrimitive.Root
+const Sheet: typeof SheetPrimitive.Root = (props) => <SheetPrimitive.Root {...props} />
 
 const SheetTrigger = SheetPrimitive.Trigger
 

@@ -6,3 +6,4 @@ export const { AWS_CLOUDWATCH_REGION, AWS_S3_LOGS_REGION, AWS_S3_LOGS_FOLDER } =
 export const { AWS_S3_LOGS_BUCKET } = process.env
 export const { AWS_CLOUDWATCH_LOGS_PREFIX } = process.env
 export const AWS_CLOUDWATCH_LOGS_GROUP = process.env.AWS_CLOUDWATCH_LOGS_GROUP || 'default'
+export const CLS_STORAGE_NAME = 'storage'

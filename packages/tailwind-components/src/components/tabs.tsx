@@ -6,6 +6,8 @@ import * as TabsPrimitive from '@radix-ui/react-tabs'
 import { cn } from '../utils'
 
 const Tabs = TabsPrimitive.Root
+// @ts-expect-error overrides bundled name of the function from package. Required for storybook.
+Tabs.name = 'Tabs'
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,

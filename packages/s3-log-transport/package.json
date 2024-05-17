@@ -14,10 +14,12 @@
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
     "test": "echo \"no test specified\" && exit 0",
-    "watch": "npx tsc -w --preserveWatchOutput"
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "docs:generate": "npx compodoc -p tsconfig.json",
+    "docs:serve": "yarn docs:generate -s"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.540.0"
+    "@aws-sdk/client-s3": "3.577.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

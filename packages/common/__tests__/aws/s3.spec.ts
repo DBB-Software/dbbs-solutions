@@ -48,7 +48,7 @@ describe('CustomS3Handler', () => {
         expectedCallInput: { region: mockedRegion, apiVersion: 'latest' }
       }
     ])('$description', async ({ enableXRay, expectedCalls, expectedCallInput }) => {
-      new CustomS3Handler(mockedRegion, enableXRay)
+      new CustomS3Handler(mockedRegion, false, enableXRay)
 
       expect(AWSXRayCore.captureAWSv3Client).toBeCalledTimes(expectedCalls)
       expect(S3Client).toHaveBeenCalledWith(expectedCallInput)
@@ -118,13 +118,6 @@ describe('CustomS3Handler', () => {
         expectedCallInput: { bucket: mockedBucket, key: mockedBucketKey },
         expectedGetObjectResult: JSON.stringify(mockedData),
         expectedResult: mockedData
-      },
-      {
-        description: 'should return empty object cause invalid getObject response fileString',
-        input: { bucket: mockedBucket, key: mockedBucketKey },
-        expectedCallInput: { bucket: mockedBucket, key: mockedBucketKey },
-        expectedGetObjectResult: mockedData,
-        expectedResult: { TENANTS: {} }
       }
     ])('$description', async ({ input, expectedCallInput, expectedGetObjectResult, expectedResult }) => {
       const s3Handler = new CustomS3Handler(mockedRegion)

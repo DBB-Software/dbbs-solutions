@@ -5,7 +5,7 @@ import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
 
 import { cn } from '../utils'
 
-const HoverCard = HoverCardPrimitive.Root
+const HoverCard: typeof HoverCardPrimitive.Root = (props) => <HoverCardPrimitive.Root {...props} />
 
 const HoverCardTrigger = HoverCardPrimitive.Trigger
 

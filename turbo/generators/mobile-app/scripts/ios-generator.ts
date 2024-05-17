@@ -27,13 +27,13 @@ export const generateIos = (answers: Parameters<PlopTypes.DynamicActionsFunction
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Prod.xcscheme`,
+      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Prod.xcscheme`,
       templateFile: 'mobile-app/templates/ios/MobileApp Prod.xcscheme.hbs',
       data: { appName }
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Dev.xcscheme`,
+      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Dev.xcscheme`,
       templateFile: 'mobile-app/templates/ios/MobileApp Dev.xcscheme.hbs',
       data: { appName }
     }

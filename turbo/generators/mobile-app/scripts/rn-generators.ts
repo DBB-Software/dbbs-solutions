@@ -94,6 +94,11 @@ export const generateRN = (answers: Parameters<PlopTypes.DynamicActionsFunction>
       type: 'add',
       path: `{{ turbo.paths.root }}/apps/${appName}/__tests__/testUtils/setupTests.ts`,
       templateFile: 'mobile-app/templates/__tests__/testUtils/setupTests.hbs'
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/__tests__/__mocks__/react-native-config.ts`,
+      templateFile: 'mobile-app/templates/__tests__/__mocks__/react-native-config.hbs'
     }
   ]
 }

@@ -16,6 +16,8 @@ const Avatar = React.forwardRef<
   />
 ))
 Avatar.displayName = AvatarPrimitive.Root.displayName
+// @ts-expect-error overrides bundled name of the function from package. Required for storybook.
+Avatar.name = AvatarPrimitive.Root.displayName
 
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,

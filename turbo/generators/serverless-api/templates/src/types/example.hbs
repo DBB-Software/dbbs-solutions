@@ -1,6 +1,6 @@
 export interface IExample {
   id: string
-  watermark: string
+  date: Date
 }
 
 export interface IExampleResponse {

@@ -1,4 +1,10 @@
+/**
+ * Module representing logger configuration.
+ * @module LoggerConfig
+ */
+
 import { FeatureFlagService, FeatureFlags } from '@dbbs/feature-config'
+import { ILoggerOptions } from '@dbbs/nestjs-module-logger'
 import {
   AWS_CLOUDWATCH_LOGS_GROUP,
   AWS_CLOUDWATCH_LOGS_PREFIX,
@@ -11,10 +17,29 @@ import {
   LOG_LEVEL
 } from './constants.js'
 
-const featureFlagService = new FeatureFlagService()
+/**
+ * Represents the logger configuration options.
+ * @typedef {ILoggerOptions} LoggerOptions
+ * @property {Object} pinoHttp - Configuration options for Pino HTTP logger.
+ * @property {Object} asyncContext - Configuration options for asynchronous context storage.
+ */
 
+/**
+ * Creates logger transports based on feature flags.
+ * @type {Object}
+ */
 let loggerTransports
 
+/**
+ * Feature flag service instance.
+ * @type {FeatureFlagService}
+ */
+const featureFlagService = new FeatureFlagService()
+
+/**
+ * Checks if API log transports feature flag is enabled.
+ * If enabled, sets up logger transports.
+ */
 if (featureFlagService.isEnabled(FeatureFlags.API_LOG_TRANSPORTS)) {
   loggerTransports = {
     targets: [
@@ -43,7 +68,11 @@ if (featureFlagService.isEnabled(FeatureFlags.API_LOG_TRANSPORTS)) {
   }
 }
 
-export const loggerOptions = {
+/**
+ * Configuration options for logger.
+ * @type {LoggerOptions}
+ */
+export const loggerOptions: ILoggerOptions = {
   pinoHttp: {
     transport: loggerTransports
   }

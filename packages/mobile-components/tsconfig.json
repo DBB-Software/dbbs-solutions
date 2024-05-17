@@ -1,5 +1,5 @@
 {
-  "extends": "@dbbs/tsconfig/react-native.json",
+  "extends": "@dbbs/tsconfig/react-library.json",
   "files": [],
   "references": [
     {

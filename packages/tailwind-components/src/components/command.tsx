@@ -21,7 +21,9 @@ const Command = React.forwardRef<
     {...props}
   />
 ))
-Command.displayName = CommandPrimitive.displayName
+Command.displayName = 'Command'
+// @ts-expect-error overrides bundled name of the function from package. Required for storybook.
+Command.name = CommandPrimitive.displayName
 
 interface CommandDialogProps extends DialogProps {}
 

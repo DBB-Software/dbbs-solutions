@@ -13,7 +13,7 @@ provider:
   name: aws
   runtime: nodejs18.x
   architecture: arm64
-  stage: ${opt:stage}
+  stage: ${opt:stage, 'local'}
   region: ${env:REGION}
   versionFunctions: false
   memorySize: 128
@@ -23,7 +23,7 @@ provider:
   logRetentionInDays: 14
   lambdaHashingVersion: 20201221
   environment:
-    STAGE: ${opt:stage}
+    STAGE: ${opt:stage, 'local'}
     REGION: ${env:REGION}
     NODE_ENV: ${env:NODE_ENV}
     DEPLOYMENT_BUCKET: ${env:DEPLOYMENT_BUCKET}
@@ -71,7 +71,7 @@ package:
 custom:
   alerts:
     stages: # Optionally - select which stages to deploy alarms to
-      - ${opt:stage}
+      - ${opt:stage, 'local'}
     dashboards: true
     nameTemplate: $[functionName]-$[metricName]-Alarm # Optionally - naming template for alarms, can be overwritten in definitions
     prefixTemplate: $[stackName] # Optionally - override the alarm name prefix
