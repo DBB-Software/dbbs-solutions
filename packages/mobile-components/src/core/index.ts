@@ -1,11 +1,15 @@
-import { DefaultTheme } from 'react-native-paper'
+import { MD3LightTheme, MD3DarkTheme, MD3Theme } from 'react-native-paper'
 
-export const appTheme = {
-  ...DefaultTheme,
-  // Specify custom property
-  myOwnProperty: true,
-  // Specify custom property in nested object
-  colors: {
-    ...DefaultTheme.colors
-  }
+export const lightTheme = {
+  ...MD3LightTheme
+}
+
+export const darkTheme = {
+  ...MD3DarkTheme
+}
+
+export type DarkAndLightTheme = typeof lightTheme | typeof darkTheme
+
+declare module '@dbbs/mobile-components' {
+  export type AppTheme = DarkAndLightTheme & MD3Theme
 }

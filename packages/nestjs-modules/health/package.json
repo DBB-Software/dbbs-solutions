@@ -14,11 +14,13 @@
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
     "test": "npx jest --coverage --verbose",
-    "watch": "npx tsc -w --preserveWatchOutput"
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "docs:generate": "npx compodoc -p tsconfig.json",
+    "docs:serve": "yarn docs:generate -s"
   },
   "dependencies": {
     "@nestjs/axios": "3.0.2",
-    "@nestjs/common": "10.3.7",
+    "@nestjs/common": "10.3.8",
     "@nestjs/terminus": "10.2.3"
   },
   "devDependencies": {

@@ -8,7 +8,7 @@ const jestConfig: JestConfigWithTsJest = {
   ...tsjPreset,
   displayName: 'mobile-app',
   preset: 'react-native',
-  transformIgnorePatterns: ['node_modules/(tamagui|@tamagui|@tamagui/animations-moti)'],
+  transformIgnorePatterns: ['../../node_modules'],
   testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
   setupFilesAfterEnv: [
     './__tests__/testUtils/setupTests.ts',

@@ -5,6 +5,11 @@ import AWSXRayCore from 'aws-xray-sdk-core'
 import { SettingServiceClient } from '../domain/setting-service-client.js'
 import { ICustomSettingsContext, ISettingsMiddlewareInput } from './types/settingsMiddleware.js'
 
+/**
+ * Middleware function for integrating the settings service into the AWS Lambda context.
+ * @param {ISettingsMiddlewareInput} params - The parameters for configuring the middleware.
+ * @returns {MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult, Error, ICustomSettingsContext>} The settings middleware.
+ */
 export function settingsMiddleware({
   region,
   endpoint,
@@ -22,7 +27,6 @@ export function settingsMiddleware({
   })
 
   lambdaClient = enableXRay ? AWSXRayCore.captureAWSv3Client(lambdaClient) : lambdaClient
-
   const settingsService = new SettingServiceClient(lambdaClient, serviceName)
 
   const settingsMiddlewareBefore: middy.MiddlewareFn<

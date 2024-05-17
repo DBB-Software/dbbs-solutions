@@ -7,6 +7,9 @@ import { ChevronDown } from 'lucide-react'
 import { cn } from '../utils'
 
 const Accordion = AccordionPrimitive.Root
+Accordion.displayName = 'Accordion'
+// @ts-expect-error overrides bundled name of the function from package. Required for storybook.
+Accordion.name = 'Accordion'
 
 const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,

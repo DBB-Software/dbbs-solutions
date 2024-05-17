@@ -12,7 +12,8 @@
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
     "start": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032",
     "test": "npx jest --coverage --verbose",
-    "watch": "npx tsc -w --preserveWatchOutput"
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "start:localstack": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032"
   },
   "dependencies": {
     "@dbbs/common": "*",

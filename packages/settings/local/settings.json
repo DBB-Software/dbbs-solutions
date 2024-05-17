@@ -1,3 +1,10 @@
 {
-	"TENANTS": {}
+	"TENANTS": {
+		"DBB-a": {
+			"PARAM-1": "a1"
+		},
+		"DBB-b": {
+			"PARAM-1": "b1"
+		}
+	}
 }

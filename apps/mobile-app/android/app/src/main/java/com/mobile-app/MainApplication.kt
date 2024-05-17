@@ -12,6 +12,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.flipper.ReactNativeFlipper
 import com.facebook.soloader.SoLoader
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.lugg.RNCConfig.RNCConfigPackage;
 
 class MainApplication : Application(), ReactApplication {
 

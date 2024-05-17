@@ -8,7 +8,9 @@
         "dist"
     ],
     "scripts": {
-        "build": "npx tsc --build tsconfig.json"
+        "build": "npx tsc --build tsconfig.json",
+        "docs:generate": "npx compodoc -p tsconfig.json",
+        "docs:serve": "yarn docs:generate -s"
     },
     "publishConfig": {
         "access": "public"

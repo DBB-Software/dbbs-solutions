@@ -4,13 +4,16 @@
     "rootDir": ".",
     "outDir": "dist",
     "noImplicitAny": false,
-    "allowJs": true
+    "allowJs": true,
+    "composite": false,
+    "declaration": false
   },
   "include": [
     "./",
     "./**/*.ts",
     "./**/*.js",
-    "src/**/*.json"
+    "src/**/*.json",
+    "src/api/*"
   ],
   "exclude": [
     "node_modules/",

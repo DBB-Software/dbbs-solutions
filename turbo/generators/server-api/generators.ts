@@ -38,18 +38,43 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       },
       {
         type: 'add',
-        path: '{{ turbo.paths.root }}/apps/{{ name }}/.nest-cli.json',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/nest-cli.json',
         templateFile: 'server-api/templates/nest-cli.hbs'
       },
       {
         type: 'add',
-        path: '{{ turbo.paths.root }}/apps/{{ name }}/.env.example',
-        templateFile: 'server-api/templates/.env.example.hbs'
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/README.md',
+        templateFile: 'server-api/templates/README.hbs'
       },
       {
         type: 'add',
         path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app.module.ts',
         templateFile: 'server-api/templates/src/app.module.hbs'
+      },
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app.controller.spec.ts',
+        templateFile: 'server-api/templates/src/app.controller.spec.hbs'
+      },
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app.controller.ts',
+        templateFile: 'server-api/templates/src/app.controller.hbs'
+      },
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app.service.ts',
+        templateFile: 'server-api/templates/src/app.service.hbs'
+      },
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/constants.ts',
+        templateFile: 'server-api/templates/src/constants.hbs'
+      },
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/logger.config.ts',
+        templateFile: 'server-api/templates/src/logger.config.hbs'
       },
       {
         type: 'add',

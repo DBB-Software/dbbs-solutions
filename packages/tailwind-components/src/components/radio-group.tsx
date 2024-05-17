@@ -13,6 +13,8 @@ const RadioGroup = React.forwardRef<
   <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={ref} />
 ))
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
+// @ts-expect-error overrides bundled name of the function from package. Required for storybook.
+RadioGroup.name = RadioGroupPrimitive.Root.displayName
 
 const RadioGroupItem = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Item>,

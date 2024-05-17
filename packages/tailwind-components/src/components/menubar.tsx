@@ -27,6 +27,8 @@ const Menubar = React.forwardRef<
   />
 ))
 Menubar.displayName = MenubarPrimitive.Root.displayName
+// @ts-expect-error overrides bundled name of the function from package. Required for storybook.
+Menubar.name = MenubarPrimitive.Root.displayName
 
 const MenubarTrigger = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Trigger>,

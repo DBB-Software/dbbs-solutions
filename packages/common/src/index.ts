@@ -10,6 +10,9 @@ export * from './aws/lambda.js'
 export * from './serverless/loggerMiddleware.js'
 export * from './serverless/types/loggerMiddleware.js'
 
+export * from './serverless/settingsMiddleware.js'
+export * from './serverless/types/settingsMiddleware.js'
+
 export * from './filter/http-exception.filter.js'
 
 export * from './error/argumentError.js'

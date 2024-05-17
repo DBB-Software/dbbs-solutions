@@ -8,14 +8,18 @@ import {
   ILoggerMiddlewareOnErrorInput
 } from './types/loggerMiddleware.js'
 
+/**
+ * Middleware for integrating a logger into the AWS Lambda context.
+ * @param {object} [options={}] - Options for configuring the logger.
+ * @returns {MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult, Error, ICustomContext>} The logger middleware.
+ */
 export function loggerMiddleware(
   options: object = {}
 ): MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult, Error, ICustomContext> {
   const destination = pinoLambdaDestination()
-
   const logger = pino(options, destination)
 
-  // custom destination formatter
+  // Custom destination formatter
   const withRequest = lambdaRequestTracker()
 
   const loggerMiddlewareBefore: middy.MiddlewareFn<
@@ -27,7 +31,6 @@ export function loggerMiddleware(
     const { event, context } = request
 
     withRequest(event, context)
-
     context.logger = logger
   }
 

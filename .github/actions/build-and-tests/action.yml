@@ -1,5 +1,5 @@
 name: 'Build and Tests'
-description: 'Execute common steps'
+description: 'Execute common steps necessary for checking applications build and tests'
 
 inputs:
   ref:
@@ -24,18 +24,22 @@ runs:
     - name: Set up Yarn
       run: |
         corepack enable
-        yarn set version stable  
-      shell: bash  
+        yarn set version stable
+      shell: bash
 
     - name: Checkout
       uses: actions/checkout@v3
       with:
         ref: ${{ inputs.ref }}
 
+    - name: Extract Node.js version from .tool-versions
+      run: echo "NODE_VERSION=$(cat .tool-versions | grep nodejs | awk '{print $2}')" >> $GITHUB_ENV
+      shell: bash
+
     - name: Set up NodeJs
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version-file: '.nvmrc'
+        node-version: ${{ env.NODE_VERSION }}
         cache: 'yarn'
 
     - name: Install project dependencies

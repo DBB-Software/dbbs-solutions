@@ -1,10 +1,11 @@
 {
-  "name": "mobile-app",
+  "name": "dbbs-mobile",
   "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "android": "npx react-native run-android",
+    "android:prod": "ENVFILE=.env.prod && npx react-native run-android --mode=ProdDebug",
+    "android:dev": "ENVFILE=.env.dev && npx react-native run-android --mode=DevDebug",
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "ios": "npx react-native run-ios --scheme='MobileApp' --simulator='iPhone 15 Pro'",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
@@ -13,24 +14,24 @@
   },
   "dependencies": {
     "@dbbs/mobile-components": "*",
-    "@react-native/metro-config": "0.74.77",
+    "@react-native/metro-config": "0.74.83",
     "@react-navigation/bottom-tabs": "6.5.20",
     "@react-navigation/native": "6.1.17",
     "@react-navigation/stack": "6.3.29",
-    "metro-config": "0.80.8",
-    "react-native": "0.73.6",
-    "react-native-gesture-handler": "2.16.0",
+    "react-native": "0.74.1",
+    "react-native-config": "1.5.1",
+    "react-native-gesture-handler": "2.16.2",
     "react-native-monorepo-tools": "1.2.1",
     "react-native-paper": "5.12.3",
-    "react-native-reanimated": "3.8.1",
-    "react-native-safe-area-context": "4.9.0",
-    "react-native-screens": "3.30.1",
-    "react-native-vector-icons": "10.0.3"
+    "react-native-reanimated": "3.11.0",
+    "react-native-safe-area-context": "4.10.1",
+    "react-native-screens": "3.31.1",
+    "react-native-svg": "15.3.0",
+    "react-native-vector-icons": "10.1.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
-    "@dbbs/tsconfig": "*",
-    "@types/jest": "^29.5.12"
+    "@dbbs/tsconfig": "*"
   }
 }

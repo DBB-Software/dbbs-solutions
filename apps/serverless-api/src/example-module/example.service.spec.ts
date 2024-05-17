@@ -1,5 +1,4 @@
 import { Logger } from '@dbbs/nestjs-module-logger'
-import { ConfigService } from '@nestjs/config'
 import { ExampleService } from './example.service.js'
 
 describe('ExampleService', () => {

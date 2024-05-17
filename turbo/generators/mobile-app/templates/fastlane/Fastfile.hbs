@@ -5,14 +5,14 @@ app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifi
 package_name = CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
 json_key_file = CredentialsManager::AppfileConfig.try_fetch_value(:json_key_file)
 
-app_connect_key_id = ENV["{{ appNameUpperCase }}_APP_CONNECT_KEY_ID"]
-app_connect_issuer_id = ENV["{{ appNameUpperCase }}_APP_CONNECT_ISSUER_ID"]
-android_app_id = ENV["{{ appNameUpperCase }}_ANDROID_APP_ID"]
-ios_app_id = ENV["{{ appNameUpperCase }}_IOS_APP_ID"]
-application_version = ENV["{{ appNameUpperCase }}_APPLICATION_VERSION"]
-application_build_number = ENV["{{ appNameUpperCase }}_APPLICATION_BUILD_NUMBER"]
-fastlane_keychain_name = ENV["{{ appNameUpperCase }}_FASTLANE_KEYCHAIN_NAME"]
-keychain_password = ENV["{{ appNameUpperCase }}_FASTLANE_KEYCHAIN_PASSWORD"]
+app_connect_key_id = ENV["APP_CONNECT_KEY_ID"]
+app_connect_issuer_id = ENV["APP_CONNECT_ISSUER_ID"]
+android_app_id = ENV["ANDROID_APP_ID"]
+ios_app_id = ENV["IOS_APP_ID"]
+application_version = ENV["APPLICATION_VERSION"]
+application_build_number = ENV["APPLICATION_BUILD_NUMBER"]
+fastlane_keychain_name = ENV["FASTLANE_KEYCHAIN_NAME"]
+keychain_password = ENV["FASTLANE_KEYCHAIN_PASSWORD"]
 
 build_folder = "fastlane/builds"
 xcodeproj_path = "ios/{{ appName }}.xcodeproj"

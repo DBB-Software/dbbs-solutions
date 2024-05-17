@@ -1,0 +1,31 @@
+version: '3.5'
+
+services:
+  dbb-backend-localstack:
+    container_name: dbb-backend-localstack
+    image: localstack/localstack:latest
+    hostname: localstack-docker
+    networks:
+      - dbb-backend-network
+    ports:
+      - '4566-4583:4566-4583'
+    environment:
+      - EDGE_PORT=4566
+      - SERVICES=s3
+      - DEBUG=${DEBUG-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - '${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 1G
+
+networks:
+  dbb-backend-network:
+    name: dbb-backend-network
+    external: true

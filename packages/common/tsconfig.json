@@ -2,10 +2,12 @@
   "extends": "@dbbs/tsconfig/nestjs.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "module": "CommonJS",
+    "moduleResolution": "Node"
   },
   "include": [
-    "src"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

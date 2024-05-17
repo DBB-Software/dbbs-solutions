@@ -38,6 +38,8 @@ const NavigationMenu = React.forwardRef<
   </NavigationMenuPrimitive.Root>
 ))
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName
+// @ts-expect-error overrides bundled name of the function from package. Required for storybook.
+NavigationMenu.name = NavigationMenuPrimitive.Root.displayName
 
 const NavigationMenuList = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.List>,

@@ -8,16 +8,20 @@
     "dev": "npx strapi develop",
     "start": "npx strapi start",
     "build": "npx strapi build",
-    "strapi": "npx strapi"
+    "strapi": "npx strapi",
+    "docs:generate": "npx compodoc -p tsconfig.json",
+    "docs:serve": "yarn docs:generate -s"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "4.22.0",
-    "@strapi/plugin-i18n": "4.22.0",
-    "@strapi/plugin-users-permissions": "4.22.0",
-    "@strapi/strapi": "4.22.0",
-    "better-sqlite3": "9.4.5",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "@aws-sdk/client-lambda": "3.577.0",
+    "@dbbs/common": "*",
+    "@strapi/plugin-cloud": "4.24.2",
+    "@strapi/plugin-i18n": "4.24.2",
+    "@strapi/plugin-users-permissions": "4.24.2",
+    "@strapi/strapi": "4.24.2",
+    "better-sqlite3": "10.0.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-router-dom": "5.3.4",
     "styled-components": "5.3.3"
   },

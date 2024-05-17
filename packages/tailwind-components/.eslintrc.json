@@ -1,7 +1,17 @@
 {
   "root": true,
-  "extends": ["@dbbs/eslint-config/react"],
+  "extends": [
+    "@dbbs/eslint-config/react",
+    "plugin:storybook/recommended"
+  ],
   "rules": {
-    "react/no-unknown-property": ["error", { "ignore": ["cmdk-input-wrapper"] }]
+    "react/no-unknown-property": [
+      "error",
+      {
+        "ignore": [
+          "cmdk-input-wrapper"
+        ]
+      }
+    ]
   }
 }

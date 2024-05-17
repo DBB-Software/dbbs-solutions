@@ -48,7 +48,7 @@ Options:
 ## Type
 
 Options:
-- Project
+- Application
 - Package
 - Module
 

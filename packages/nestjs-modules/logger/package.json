@@ -17,10 +17,10 @@
     "watch": "npx tsc -w --preserveWatchOutput"
   },
   "dependencies": {
-    "@nestjs/common": "10.3.7",
-    "nestjs-pino": "4.0.0",
-    "pino": "8.19.0",
-    "pino-http": "9.0.0"
+    "@nestjs/common": "10.3.8",
+    "nestjs-pino": "4.1.0",
+    "pino": "9.1.0",
+    "pino-http": "10.1.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

@@ -48,13 +48,23 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       },
       {
         type: 'add',
-        path: '{{ turbo.paths.root }}/apps/{{ name }}/.env.example',
-        templateFile: 'serverless-api/templates/.env.example.hbs'
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/README.md',
+        templateFile: 'serverless-api/templates/README.hbs'
       },
       {
         type: 'add',
         path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app.module.ts',
         templateFile: 'serverless-api/templates/src/app.module.hbs'
+      },
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/logger.config.ts',
+        templateFile: 'serverless-api/templates/src/logger.config.hbs'
+      },
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/constants.ts',
+        templateFile: 'serverless-api/templates/src/constants.hbs'
       },
       {
         type: 'add',

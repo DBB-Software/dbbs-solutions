@@ -5,9 +5,14 @@ import { defaults as tsjPreset } from 'ts-jest/presets'
 const jestConfig: JestConfigWithTsJest = {
   ...baseConfig,
   ...tsjPreset,
+  displayName: 'mobile-components',
   preset: 'react-native',
-  testMatch: ['**/(__tests__)/**/*.(test|spec|e2e).(ts)'],
-  setupFilesAfterEnv: ['./__tests__/testUtils/setupTests.ts']
+  transformIgnorePatterns: ['../../node_modules'],
+  testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
+  setupFilesAfterEnv: [
+    './__tests__/testUtils/setupTests.ts',
+    '../../node_modules/react-native-gesture-handler/jestSetup.js'
+  ]
 }
 
 export default jestConfig
