@@ -78,7 +78,9 @@ describe('getSettingsHandler', () => {
       const { event, context } = input
       clearEnvVariable(envToClear)
 
-      await expect(async () => await getSettings(event, context as unknown as ICustomContext)).rejects.toThrow(expectedErrorMessage)
+      await expect(async () => await getSettings(event, context as unknown as ICustomContext)).rejects.toThrow(
+        expectedErrorMessage
+      )
     })
   })
 })

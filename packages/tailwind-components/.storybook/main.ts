@@ -1,4 +1,4 @@
-import { StorybookConfig } from '@storybook/react-vite';
+import { StorybookConfig } from '@storybook/react-vite'
 import { join, dirname } from 'path'
 
 /**

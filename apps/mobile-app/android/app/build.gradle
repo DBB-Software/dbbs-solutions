@@ -1,10 +1,11 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: 'com.google.gms.google-services'
 
 project.ext.envConfigFiles = [
     prod: ".env.prod",
-    dev: ".env.dev"
+    dev: ".env.dev",
 ]
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
@@ -68,6 +69,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
+        testBuildType System.getProperty('testBuildType', 'debug')
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     productFlavors {
         prod {
@@ -75,7 +78,6 @@ android {
         }
         dev {
             resValue "string", "app_name", "DBBS Software"
-            applicationIdSuffix ".dev"
         }
     }
     signingConfigs {
@@ -102,6 +104,7 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFile "${rootProject.projectDir}/../../../node_modules/detox/android/detox/proguard-rules-app.pro"
         }
     }
 }
@@ -111,6 +114,8 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-config')
+    androidTestImplementation('com.wix:detox:+')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

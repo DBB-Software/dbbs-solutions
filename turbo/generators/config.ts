@@ -6,6 +6,7 @@ import serverlessApiGenerators from './serverless-api/generators'
 import serverlessServiceGenerators from './serverless-service/generators'
 import mobileAppGenerators from './mobile-app/generators'
 import storybookGenerators from './storybook/generators'
+import mobileStorybookGenerators from './mobile-storybook/generators'
 import helpers from './hbsHelpers'
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
@@ -16,5 +17,6 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
   serverlessServiceGenerators(plop)
   mobileAppGenerators(plop)
   storybookGenerators(plop)
+  mobileStorybookGenerators(plop)
   helpers(plop)
 }

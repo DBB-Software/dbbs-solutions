@@ -17,6 +17,8 @@ module.exports = {
       }
     ],
     '@babel/plugin-transform-react-jsx',
-    'react-native-reanimated/plugin'
+    'react-native-reanimated/plugin',
+    'transform-inline-environment-variables',
+    '@babel/plugin-transform-export-namespace-from'
   ]
 }

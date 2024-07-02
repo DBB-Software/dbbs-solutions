@@ -1,4 +1,0 @@
-{
-  "extends": "@dbbs/tsconfig/react-library.json",
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
-}

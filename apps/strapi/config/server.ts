@@ -24,5 +24,14 @@ export default ({ env }) => ({
     region: env('REGION', ''),
     endpoint: env('SETTINGS_SERVICE_ENDPOINT', ''),
     serviceName: env('SETTINGS_SERVICE_NAME', '')
+  },
+  stripe: {
+    apiKey: env('STRIPE_API_KEY', ''),
+    currency: 'usd',
+    successPaymentUrl: env('STRIPE_SUCCESS_PAYMENT_URL', 'http://localhost:8080/success'),
+    webhookSecret: env('STRIPE_WEBHOOK_SECRET', ''),
+    awsRegion: env('STRIPE_SES_REGION', ''),
+    sesSenderEmail: env('STRIPE_SES_SENDER_EMAIL', ''),
+    domainUrl: env('DOMAIN_URL', '')
   }
-});
+})

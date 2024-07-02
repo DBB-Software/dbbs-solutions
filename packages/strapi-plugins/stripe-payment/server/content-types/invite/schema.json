@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "invites",
+  "info": {
+    "singularName": "invite",
+    "pluralName": "invites",
+    "displayName": "Invite"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": ""
+  },
+  "attributes": {
+    "token": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::stripe-payment.organization",
+      "inversedBy": "invites"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "accepted",
+        "cancelled"
+      ]
+    }
+  }
+}

@@ -145,6 +145,9 @@ The DBBS Platform Base offers a set of commands to manage and operate your monor
    ```
    Replace `<app-name>` with the name of the application you're developing.
 
+6. **Local start**
+   For local environment to emulate AWS resources [LocalStack](https://www.localstack.cloud/) is used. To start the local environment and emulate AWS resources using LocalStack, run the start:localstack command from the root directory. This will start applications along with additional AWS services in docker container such as S3, etc. 
+
 ### Additional Tips
 
 - **Targeted Commands:** Most commands support a `target` env variable at the beginning of command to specify which package or app the command should run for. This allows for more granular control over your development workflow.
@@ -173,6 +176,88 @@ In addition to the standard development commands, the DBBS Platform includes Cyp
 - `check-yarn` - Checks if Yarn is installed and up to date. If not, it installs Yarn using Corepack. It also updates local Yarn to the stable version if the installed version is lower than 4.0.
 - `install-awscli` - Installs the AWS CLI using Homebrew.
 - `check-versions` - Checks and prints the versions of installed tools, including asdf, Node.js, Ruby, Cocoapods, Yarn and the AWS CLI.
+
+#### Scripts:
+The .sh scripts are in **`/scripts`** folder. Below is an outline of the scripts, along with their purpose:
+##### download.env.sh
+Script for downloading environment variables from AWS Secret Manager. It requires the `STAGE`, `AWS_PROFILE`, and `SECRET_PREFIX` variables to be set. There are three ways to set the envs:
+
+1. **Inline variable**
+   ```bash
+   STAGE="your-stage" AWS_PROFILE="your-aws-profile" SECRET_PREFIX="your-secret-prefix" ./download.env.sh
+
+   ```
+2. **With export in terminal**
+   ```bash
+   export STAGE="your-stage"
+   export AWS_PROFILE="your-aws-profile"
+   export SECRET_PREFIX="your-secret-prefix"
+   ./script.sh
+
+   ```
+3. **Define the `STAGE`, `AWS_PROFILE`, `SECRET_PREFIX` in `scripts/env-constants.sh`**.
+   ```bash
+   # Define the AWS profile (default value)
+   AWS_PROFILE="${AWS_PROFILE:-default-aws-profile}"
+
+   # Define the secret prefix (default value)
+   SECRET_PREFIX="${SECRET_PREFIX:-dbbs-platform}"
+
+   # Define the stage (default value)
+   STAGE="${STAGE:-default-stage}"
+   ```
+
+##### upload-settings.sh
+The main script for uploading application settings to an S3 bucket. It requires the `SETTINGS_S3_BUCKET_NAME` and `AWS_PROFILE` variables to be set. There are three ways to set the `SETTINGS_S3_BUCKET_NAME` and `AWS_PROFILE`:
+
+1. **Inline variable**
+   ```bash
+   SETTINGS_S3_BUCKET_NAME="your-s3-bucket-name" ./scripts/upload-settings.sh
+   ```
+2. **With export in terminal**
+   ```bash
+   export SETTINGS_S3_BUCKET_NAME="your-s3-bucket-name"
+   ./scripts/upload-settings.sh
+   ```
+3. **Define the `SETTINGS_S3_BUCKET_NAME` in `scripts/env-constants.sh`**.
+   ```bash
+   #!/bin/bash
+
+   # Define a list of environment names
+   readonly ENVIRONMENTS=("local" "development" "production" "staging")
+
+   # Define the S3 bucket name (default value)
+   SETTINGS_S3_BUCKET_NAME="${SETTINGS_S3_BUCKET_NAME:-default-s3-bucket-name}"
+
+   ```
+
+#### `upload-env.sh`
+Script for uploading environment variables from AWS Secret Manager. It requires the `STAGE`, `AWS_PROFILE`, and `SECRET_PREFIX` variables to be set. There are three ways to set the envs:
+
+1. **Inline variable**
+   ```bash
+   STAGE="your-stage" AWS_PROFILE="your-aws-profile" SECRET_PREFIX="your-secret-prefix" ./scripts/upload-env.sh
+
+   ```
+2. **With export in terminal**
+   ```bash
+   export STAGE="your-stage"
+   export AWS_PROFILE="your-aws-profile"
+   export SECRET_PREFIX="your-secret-prefix"
+   ./scripts/upload-env.sh
+
+   ```
+3. **Define the `STAGE`, `AWS_PROFILE`, `SECRET_PREFIX` in `scripts/env-constants.sh`**.
+   ```bash
+   # Define the AWS profile (default value)
+   AWS_PROFILE="${AWS_PROFILE:-default-aws-profile}"
+
+   # Define the secret prefix (default value)
+   SECRET_PREFIX="${SECRET_PREFIX:-dbbs-platform}"
+
+   # Define the stage (default value)
+   STAGE="${STAGE:-default-stage}"
+   ```
 
 ## Repository Structure
 The DBBS Platform Base monorepo is structured to facilitate ease of navigation and development across various components. Below is an outline of the key directories and files, along with their purpose:

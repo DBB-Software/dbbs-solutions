@@ -10,6 +10,4 @@ export const darkTheme = {
 
 export type DarkAndLightTheme = typeof lightTheme | typeof darkTheme
 
-declare module '@dbbs/mobile-components' {
-  export type AppTheme = DarkAndLightTheme & MD3Theme
-}
+export type AppTheme = DarkAndLightTheme & MD3Theme

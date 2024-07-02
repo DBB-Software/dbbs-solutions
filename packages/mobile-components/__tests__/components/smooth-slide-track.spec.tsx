@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text } from 'react-native'
 import { render, fireEvent } from '@testing-library/react-native'
-import { SmoothSlideTrack } from '../../src/components'
+import { SmoothSlideTrack } from '../../src'
 
 describe('SmoothSlideTrack', () => {
   const data = ['Item 1', 'Item 2', 'Item 3']

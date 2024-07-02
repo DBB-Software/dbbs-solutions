@@ -33,7 +33,7 @@ bootstrap()
 
 ## Features
 
-- AWS Client Wrappers: These wrappers simplify the usage of AWS SDK for DynamoDB, Event Bridge, Lambda, S3, SNS, and SQS services across DBBS applications.
+- AWS Client Wrappers: These wrappers simplify the usage of AWS SDK for DynamoDB, Event Bridge, Lambda, S3, SNS, SES, and SQS services across DBBS applications.
 - Settings Service Client: This service facilitates managing tenant settings in a multi-tenant system. It provides the capability to retrieve settings for all tenants or for a specific one. It caches settings to enhance performance using LRUCache.
 - Error Wrappers: A collection of frequently used errors, such as AuthError, ArgumentError, NotFoundError, etc., with preset HTTP status codes.
 - HTTP Exception Filter: An error handler configured for Nest.js applications.
@@ -48,6 +48,7 @@ bootstrap()
 - aws-client-wrapper-s3
 - aws-client-wrapper-sns
 - aws-client-wrapper-sqs
+- aws-client-wrapper-ses
 - settings-service-client
 - error-wrapper
 - http-exception-filter
@@ -97,6 +98,8 @@ The DBBS Platform Base is open-source software licensed under the [MIT License](
 
 [Amazon SQS Node.js](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/sqs-examples.html)
 
+[Amazon SES Node.js](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/ses-examples.html)
+
 [Pino documentation](https://github.com/pinojs/pino/tree/master/docs)
 
 ## Relations
@@ -112,6 +115,7 @@ The DBBS Platform Base is open-source software licensed under the [MIT License](
 - @aws-sdk/client-s3
 - @aws-sdk/client-sns
 - @aws-sdk/client-sqs
+- @aws-sdk/client-ses
 - @aws-sdk/util-utf8-node
 - @middy/core
 - pino

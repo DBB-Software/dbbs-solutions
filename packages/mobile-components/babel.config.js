@@ -6,14 +6,9 @@ module.exports = {
     },
   },
   plugins: [
-    [
-      'module-resolver',
-      {
-        root: ['./src']
-      }
-    ],
     '@babel/plugin-transform-react-jsx',
-    ['@babel/plugin-transform-private-methods', { loose: true }],
-    'react-native-reanimated/plugin'
+    'react-native-reanimated/plugin',
+    'transform-inline-environment-variables',
+    '@babel/plugin-transform-export-namespace-from'
   ]
 }

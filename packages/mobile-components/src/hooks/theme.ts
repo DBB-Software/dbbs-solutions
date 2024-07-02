@@ -1,7 +1,6 @@
 import { useTheme } from 'react-native-paper'
 import { useColorScheme } from 'react-native'
-import { AppTheme } from '@dbbs/mobile-components'
-import { darkTheme, lightTheme } from '../core'
+import { darkTheme, lightTheme, AppTheme } from '../core'
 
 export const useDefinedTheme = (isDark = false) => {
   const colorScheme = useColorScheme()

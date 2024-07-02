@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "product"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": ""
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "stripe_id": {
+      "type": "string"
+    },
+    "plans": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::stripe-payment.plan",
+      "mappedBy": "product"
+    }
+  }
+}

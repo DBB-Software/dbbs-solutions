@@ -9,7 +9,7 @@ describe('ExampleService', () => {
     const testCases = [
       {
         description: 'should receive an example',
-        id: 'valid ID',
+        id: 'valid ID'
       }
     ]
 

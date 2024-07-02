@@ -26,7 +26,11 @@ const cleanUnwantedFilesAction: PlopTypes.CustomActionFunction = (
   execSync(
     `cd apps/${appName} && rm -rf node_modules __tests__ .gitignore Gemfile *.js *.tsx *.json *.md .eslintrc.js .prettierrc.js`
   )
-  execSync(`cd apps/${appName}/android/app && rm -rf build.gradle`)
+  execSync(
+    `cd apps/${appName}/android && rm -rf build.gradle && cd app && rm -rf build.gradle && cd src/main && rm -rf AndroidManifest.xml`
+  )
+  execSync(`cd apps/${appName}/ios/${appName} && rm -rf AppDelegate.mm`)
+  execSync(`cd apps/${appName}/ios && rm -rf Podfile`)
   execSync(
     `cd apps/${appName}/ios/${appName} && rm -rf Info.plist ${appName}.entitlements && cd Images.xcassets &&  rm -rf AppIcon.appiconset`
   )
@@ -63,6 +67,11 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
           return true
         }
+      },
+      {
+        type: 'confirm',
+        name: 'storybook',
+        message: 'Select whether you want to setup storybook in the project'
       }
     ],
     actions: (answers) => [
