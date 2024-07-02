@@ -111,4 +111,6 @@ exports
 .strapi
 dist
 build
+types/generated
 .strapi-updater.json
+config/sync

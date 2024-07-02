@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subscriptions",
+  "info": {
+    "singularName": "subscription",
+    "pluralName": "subscriptions",
+    "displayName": "Subscription"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": ""
+  },
+  "attributes": {
+    "stripe_id": {
+      "type": "string"
+    },
+    "organization": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::stripe-payment.organization",
+      "inversedBy": "subscription"
+    },
+    "plan": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::stripe-payment.plan"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "trialing",
+        "active",
+        "cancelled",
+        "paused"
+      ]
+    }
+  }
+}

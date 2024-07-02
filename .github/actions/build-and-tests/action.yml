@@ -42,6 +42,15 @@ runs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'yarn'
 
+    - name: Cache node_modules
+      if: ${{ github.event.pull_request.draft == true }}
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
     - name: Install project dependencies
       run: |
         node -v
@@ -69,7 +78,6 @@ runs:
       run: |
         yarn download:env
         yarn test
-
       env:
         STAGE: development
         AWS_PROFILE: dbbs-development

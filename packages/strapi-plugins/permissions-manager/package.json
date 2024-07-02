@@ -1,0 +1,62 @@
+{
+  "name": "@dbbs/strapi-plugin-permissions-manager",
+  "version": "1.0.0",
+  "description": "Strapi plugin to manage custom permissions and roles",
+  "main": "dist/index.js",
+  "keywords": [
+    "strapi",
+    "plugin",
+    "permissions",
+    "roles"
+  ],
+  "scripts": {
+    "dev": "tsc -p tsconfig.server.json -w",
+    "build": "tsc -p tsconfig.server.json",
+    "clean": "npx rimraf node_modules dist || exit 0"
+  },
+  "strapi": {
+    "name": "permissions-manager",
+    "description": "Description of permissions-manager plugin",
+    "kind": "plugin"
+  },
+  "dependencies": {
+    "@strapi/design-system": "1.6.3",
+    "@strapi/helper-plugin": "4.6.0",
+    "@strapi/icons": "1.6.3",
+    "prop-types": "15.7.2"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*",
+    "@strapi/typescript-utils": "4.6.0",
+    "@types/react": "17.0.53",
+    "@types/react-dom": "18.3.0",
+    "@types/react-router-dom": "5.3.3",
+    "@types/styled-components": "5.1.32",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "5.3.4",
+    "styled-components": "5.3.3",
+    "typescript": "5.0.4"
+  },
+  "peerDependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "5.3.4",
+    "styled-components": "5.3.3"
+  },
+  "author": {
+    "name": "A Strapi developer"
+  },
+  "maintainers": [
+    {
+      "name": "A Strapi developer"
+    }
+  ],
+  "engines": {
+    "node": ">=18.0.0 <=20.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

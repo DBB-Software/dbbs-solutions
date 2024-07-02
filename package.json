@@ -5,7 +5,8 @@
     "packages": [
       "packages/*",
       "packages/nestjs-modules/*",
-      "apps/*"
+      "apps/*",
+      "packages/strapi-plugins/*"
     ]
   },
   "scripts": {
@@ -22,6 +23,7 @@
     "prettier": "npx prettier --write \"packages/**/*.{ts,tsx}\" \"apps/**/*.{ts,tsx}\"",
     "sort-packages": "npm i -g sort-package-json && sort-package-json && find packages/* apps/* -name package.json -maxdepth 2 -execdir npx sort-package-json \\; -execdir rm -rf node_modules \\;",
     "test": "dotenv -- npx turbo run test --filter ${target:-\"*\"}",
+    "e2e": "dotenv -- npx turbo run e2e --filter ${target:-\"*\"}",
     "update-packages": "npm i -g npm-check-updates && ncu -u && find packages/* apps/* -name package.json -maxdepth 2 -execdir npx ncu -u \\; -execdir rm -rf node_modules \\;",
     "start:localstack": "make localstack-up && turbo run start:localstack",
     "upload:settings": "./scripts/upload-settings.sh"
@@ -60,6 +62,7 @@
     "@typescript-eslint/eslint-plugin": "7.9.0",
     "@typescript-eslint/parser": "7.9.0",
     "@vitejs/plugin-react": "4.2.1",
+    "aws-cdk": "2.144.0",
     "aws-cdk-lib": "2.142.1",
     "babel-plugin-module-resolver": "5.0.2",
     "capture-console": "1.0.2",
@@ -109,5 +112,5 @@
     "vite": "5.2.11",
     "webpack": "5.91.0"
   },
-  "packageManager": "yarn@4.1.1"
+  "packageManager": "yarn@4.2.2"
 }

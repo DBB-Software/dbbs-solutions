@@ -1,0 +1,352 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TabView Component renders the correct content when the tab changes 1`] = `
+<View
+  onLayout={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+        "overflow": "hidden",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "flex": 1,
+        }
+      }
+    >
+      <RCTScrollView
+        collapsable={false}
+        handlerTag={2}
+        handlerType="NativeViewGestureHandler"
+        horizontal={true}
+        onGestureHandlerEvent={[Function]}
+        onGestureHandlerStateChange={[Function]}
+        style={
+          {
+            "width": 750,
+          }
+        }
+        waitFor={
+          [
+            {
+              "current": null,
+            },
+          ]
+        }
+      >
+        <View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "flex": 1,
+                  "flexDirection": "row",
+                  "justifyContent": "space-around",
+                },
+                {
+                  "minWidth": 750,
+                },
+              ]
+            }
+          >
+            <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": undefined,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
+              accessible={true}
+              collapsable={false}
+              focusable={true}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                {
+                  "paddingLeft": 20,
+                  "paddingVertical": 20,
+                }
+              }
+              testID="tab-1-pressable"
+            >
+              <Text
+                onLayout={[Function]}
+                style={
+                  [
+                    {
+                      "textAlign": "left",
+                    },
+                    {
+                      "color": "rgba(28, 27, 31, 1)",
+                      "fontFamily": "System",
+                      "fontWeight": "400",
+                      "letterSpacing": 0,
+                    },
+                    {
+                      "writingDirection": "ltr",
+                    },
+                    {
+                      "fontWeight": "bold",
+                      "textAlign": "center",
+                    },
+                  ]
+                }
+                testID="tab-1-text"
+              >
+                Tab 1
+              </Text>
+              <View
+                collapsable={false}
+                jestAnimatedStyle={
+                  {
+                    "value": {
+                      "backgroundColor": "rgba(103, 80, 164, 1)",
+                      "borderRadius": 10,
+                      "height": 2,
+                      "width": 0,
+                    },
+                  }
+                }
+                style={
+                  {
+                    "backgroundColor": "rgba(103, 80, 164, 1)",
+                    "borderRadius": 10,
+                    "height": 2,
+                    "width": 0,
+                  }
+                }
+                testID="tab-1-animated"
+              />
+            </View>
+            <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": undefined,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
+              accessible={true}
+              collapsable={false}
+              focusable={true}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                {
+                  "paddingLeft": 20,
+                  "paddingVertical": 20,
+                }
+              }
+              testID="tab-2-pressable"
+            >
+              <Text
+                onLayout={[Function]}
+                style={
+                  [
+                    {
+                      "textAlign": "left",
+                    },
+                    {
+                      "color": "rgba(28, 27, 31, 1)",
+                      "fontFamily": "System",
+                      "fontWeight": "400",
+                      "letterSpacing": 0,
+                    },
+                    {
+                      "writingDirection": "ltr",
+                    },
+                    {
+                      "fontWeight": "400",
+                      "textAlign": "center",
+                    },
+                  ]
+                }
+                testID="tab-2-text"
+              >
+                Tab 2
+              </Text>
+              <View
+                collapsable={false}
+                jestAnimatedStyle={
+                  {
+                    "value": {
+                      "backgroundColor": "rgba(103, 80, 164, 1)",
+                      "borderRadius": 10,
+                      "height": 2,
+                      "width": 0,
+                    },
+                  }
+                }
+                style={
+                  {
+                    "backgroundColor": "rgba(103, 80, 164, 1)",
+                    "borderRadius": 10,
+                    "height": 2,
+                    "width": 0,
+                  }
+                }
+                testID="tab-2-animated"
+              />
+            </View>
+          </View>
+        </View>
+      </RCTScrollView>
+    </View>
+  </View>
+  <LEGACY_RNCViewPager
+    collapsable={false}
+    initialPage={0}
+    keyboardDismissMode="on-drag"
+    layout={
+      {
+        "height": 0,
+        "width": 0,
+      }
+    }
+    layoutDirection="ltr"
+    onMoveShouldSetResponderCapture={[Function]}
+    onPageScroll={[Function]}
+    onPageScrollStateChanged={[Function]}
+    onPageSelected={[Function]}
+    scrollEnabled={true}
+    style={
+      {
+        "flex": 1,
+      }
+    }
+    useLegacy={true}
+  >
+    <View
+      collapsable={false}
+      style={
+        {
+          "bottom": 0,
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+        }
+      }
+    >
+      <View
+        accessibilityElementsHidden={false}
+        importantForAccessibility="auto"
+        style={
+          [
+            {
+              "flex": 1,
+              "overflow": "hidden",
+            },
+            {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            },
+            [
+              undefined,
+              {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              },
+            ],
+          ]
+        }
+      >
+        <Text>
+          Tab 1 Content
+        </Text>
+      </View>
+    </View>
+    <View
+      collapsable={false}
+      style={
+        {
+          "bottom": 0,
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+        }
+      }
+    >
+      <View
+        accessibilityElementsHidden={true}
+        importantForAccessibility="no-hide-descendants"
+        style={
+          [
+            {
+              "flex": 1,
+              "overflow": "hidden",
+            },
+            null,
+            [
+              undefined,
+              {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              },
+            ],
+          ]
+        }
+      />
+    </View>
+  </LEGACY_RNCViewPager>
+</View>
+`;

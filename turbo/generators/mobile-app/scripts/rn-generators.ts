@@ -21,6 +21,11 @@ export const generateRN = (answers: Parameters<PlopTypes.DynamicActionsFunction>
     },
     {
       type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/firebase.json`,
+      templateFile: 'mobile-app/templates/firebase-json.hbs'
+    },
+    {
+      type: 'add',
       path: `{{ turbo.paths.root }}/apps/${appName}/babel.config.cjs`,
       templateFile: 'mobile-app/templates/babel-config.hbs'
     },
@@ -99,6 +104,36 @@ export const generateRN = (answers: Parameters<PlopTypes.DynamicActionsFunction>
       type: 'add',
       path: `{{ turbo.paths.root }}/apps/${appName}/__tests__/__mocks__/react-native-config.ts`,
       templateFile: 'mobile-app/templates/__tests__/__mocks__/react-native-config.hbs'
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/.detoxrc.cjs`,
+      templateFile: 'mobile-app/templates/detoxrc.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/detox.config.ts`,
+      templateFile: 'mobile-app/templates/detox.config.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/e2e/tsconfig.json`,
+      templateFile: 'mobile-app/templates/e2e/tsconfig-json.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/e2e/testUtils/setupTests.ts`,
+      templateFile: 'mobile-app/templates/e2e/testUtils/setupTests.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/e2e/start-up/starter.e2e.ts`,
+      templateFile: 'mobile-app/templates/e2e/start-up/starter.e2e.hbs',
+      data: templateProps
     }
   ]
 }

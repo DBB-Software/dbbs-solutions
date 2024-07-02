@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "include": [
     "./src/**/*",
-    "./**/*.json"
+    "./**/*.json",
+    ".ondevice/*.ts"
   ],
   "exclude": [
     "./__tests__/**/*.ts",

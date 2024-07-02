@@ -6,14 +6,32 @@
   "scripts": {
     "android:prod": "ENVFILE=.env.prod && npx react-native run-android --mode=ProdDebug",
     "android:dev": "ENVFILE=.env.dev && npx react-native run-android --mode=DevDebug",
+    "build:ios-dev": "detox build --configuration ios.sim.dev",
+    "build:ios-prod": "detox build --configuration ios.sim.prod",
+    "build:android-dev": "detox build --configuration android.emu.dev",
+    "build:android-prod": "detox build --configuration android.emu.prod",
+    "build:android-ci": "detox build --configuration android.emu.ci",
+    "test:ios-dev": "detox test --configuration ios.sim.dev",
+    "test:ios-prod": "detox test --configuration ios.sim.prod",
+    "test:android-dev": "detox test --configuration android.emu.dev",
+    "test:android-prod": "detox test --configuration android.emu.prod",
+    "test:android-ci": "detox test --configuration android.emu.ci --headless --record-logs all",
+    "e2e:ios": "yarn build:ios-prod && yarn test:ios-prod",
+    "e2e:android": "yarn build:android-prod && yarn test:android-prod",
+    "e2e:android-ci": "yarn build:android-ci && yarn test:android-ci",
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
-    "ios": "npx react-native run-ios --scheme='MobileApp' --simulator='iPhone 15 Pro'",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
     "start": "npx react-native start",
-    "test": "npx jest --coverage --verbose"
+    "test": "npx jest --coverage --verbose",
+    "e2e": "yarn e2e:ios && yarn e2e:android",
+    "e2e:ci": "yarn e2e:android-ci"
   },
   "dependencies": {
     "@dbbs/mobile-components": "*",
+    "@dbbs/mobile-features": "*",
+    "@react-native-firebase/app": "20.0.0",
+    "@react-native-firebase/messaging": "20.0.0",
+    "@react-native-firebase/remote-config": "20.0.0",
     "@react-native/metro-config": "0.74.83",
     "@react-navigation/bottom-tabs": "6.5.20",
     "@react-navigation/native": "6.1.17",
@@ -22,16 +40,20 @@
     "react-native-config": "1.5.1",
     "react-native-gesture-handler": "2.16.2",
     "react-native-monorepo-tools": "1.2.1",
+    "react-native-pager-view": "6.3.1",
     "react-native-paper": "5.12.3",
     "react-native-reanimated": "3.11.0",
     "react-native-safe-area-context": "4.10.1",
     "react-native-screens": "3.31.1",
-    "react-native-svg": "15.2.0",
+    "react-native-svg": "15.3.0",
+    "react-native-tab-view": "3.5.2",
     "react-native-vector-icons": "10.1.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "detox": "20.22.2",
+    "jest": "29.7.0"
   }
 }

@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "plans",
+  "info": {
+    "singularName": "plan",
+    "pluralName": "plans",
+    "displayName": "plan"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": ""
+  },
+  "attributes": {
+    "price": {
+      "type": "integer"
+    },
+    "stripe_id": {
+      "type": "string"
+    },
+    "interval": {
+      "type": "enumeration",
+      "enum": [
+        "month",
+        "year"
+      ]
+    },
+    "product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::stripe-payment.product",
+      "inversedBy": "plans"
+    }
+  }
+}

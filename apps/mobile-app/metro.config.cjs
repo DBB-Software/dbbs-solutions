@@ -1,15 +1,28 @@
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config')
-const exclusionList = require('metro-config/src/defaults/exclusionList')
 const { getMetroTools, getMetroAndroidAssetsResolutionFix } = require('react-native-monorepo-tools')
+const { generate } = require('@storybook/react-native/scripts/generate');
+const exclusionList = require('metro-config/src/defaults/exclusionList')
+const path = require('path')
+
+generate({
+  configPath: path.resolve(__dirname, './.ondevice'),
+});
 
 const monorepoMetroTools = getMetroTools()
 
 const androidAssetsResolutionFix = getMetroAndroidAssetsResolutionFix()
 
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
 const config = {
   transformer: {
     // Apply the Android assets resolution fix to the public path...
     publicPath: androidAssetsResolutionFix.publicPath,
+    unstable_allowRequireContext: true,
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
@@ -29,7 +42,25 @@ const config = {
   resolver: {
     // Ensure we resolve nohoist libraries from this directory.
     blockList: exclusionList(monorepoMetroTools.blockList),
-    extraNodeModules: monorepoMetroTools.extraNodeModules
+    extraNodeModules: monorepoMetroTools.extraNodeModules,
+    resolveRequest: (context, moduleName, platform) => {
+      const defaultResolveResult = context.resolveRequest(
+        context,
+        moduleName,
+        platform
+      );
+
+      if (
+        process.env.STORYBOOK_ENABLED !== 'true' &&
+        defaultResolveResult?.filePath?.includes?.('.ondevice/')
+      ) {
+        return {
+          type: 'empty',
+        };
+      }
+
+      return defaultResolveResult;
+    },
   }
 }
 

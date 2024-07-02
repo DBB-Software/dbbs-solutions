@@ -43,12 +43,36 @@ export const generateAndroid = (answers: Parameters<PlopTypes.DynamicActionsFunc
       path: `{{ turbo.paths.root }}/apps/${appName}/android/app/src/main/java/com/${appName.toLowerCase()}/MainApplication.kt`,
       pattern: /import com.oblador.vectoricons.VectorIconsPackage/,
       separator: '\n',
-      template: 'import com.lugg.RNCConfig.RNCConfigPackage;'
+      template: 'import com.lugg.RNCConfig.RNCConfigPackage'
     },
     {
       type: 'add',
       path: `{{ turbo.paths.root }}/apps/${appName}/android/app/build.gradle`,
       templateFile: 'mobile-app/templates/android/build-gradle.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/android/app/src/main/AndroidManifest.xml`,
+      templateFile: 'mobile-app/templates/android/AndroidManifest.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/android/app/src/androidTest/java/com/${appName.toLowerCase()}/DetoxTest.kt`,
+      templateFile: 'mobile-app/templates/android/DetoxTest.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/android/app/src/main/res/xml/network_security_config.xml`,
+      templateFile: 'mobile-app/templates/android/network_security_config.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/android/build.gradle`,
+      templateFile: 'mobile-app/templates/android/root-build-gradle.hbs',
       data: templateProps
     }
   ]

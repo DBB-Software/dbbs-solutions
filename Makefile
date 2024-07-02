@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Main target for setting up dependencies
-setup-dependencies: check-brew asdf-install install-deps
+setup-dependencies: check-brew asdf-install install-deps install-docker
 
 # Check if Homebrew is installed and prompt to install if not
 check-brew:
@@ -51,7 +51,7 @@ check-yarn:
 		corepack enable; \
 		corepack prepare yarn@$$yarn_version --activate; \
 		echo "Yarn version $$yarn_version has been installed. Please reopen your terminal and check the yarn version with 'yarn -v'."; \
-		exit 0; \
+		exit 1; \
 	}
 	@{ \
 		yarn_version=$$(grep '"packageManager": "yarn@' package.json | sed 's/.*yarn@\(.*\)".*/\1/'); \
@@ -61,7 +61,7 @@ check-yarn:
 			corepack prepare yarn@$$yarn_version --activate; \
 			yarn set version $$yarn_version; \
 			echo "Yarn has been updated to version $$yarn_version. Please reopen your terminal and check the yarn version with 'yarn -v'."; \
-			exit 0; \
+			exit 1; \
 		fi; \
 	}
 
@@ -90,7 +90,7 @@ install-sst-cli: check-brew
 	@command sst version >/dev/null 2>&1 && echo "SST CLI installed successfully" || ( \
 		echo "SST CLI installation failed. Please check the Homebrew installation or try installing it manually."; \
 		exit 1; \
-	)	
+	)
 
 # Check versions
 check-versions: check-brew check-yarn
@@ -119,6 +119,20 @@ check-versions: check-brew check-yarn
 		aws --version; \
 	) || echo "AWS CLI not installed"
 
+# Setup Docker and Docker Compose
+install-docker: check-brew
+	@command -v docker >/dev/null 2>&1 && echo "Docker is already installed." || { \
+		echo "Docker is not installed. Installing Docker via Homebrew..."; \
+		brew install docker && brew link docker; \
+	}
+
+	@echo "Checking if Docker Compose is installed..."
+	@command -v docker-compose >/dev/null 2>&1 && echo "Docker Compose is already installed." || { \
+		echo "Docker Compose is not installed. Installing Docker Compose via Homebrew..."; \
+		brew install docker-compose; \
+		echo "Docker Compose installed successfully"; \
+	}
+
 install-gems-%:
 	cd apps/$(*F) && bundle install
 
@@ -134,7 +148,7 @@ firebase-distribution-%:
 beta-distribution-%:
 	cd apps/$(*F) && bundle exec fastlane $(P) beta variant:$(V)
 
-localstack-up: local-network-up
+localstack-up: install-docker local-network-up
 	docker compose -f docker-compose/docker-compose.localstack.yml --env-file ./.env --project-name backend-localstack up --build -d
 localstack-down: local-network-down
 	docker compose -f docker-compose/docker-compose.localstack.yml --env-file ./.env --project-name backend-localstack down

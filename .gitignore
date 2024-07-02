@@ -207,3 +207,9 @@ local.properties
 *storybook.log
 
 docker-compose/volume/*
+
+# AWS CDK
+.cdk.staging
+cdk.out
+infra/aws-cdk/**/*.js
+infra/aws-cdk/**/*.d.ts

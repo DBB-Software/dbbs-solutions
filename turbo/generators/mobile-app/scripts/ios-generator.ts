@@ -36,6 +36,18 @@ export const generateIos = (answers: Parameters<PlopTypes.DynamicActionsFunction
       path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Dev.xcscheme`,
       templateFile: 'mobile-app/templates/ios/MobileApp Dev.xcscheme.hbs',
       data: { appName }
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/AppDelegate.mm`,
+      templateFile: 'mobile-app/templates/ios/AppDelegate.hbs',
+      data: { appName }
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/ios/Podfile`,
+      templateFile: 'mobile-app/templates/ios/Podfile.hbs',
+      data: { appName }
     }
   ]
 }
