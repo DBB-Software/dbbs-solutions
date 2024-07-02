@@ -2,7 +2,10 @@
   "extends": "./tsconfig.json",
   "include": [
     "./src/**/*",
-    "./**/*.json"
+    "./**/*.json"{{#if storybook}},{{/if}}
+    {{#if storybook}}
+    ".ondevice/*.ts"
+    {{/if}}
   ],
   "exclude": [
     "./__tests__/**/*.ts",

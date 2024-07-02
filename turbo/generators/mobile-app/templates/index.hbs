@@ -1,5 +1,9 @@
 import { AppRegistry } from 'react-native'
+{{#if storybook}}
+import App from './AppEntryPoint'
+{{else}}
 import { App } from './src/app'
+{{/if}}
 import { name as appName } from './app.json'
 
 AppRegistry.registerComponent(appName, () => App)

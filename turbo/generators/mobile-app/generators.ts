@@ -67,6 +67,11 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
           return true
         }
+      },
+      {
+        type: 'confirm',
+        name: 'storybook',
+        message: 'Select whether you want to setup storybook in the project'
       }
     ],
     actions: (answers) => [
