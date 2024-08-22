@@ -1,15 +1,21 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+      "types": ["node"]
+  },
   "include": [
-    "./src/**/*",
-    "./**/*.json"{{#if storybook}},{{/if}}
-    {{#if storybook}}
-    ".ondevice/*.ts"
-    {{/if}}
-  ],
-  "exclude": [
-    "./__tests__/**/*.ts",
-    "./__tests__/**/*.tsx",
-    "./jest.config.ts"
-  ]
+      "src",
+      ".ondevice/**/*"
+    ],
+    "exclude": [
+      "dist/",
+      "jest.config.ts",
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/*.test.tsx",
+      "**/*.spec.tsx",
+      "./src/stories/*.ts",
+      "./src/stories/*.tsx",
+      "./src/testUtils/**/*"
+    ]
 }

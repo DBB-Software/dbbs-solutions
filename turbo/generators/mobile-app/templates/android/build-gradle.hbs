@@ -1,11 +1,22 @@
+import java.nio.file.Paths
+
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
+apply from: 'signing.gradle'
+apply from: 'sentry.gradle'
+
+def configureDebugSigningConfig = { config ->
+    config.storeFile file('debug.keystore')
+    config.storePassword 'android'
+    config.keyAlias 'androiddebugkey'
+    config.keyPassword 'android'
+}
 
 project.ext.envConfigFiles = [
-    prod: ".env.prod",
-    dev: ".env.dev"
+    prod: ".env.production",
+    dev: ".env.development"
 ]
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
@@ -78,21 +89,25 @@ android {
         }
         dev {
             resValue "string", "app_name", "{{ appName }}"
-            applicationIdSuffix ".dev"
         }
     }
     signingConfigs {
-        release {
-            storeFile file(System.getenv("UPLOAD_STORE_FILE"))
-            keyAlias System.getenv("UPLOAD_KEY_ALIAS")
-            storePassword System.getenv("UPLOAD_STORE_PASSWORD")
-            keyPassword System.getenv("UPLOAD_KEY_PASSWORD")
-        }
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            configureDebugSigningConfig(delegate)
+        }
+        release {
+            if (keystoreFile?.exists()) {
+                storeFile keystoreFile
+                storePassword credentials.android.keystore.keystorePassword
+                keyAlias credentials.android.keystore.keyAlias
+                if (credentials.android.keystore.containsKey("keyPassword")) {
+                    keyPassword credentials.android.keystore.keyPassword
+                } else {
+                    keyPassword credentials.android.keystore.keystorePassword
+                }
+            } else {
+                configureDebugSigningConfig(delegate)
+            }
         }
     }
     buildTypes {
@@ -100,9 +115,14 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.release
+            if (keystoreFile?.exists()) {
+                println "Selected release build type!"
+                signingConfig signingConfigs.release
+            } else {
+                println "Selected debug build type!"
+                signingConfig signingConfigs.debug
+            }
+
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             proguardFile "${rootProject.projectDir}/../../../node_modules/detox/android/detox/proguard-rules-app.pro"
@@ -124,9 +144,15 @@ dependencies {
         implementation jscFlavor
     }
 }
+
 project.ext.vectoricons = [
   iconFontsDir: "../../../../node_modules/react-native-vector-icons/Fonts",
 ]
 
+project.ext.sentryCli = [
+    logLevel: "debug"
+]
+
 apply from: file("../../../../node_modules/react-native-vector-icons/fonts.gradle")
 apply from: file("../../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: "../../../../node_modules/@sentry/react-native/sentry.gradle"

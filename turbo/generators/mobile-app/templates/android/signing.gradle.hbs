@@ -1,0 +1,26 @@
+import java.nio.file.Paths
+
+def credentialsJson = rootProject.file("../credentials.json")
+def credentials
+if (credentialsJson.exists()) {
+    credentials = new groovy.json.JsonSlurper().parse(credentialsJson)
+} else {
+    println "Credentials file not found: ${credentialsJson}"
+}
+
+def keystorePath
+def storeFilePath
+def keystoreFile
+
+if (credentials != null) {
+    keystorePath = Paths.get(credentials.android.keystore.keystorePath)
+    storeFilePath = keystorePath.isAbsolute() 
+        ? keystorePath 
+        : rootProject.file("..").toPath().resolve(keystorePath)
+    keystoreFile = storeFilePath.toFile()
+    println "keystoreFile - ${keystoreFile}"
+}
+
+// Expose the variables to be used in build.gradle
+ext.credentials = credentials
+ext.keystoreFile = keystoreFile

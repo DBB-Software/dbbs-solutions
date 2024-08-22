@@ -1,6 +1,12 @@
+{{#if isExpo}}
+import Constants from 'expo-constants'
+{{/if}}
 import { App } from './src/app'
 import onDevice from './.ondevice'
-
+{{#if isExpo}}
+const AppEntryPoint = Constants.expoConfig?.extra?.storybookEnabled === 'true' ? onDevice : App
+{{else}}
 const AppEntryPoint = process.env.STORYBOOK_ENABLED === 'true' ? onDevice : App
+{{/if}}
 
 export default AppEntryPoint

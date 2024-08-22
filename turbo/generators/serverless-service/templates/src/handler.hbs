@@ -1,7 +1,98 @@
-import { loggerMiddleware } from '@dbbs/common'
 import middy from '@middy/core'
+{{#ifCond wantLogger '||' wantSettings}}
+import { {{#if @wantLogger}}loggerMiddleware, ICustomContext{{/if}}{{#ifCond @wantLogger 'AND' @wantSettings}}, settingsMiddleware{{/ifCond}}{{#ifCond @wantSettings 'XOR' @wantLogger}}settingsMiddleware{{/ifCond}}{{#if @wantAPI}}, CustomS3Handler{{/if}} } from '@dbbs/common'
+{{else}}{{#if @wantAPI}}import { CustomS3Handler } from '@dbbs/common'{{/if}}
+{{/ifCond}}
+{{#if wantAPI}}
 
-function exampleFunction() {}
+const LOCAL_STAGE = 'local'
 
-export const getSettingsHandler = middy(exampleFunction)
-getSettingsHandler.use(loggerMiddleware())
+{{/if}}
+interface IEvent {
+  [name: string]: string
+  // @ts-ignore
+  Records?: {
+    [name: string]: string
+  }[]
+}
+
+function serviceFunction(event: IEvent{{#if wantLogger}}, context: ICustomContext{{/if}}) {
+{{#if wantLogger}}
+  const { logger } = context
+{{/if}}
+  if (!event?.Records?.length) {
+    return 'Records not defined'
+  }
+  // eslint-disable-next-line no-restricted-syntax
+  for (const { messageId, body } of event.Records) {
+  {{#if wantLogger}}
+    logger.info(`SQS message ${messageId}: ${body}`)
+  {{else}}
+    console.log('SQS message %s: %j', messageId, body)
+  {{/if}}
+  }
+  return `Successfully processed ${event.Records.length} messages.`
+}
+
+{{#if wantAPI}}
+async function getS3File(event: IEvent{{#if wantLogger}}, context: ICustomContext{{/if}}) {
+  {{#if wantLogger}}
+  const { logger } = context
+  {{/if}}
+  const { REGION, STAGE, STORAGE_BUCKET } = process.env
+  if (!REGION) {
+    throw new Error('No REGION variable provided')
+  }
+  if (!STAGE) {
+    throw new Error('No STAGE variable provided')
+  }
+  {{#if wantLogger}}
+  logger.info(`Received event: ${JSON.stringify(event, null, 2)}`)
+  {{else}}
+  console.log('Received event:', JSON.stringify(event, null, 2))
+  {{/if}}
+  const s3Handler = new CustomS3Handler(REGION, STAGE === LOCAL_STAGE)
+  // Get the object from the event and show its content type
+  const bucket = STORAGE_BUCKET || event.bucketName
+  const key = decodeURIComponent(event.fileKey?.replace(/\+/g, ' '))
+  const params = {
+    bucket,
+    key
+  }
+  try {
+    {{#if wantLogger}}
+    logger.info(`Start getting settings from s3: ${bucket} / ${key}`)
+    {{else}}
+    console.log(`Start getting settings from s3: ${bucket} / ${key}`)
+    {{/if}}
+    const s3File = await s3Handler.getObject(params)
+    return s3File
+  } catch (err) {
+    {{#if wantLogger}}
+    logger.error(err)
+    {{else}}
+    console.log(err)
+    {{/if}}
+    const message = `Error getting object ${key} from bucket ${bucket}. Make sure they exist and your bucket is in the same region as this function.`
+    throw new Error(message)
+  }
+}
+{{/if}}
+export const getServiceHandler = middy(serviceFunction)
+{{#if wantAPI}}export const getApiRequest = middy(getS3File){{/if}}{{#if wantLogger}}
+getServiceHandler.use(loggerMiddleware()){{#if wantAPI}}
+getApiRequest.use(loggerMiddleware()){{/if}}{{/if}}{{#if wantSettings}}
+getServiceHandler.use(
+  settingsMiddleware({
+    region: process.env.REGION ?? '',
+    endpoint: process.env.SETTINGS_SERVICE_ENDPOINT ?? '',
+    serviceName: process.env.SETTINGS_SERVICE_NAME ?? ''
+  })
+){{#if wantAPI}}
+getApiRequest.use(
+  settingsMiddleware({
+    region: process.env.REGION ?? '',
+    endpoint: process.env.SETTINGS_SERVICE_ENDPOINT ?? '',
+    serviceName: process.env.SETTINGS_SERVICE_NAME ?? ''
+  })
+){{/if}}{{/if}}

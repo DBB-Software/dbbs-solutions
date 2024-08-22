@@ -2,15 +2,50 @@
   "name": "{{ appName }}",
   "version": "0.0.1",
   "private": true,
+  {{#if isReactNative}}
   "type": "module",
+  {{/if}}
+  {{#if isExpo}}
+  "main": "index.js",
+  {{/if}}
   "scripts": {
-    "start": "npx react-native start",
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
-    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
     "test": "npx jest --coverage --verbose",
-    "android:prod": "ENVFILE=.env.prod && npx react-native run-android --mode=ProdDebug",
-    "android:dev": "ENVFILE=.env.dev && npx react-native run-android --mode=DevDebug",
-    "ios:dev": "npx react-native run-ios --scheme='{{ appName }}' --simulator='iPhone 15 Pro'",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "build": "echo \"Build must be defined by a platform variant, this command is required to start building application-related packages\" && exit 0",
+    {{#if isReactNative}}
+    "start": "npx react-native start",
+    "start:clean": "yarn watchman-refresh && npx react-native start --reset-cache",
+    {{else}}
+    "start": "NODE_ENV=development expo start",
+    "start:prod": "NODE_ENV=production expo start",
+    "start:clean": "yarn watchman-refresh && NODE_ENV=development yarn start --clear",
+    {{/if}}
+    "watchman-refresh": "watchman watch-del-all && watchman watch-project .",
+    {{#if isExpo}}
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    {{/if}}
+    {{#if isReactNative}}
+    "android:dev": "NODE_ENV=production yarn prebuild npx react-native run-android --mode=DevDebug",
+    "android:prod": "NODE_ENV=development yarn prebuild npx react-native run-android --mode=ProdDebug",
+    "ios:dev": "NODE_ENV=development yarn prebuild npx react-native run-ios --scheme='{{ appName }} Dev' --simulator='iPhone 15 Pro'",
+    "ios:prod": "NODE_ENV=production yarn prebuild npx react-native run-ios --scheme='{{ appName }} Prod' --simulator='iPhone 15 Pro'",
+    "prebuild": "chmod +x scripts/*.sh && ./scripts/prebuild.sh",
+    {{else}}
+    "android:dev": "chmod +x eas_hooks/*.sh && NODE_ENV=development ./eas_hooks/eas-run-with-env.sh eas build --profile dev --platform android --local",
+    "android:prod": "chmod +x eas_hooks/*.sh && NODE_ENV=production ./eas_hooks/eas-run-with-env.sh eas build --profile prod --platform android --local",
+    "android:dev-ci": "NODE_ENV=development eas build --profile dev --platform android",
+    "android:prod-ci": "NODE_ENV=production eas build --profile prod --platform android",
+    "ios:dev": "chmod +x eas_hooks/*.sh && NODE_ENV=development ./eas_hooks/eas-run-with-env.sh eas build --profile dev --platform ios --local",
+    "ios:prod": "chmod +x eas_hooks/*.sh && NODE_ENV=production ./eas_hooks/eas-run-with-env.sh eas build --profile prod --platform ios --local",
+    "ios:dev-ci": "NODE_ENV=development eas build --profile dev --platform ios",
+    "ios:prod-ci": "NODE_ENV=production eas build --profile prod --platform ios",
+    "web": "expo start --web",
+    "prebuild": "npx expo prebuild --no-install && chmod +x prebuild-cleanup.sh && ./prebuild-cleanup.sh",
+    "eas-build-pre-install": "chmod +x eas_hooks/*.sh && ./eas_hooks/eas-build-pre-install.sh",
+    "eas-build-post-install": "./eas_hooks/eas-build-post-install.sh",
+    {{/if}}
     "build:ios-dev": "detox build --configuration ios.sim.dev",
     "build:ios-prod": "detox build --configuration ios.sim.prod",
     "build:android-dev": "detox build --configuration android.emu.dev",
@@ -38,27 +73,37 @@
   "dependencies": {
     "@dbbs/mobile-components": "*",
     "@dbbs/mobile-features": "*",
+    "@react-native-async-storage/async-storage": "1.24.0",
     {{#if storybook}}
-    "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-community/datetimepicker": "8.0.1",
+    "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-community/slider": "4.5.2",
     {{/if}}
     "@react-native-firebase/app": "20.0.0",
     "@react-native-firebase/messaging": "20.0.0",
     "@react-native-firebase/remote-config": "20.0.0",
-    "@react-native/metro-config": "0.74.83",
-    "@react-navigation/bottom-tabs": "6.5.20",
-    "@react-navigation/native": "6.1.17",
-    "@react-navigation/stack": "6.3.29",
-    "react-native": "0.74.1",
+    "@react-navigation/bottom-tabs": "6.6.1",
+    "@react-navigation/native": "6.1.18",
+    "@react-navigation/stack": "6.4.1",
+    "@sentry/react-native": "5.26.0",
+    {{#if isExpo}}
+    "expo": "51.0.26",
+    "expo-build-properties": "0.12.5",
+    "expo-constants": "16.0.2",
+    "expo-dev-client": "4.0.22",
+    "expo-status-bar": "1.12.1",
+    "expo-updates": "0.25.22",
+    {{/if}}
+    "react-native": "0.74.5",
+    {{#if isReactNative}}
     "react-native-bootsplash": "5.5.3",
     "react-native-config": "1.5.1",
-    "react-native-gesture-handler": "2.16.2",
     "react-native-monorepo-tools": "1.2.1",
-    "react-native-pager-view": "6.3.1",
-    "react-native-paper": "5.12.3",
+    {{/if}}
+    "react-native-gesture-handler": "2.16.2",
+    "react-native-pager-view": "6.3.3",
+    "react-native-paper": "5.12.5",
     "react-native-reanimated": "3.11.0",
-    "react-native-safe-area-context": "4.10.1",
+    "react-native-safe-area-context": "4.10.8",
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.3.0",
     "react-native-tab-view": "3.5.2",
@@ -68,34 +113,50 @@
     {{/if}}
   },
   "devDependencies": {
+    {{#if isReactNative}}
     {{#if storybook}}
     "@babel/preset-react": "7.24.7",
+    {{/if}}
+    {{/if}}
+    {{#if isExpo}}
+    "@config-plugins/detox": "8.0.0",
     {{/if}}
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
+    {{#if isExpo}}
+    "@expo/metro-runtime": "3.2.1",
+    {{/if}}
     {{#if storybook}}
-    "@storybook/addon-actions": "8.1.7",
-    "@storybook/addon-controls": "8.1.7",
-    "@storybook/addon-essentials": "8.1.7",
-    "@storybook/addon-links": "8.1.7",
-    "@storybook/addon-ondevice-actions": "7.6.19",
-    "@storybook/addon-ondevice-backgrounds": "7.6.19",
-    "@storybook/addon-ondevice-controls": "7.6.19",
-    "@storybook/addon-ondevice-notes": "7.6.19",
+    "@storybook/addon-actions": "8.2.9",
+    "@storybook/addon-controls": "8.2.9",
+    "@storybook/addon-essentials": "8.2.9",
+    "@storybook/addon-links": "8.2.9",
+    "@storybook/addon-ondevice-actions": "7.6.20",
+    "@storybook/addon-ondevice-backgrounds": "7.6.20",
+    "@storybook/addon-ondevice-controls": "7.6.20",
+    "@storybook/addon-ondevice-notes": "7.6.20",
     "@storybook/addon-react-native-web": "0.0.24",
-    "@storybook/react": "8.1.7",
-    "@storybook/react-native": "7.6.19",
-    "@storybook/react-webpack5": "8.1.7",
+    "@storybook/react": "8.2.9",
+    "@storybook/react-native": "7.6.20",
+    "@storybook/react-webpack5": "8.2.9",
     "babel-loader": "9.1.3",
     "babel-plugin-react-docgen-typescript": "1.5.1",
     "babel-plugin-react-native-web": "0.19.12",
+    {{/if}}
+    {{#if isReactNative}}
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
     {{/if}}
-    "detox": "20.22.2",
+    {{#if isExpo}}
+    "babel-preset-expo": "11.0.12",
+    {{/if}}
+    "detox": "20.25.2",
+    {{#if isExpo}}
+    "jest-expo": "51.0.3",
+    {{/if}}
     "jest": "29.7.0"{{#if storybook}},{{/if}}
     {{#if storybook}}
-    "storybook": "8.1.7"
+    "storybook": "8.2.9"
     {{/if}}
   }
 }

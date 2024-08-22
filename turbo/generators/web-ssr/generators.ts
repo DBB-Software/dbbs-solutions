@@ -5,9 +5,29 @@ enum StylingFrameworks {
   TAILWIND = 'tailwind'
 }
 
+enum StoreFrameworks {
+  ReduxToolkit = 'redux-toolkit',
+  Jotai = 'jotai',
+  none = 'none'
+}
+enum TypeRouter {
+  pageRouter = 'page-router',
+  appRouter = 'app-router'
+}
+
 const generateApp = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): PlopTypes.ActionType[] => {
   const appName = answers?.name
-  const templateProps = { appName, cssFramework: answers?.cssFramework }
+  const usePageRouter = answers?.typeRouter === TypeRouter.pageRouter
+  const templateProps = {
+    appName,
+    cssFramework: answers?.cssFramework,
+    isReduxToolkit: answers?.storeFramework === StoreFrameworks.ReduxToolkit,
+    isJotaiStore: answers?.storeFramework === StoreFrameworks.Jotai,
+    useServerless: !!answers?.useServerless,
+    typeRouter: answers?.typeRouter,
+    usePageRouter,
+    useMui: answers?.cssFramework === StylingFrameworks.MUI
+  }
 
   const actions: PlopTypes.ActionType[] = [
     {
@@ -60,24 +80,6 @@ const generateApp = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): 
     },
     {
       type: 'add',
-      path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app/layout.tsx',
-      templateFile: 'web-ssr/templates/src/app/layout.hbs',
-      data: templateProps
-    },
-    {
-      type: 'add',
-      path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app/page.tsx',
-      templateFile: 'web-ssr/templates/src/app/page.hbs',
-      data: templateProps
-    },
-    {
-      type: 'add',
-      path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app/global.css',
-      templateFile: 'web-ssr/templates/src/app/global-css.hbs',
-      data: templateProps
-    },
-    {
-      type: 'add',
       path: '{{ turbo.paths.root }}/apps/{{ name }}/cypress/tsconfig.json',
       templateFile: 'web-ssr/templates/cypress/tsconfig.hbs',
       data: templateProps
@@ -99,37 +101,88 @@ const generateApp = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): 
       path: '{{ turbo.paths.root }}/apps/{{ name }}/__tests__/testUtils/setupTests.ts',
       templateFile: 'web-ssr/templates/__tests__/testUtils/setupTests.hbs',
       data: templateProps
+    },
+    {
+      type: 'add',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/package.json',
+      templateFile: 'web-ssr/templates/package-json.hbs',
+      data: templateProps
     }
   ]
 
-  if (answers?.useSST) {
+  if (answers?.typeRouter === TypeRouter.appRouter) {
     actions.push(
       ...([
         {
           type: 'add',
-          path: '{{ turbo.paths.root }}/apps/{{ name }}/sst.config.ts',
-          templateFile: 'web-ssr/templates/sst/config.hbs',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app/layout.tsx',
+          templateFile: 'web-ssr/templates/src/app/layout.hbs',
           data: templateProps
         },
         {
           type: 'add',
-          path: '{{ turbo.paths.root }}/apps/{{ name }}/sst-env.d.ts',
-          templateFile: 'web-ssr/templates/sst/sst-types.hbs',
-          data: templateProps
-        },
-        {
-          type: 'add',
-          path: '{{ turbo.paths.root }}/apps/{{ name }}/package.json',
-          templateFile: 'web-ssr/templates/sst/package-json.hbs',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app/page.tsx',
+          templateFile: 'web-ssr/templates/src/app/page.hbs',
           data: templateProps
         }
       ] satisfies PlopTypes.ActionType[])
     )
-  } else {
+  }
+  if (answers?.typeRouter === TypeRouter.pageRouter) {
+    actions.push(
+      ...([
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/pages/_app.tsx',
+          templateFile: 'web-ssr/templates/src/pages/_app.hbs',
+          data: templateProps
+        },
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/pages/index.tsx',
+          templateFile: 'web-ssr/templates/src/pages/index.hbs',
+          data: templateProps
+        },
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/pages/_document.tsx',
+          templateFile: 'web-ssr/templates/src/pages/_document.hbs',
+          data: templateProps
+        }
+      ] satisfies PlopTypes.ActionType[])
+    )
+  }
+
+  if (templateProps.isReduxToolkit) {
+    const baseActions = [
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/lib/store.ts',
+        templateFile: 'web-ssr/templates/lib/store-rtk.hbs',
+        data: templateProps
+      },
+      {
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/lib/hooks.ts',
+        templateFile: 'web-ssr/templates/lib/hooks.hbs',
+        data: templateProps
+      }
+    ]
+    if (answers?.typeRouter === TypeRouter.appRouter) {
+      baseActions.push({
+        type: 'add',
+        path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app/StoreProvider.tsx',
+        templateFile: 'web-ssr/templates/src/app/StoreProvider.hbs',
+        data: templateProps
+      })
+    }
+    actions.push(...(baseActions satisfies PlopTypes.ActionType[]))
+  }
+  if (answers?.useServerless) {
     actions.push({
       type: 'add',
-      path: '{{ turbo.paths.root }}/apps/{{ name }}/package.json',
-      templateFile: 'web-ssr/templates/package-json.hbs',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/next-serverless.config.js',
+      templateFile: 'web-ssr/templates/serverlessDeployment/serverless-deployment-config.hbs',
       data: templateProps
     })
   }
@@ -146,6 +199,15 @@ const generateApp = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): 
           type: 'add',
           path: '{{ turbo.paths.root }}/apps/{{ name }}/postcss.config.js',
           templateFile: 'web-ssr/templates/postcss-config.hbs'
+        },
+        {
+          type: 'add',
+          path:
+            answers?.typeRouter === TypeRouter.appRouter
+              ? '{{ turbo.paths.root }}/apps/{{ name }}/src/app/global.css'
+              : '{{ turbo.paths.root }}/apps/{{ name }}/src/styles/global.css',
+          templateFile: 'web-ssr/templates/src/app/global-css.hbs',
+          data: templateProps
         }
       ] satisfies PlopTypes.ActionType[])
     )
@@ -154,7 +216,10 @@ const generateApp = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): 
   if (answers?.cssFramework === StylingFrameworks.MUI) {
     actions.push({
       type: 'add',
-      path: '{{ turbo.paths.root }}/apps/{{ name }}/src/app/ThemeRegistry.tsx',
+      path:
+        answers?.typeRouter === TypeRouter.appRouter
+          ? '{{ turbo.paths.root }}/apps/{{ name }}/src/app/ThemeRegistry.tsx'
+          : '{{ turbo.paths.root }}/apps/{{ name }}/src/ThemeRegistry.tsx',
       templateFile: 'web-ssr/templates/src/app/ThemeRegistry.hbs',
       transform(template) {
         return template.replace('STYLE_PLACEHOLDER', 'dangerouslySetInnerHTML={{\n\t\t\t\t\t__html: styles\n\t\t\t\t}}')
@@ -176,14 +241,26 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       },
       {
         type: 'list',
+        name: 'typeRouter',
+        message: 'Choose the router type',
+        choices: [TypeRouter.appRouter, TypeRouter.pageRouter]
+      },
+      {
+        type: 'list',
         name: 'cssFramework',
         message: 'Choose the UI library what you want to use',
         choices: [StylingFrameworks.MUI, StylingFrameworks.TAILWIND]
       },
       {
         type: 'confirm',
-        name: 'useSST',
-        message: 'Do you want to use SST for deployments? (y/n)'
+        name: 'useServerless',
+        message: 'Do you want to use @dbbs/next-serverless-deployment for deployments? (y/n)'
+      },
+      {
+        type: 'list',
+        name: 'storeFramework',
+        message: 'Choose the state management library what you want to use',
+        choices: [StoreFrameworks.ReduxToolkit, StoreFrameworks.Jotai, StoreFrameworks.none]
       }
     ],
     actions: (answers) => generateApp(answers)

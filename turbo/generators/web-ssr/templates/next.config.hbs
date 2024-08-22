@@ -1,12 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  {{#ifCond cssFramework '===' 'tailwind'}}
-  transpilePackages: ['@dbbs/tailwind-components']
-  {{/ifCond}}
-  {{#ifCond cssFramework '===' 'mui'}}
-  transpilePackages: ['@dbbs/mui-components']
-  {{/ifCond}}
+  transpilePackages: [
+    {{#ifCond cssFramework '===' 'tailwind'}}
+    '@dbbs/tailwind-components',
+    {{/ifCond}}
+    {{#ifCond cssFramework '===' 'mui'}}
+    '@dbbs/mui-components',
+    {{/ifCond}}
+    {{#if isJotaiStore}}
+    '@dbbs/web-jotai-storage'
+    {{/if}}
+    {{#if isReduxToolkit}}
+    '@dbbs/web-redux-storage'
+    {{/if}}
+  ]
 }
 
 module.exports = nextConfig
