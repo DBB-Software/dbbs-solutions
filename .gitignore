@@ -198,9 +198,8 @@ local.properties
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
 
-# SST
-.open-next/
-.sst/
+# @dbbs/next-serverless-deployment
+serverless-next
 
 #YARN
 .yarn
@@ -213,3 +212,29 @@ docker-compose/volume/*
 cdk.out
 infra/aws-cdk/**/*.js
 infra/aws-cdk/**/*.d.ts
+
+# Pycache
+**/__pycache__/
+
+#PnP
+.pnp.cjs
+.pnp.loader.mjs
+
+#SQLite DB
+apps/django-server/*.sqlite3
+
+#Django static
+/apps/django-server/static/
+
+#Django tests
+/apps/django-server/.coverage
+/apps/django-server/coverage.xml
+
+# Android - iOS
+credentials.*
+**/sentry.properties
+
+# Expo
+.expo/
+*.apk
+build-*.tar.gz

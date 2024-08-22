@@ -1,0 +1,22 @@
+name: 'Setup yarn'
+description: 'Setup yarn with specified version from package.json'
+
+inputs:
+  ref:
+    description: Ref for checkout. Use the github.ref
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Extract yarn version from package.json
+      run: |
+        YARN_VERSION=$(grep -oP '"packageManager": "yarn@\K[^"]+' package.json)
+        echo "YARN_VERSION=$YARN_VERSION" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set up Yarn
+      run: |
+        corepack enable
+        yarn set version ${{ env.YARN_VERSION }}
+      shell: bash
