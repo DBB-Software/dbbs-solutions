@@ -1,6 +1,8 @@
 export interface CreateOrganizationParams {
   name: string
   ownerId: string
+  email: string
+  quantity: number
 }
 
 export interface UpdateOrganizationParams {
@@ -13,12 +15,24 @@ export interface GetOrganizationByIdParams {
   id: number
 }
 
+export interface GetMyOrganizationsParams {
+  userId: number
+}
+
+export interface GetPaymentMethodParams {
+  id: number
+}
+
 export interface DeleteOrganizationParams {
   id: number
 }
 
 export interface UpdateOwnerParams {
   ownerId: number
+  id: number
+}
+
+export interface CreateDefaultPaymentMethodUpdateCheckoutSessionParams {
   id: number
 }
 

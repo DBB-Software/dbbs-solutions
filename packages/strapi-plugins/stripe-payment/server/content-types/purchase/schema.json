@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "purchases",
+  "info": {
+    "singularName": "purchase",
+    "pluralName": "purchases",
+    "displayName": "Purchase"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "stripe_id": {
+      "type": "string"
+    },
+    "plan": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::stripe-payment.plan"
+    },
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::stripe-payment.organization",
+      "inversedBy": "purchases"
+    }
+  }
+}

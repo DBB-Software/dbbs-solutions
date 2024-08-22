@@ -2,13 +2,51 @@ import { Strapi } from '@strapi/strapi'
 import { errors } from '@strapi/utils'
 import { createMockPlugins } from './mockPlugins'
 
+interface MockQueries {
+  [key: string]: {
+    findOne: unknown
+    findMany: unknown
+    count: unknown
+    create: unknown
+    update: unknown
+    delete: unknown
+  }
+}
+
 export const createMockStrapi = (overrides?: Partial<Strapi>): Strapi => {
-  const mockQuery = {
-    create: jest.fn(),
-    findOne: jest.fn(),
-    findMany: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn()
+  const mockQueries: MockQueries = {
+    'plugin::stripe-payment.plan': {
+      findOne: jest.fn(),
+      findMany: jest.fn(),
+      count: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn()
+    },
+    'plugin::stripe-payment.organization': {
+      findOne: jest.fn(),
+      findMany: jest.fn(),
+      count: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn()
+    },
+    'plugin::stripe-payment.subscription': {
+      findOne: jest.fn(),
+      findMany: jest.fn(),
+      count: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn()
+    },
+    'plugin::stripe-payment.product': {
+      findOne: jest.fn(),
+      findMany: jest.fn(),
+      count: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn()
+    }
   }
 
   const mockContentType = {
@@ -16,7 +54,7 @@ export const createMockStrapi = (overrides?: Partial<Strapi>): Strapi => {
   }
 
   const defaultStrapi = {
-    query: jest.fn().mockReturnValue(mockQuery),
+    query: (uid: string) => mockQueries[uid] || {},
     contentType: jest.fn().mockReturnValue(mockContentType),
     plugin: jest.fn(),
     plugins: createMockPlugins(),

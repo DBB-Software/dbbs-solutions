@@ -1,31 +1,37 @@
 export default [
   {
+    method: 'GET',
+    path: '/admin/products/:id',
+    handler: 'product.getProductById',
+    config: {}
+  },
+  {
     method: 'POST',
-    path: '/products',
+    path: '/admin/products',
     handler: 'product.create',
     config: {}
   },
   {
     method: 'GET',
-    path: '/products/:id',
+    path: '/admin/products/:id',
     handler: 'product.getProductById',
     config: {}
   },
   {
     method: 'GET',
-    path: '/products',
+    path: '/admin/products',
     handler: 'product.getProducts',
     config: {}
   },
   {
     method: 'PUT',
-    path: '/products/:id',
+    path: '/admin/products/:id',
     handler: 'product.update',
     config: {}
   },
   {
     method: 'DELETE',
-    path: '/products/:id',
+    path: '/admin/products/:id',
     handler: 'product.delete',
     config: {}
   }

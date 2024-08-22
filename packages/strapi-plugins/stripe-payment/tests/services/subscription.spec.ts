@@ -2,7 +2,7 @@ import { Strapi } from '@strapi/strapi'
 import { errors } from '@strapi/utils'
 import subscriptionService from '../../server/services/subscription'
 import { createMockStrapi } from '../factories'
-import { SubscriptionStatus } from '../../server/enums'
+import { PlanType, SubscriptionStatus } from '../../server/enums'
 import { canceledSubscription, defaultSubscription, strapiSubscriptionServiceMock, updatedSubscription } from '../mocks'
 
 jest.mock('stripe')
@@ -15,6 +15,9 @@ describe('Subscription Service', () => {
   })
 
   describe('Create Checkout Session', () => {
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
     it.each([
       {
         name: 'should create a checkout session',
@@ -28,8 +31,10 @@ describe('Subscription Service', () => {
         setupMocks: () => {
           jest.spyOn(strapi.query('plugin::stripe-payment.plan'), 'findOne').mockResolvedValue({
             id: 1,
-            stripe_id: 'price_123'
+            stripe_id: 'price_123',
+            type: PlanType.RECURRING
           })
+          jest.spyOn(strapi.query('plugin::stripe-payment.organization'), 'count').mockResolvedValue(0)
           jest.spyOn(strapi.plugin('stripe-payment').service('stripe').checkout.sessions, 'create').mockResolvedValue({
             url: 'https://checkout.session.url'
           })
@@ -53,6 +58,48 @@ describe('Subscription Service', () => {
         ],
         queryMethod: 'findOne',
         queryArgs: { where: { id: 1 } }
+      },
+      {
+        name: 'should create a checkout session',
+        serviceMethodArgs: {
+          userId: 1,
+          planId: 1,
+          quantity: 1,
+          organizationId: 1
+        },
+        expectedResult: 'https://checkout.session.url',
+        setupMocks: () => {
+          jest.spyOn(strapi.query('plugin::stripe-payment.plan'), 'findOne').mockResolvedValue({
+            id: 1,
+            stripe_id: 'price_123',
+            type: PlanType.RECURRING
+          })
+          jest
+            .spyOn(strapi.query('plugin::stripe-payment.organization'), 'findOne')
+            .mockResolvedValue({ name: 'Test Organization', customer_id: 11 })
+          jest.spyOn(strapi.plugin('stripe-payment').service('stripe').checkout.sessions, 'create').mockResolvedValue({
+            url: 'https://checkout.session.url'
+          })
+        },
+        stripeServiceMethod: 'create',
+        customer: 11,
+        stripeServiceArgs: [
+          {
+            success_url: 'https://success.url',
+            customer: 11,
+            metadata: {
+              organizationName: 'Test Organization',
+              userId: 1,
+              planId: 1,
+              quantity: 1
+            },
+            line_items: [{ price: 'price_123', quantity: 1 }],
+            subscription_data: {
+              trial_period_days: 30
+            },
+            mode: 'subscription'
+          }
+        ]
       }
     ])(
       '$name',
@@ -150,7 +197,7 @@ describe('Subscription Service', () => {
             .mockResolvedValue(defaultSubscription)
         },
         queryMethod: 'findOne',
-        queryArgs: { where: { organization: { id: 1 } }, populate: { organization: true, plan: true } }
+        queryArgs: { where: { organization: { id: 1 } }, populate: ['organization', 'plan', 'plan.product'] }
       }
     ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, queryMethod, queryArgs }) => {
       setupMocks()
@@ -206,38 +253,21 @@ describe('Subscription Service', () => {
             .mockResolvedValue(canceledSubscription)
         },
         stripeServiceMethod: 'cancel',
-        stripeServiceArgs: ['sub_123'],
-        queryMethod: 'delete',
-        queryArgs: { where: { id: 1 } }
+        stripeServiceArgs: ['sub_123']
       }
-    ])(
-      '$name',
-      async ({
-        serviceMethodArgs,
-        expectedResult,
-        setupMocks,
-        stripeServiceMethod,
-        stripeServiceArgs,
-        queryMethod,
-        queryArgs
-      }) => {
-        setupMocks()
+    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, stripeServiceMethod, stripeServiceArgs }) => {
+      setupMocks()
 
-        const result = await subscriptionService({ strapi }).cancelSubscription(serviceMethodArgs)
+      const result = await subscriptionService({ strapi }).cancelSubscription(serviceMethodArgs)
 
-        if (stripeServiceMethod && stripeServiceArgs) {
-          expect(strapi.plugin('stripe-payment').service('stripe').subscriptions[stripeServiceMethod]).toBeCalledWith(
-            ...stripeServiceArgs
-          )
-        }
-
-        if (queryMethod && queryArgs) {
-          expect(strapi.query('plugin::stripe-payment.subscription')[queryMethod]).toBeCalledWith(queryArgs)
-        }
-
-        expect(result).toEqual(expectedResult)
+      if (stripeServiceMethod && stripeServiceArgs) {
+        expect(strapi.plugin('stripe-payment').service('stripe').subscriptions[stripeServiceMethod]).toBeCalledWith(
+          ...stripeServiceArgs
+        )
       }
-    )
+
+      expect(result).toEqual(expectedResult)
+    })
 
     it.each([
       {

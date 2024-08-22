@@ -1,17 +1,33 @@
 import { factories, Strapi } from '@strapi/strapi'
 import { errors } from '@strapi/utils'
 import { CreateProductParams, DeleteProductParams, GetProductByIdParams, UpdateProductParams } from '../interfaces'
+import {
+  createProductSchema,
+  getProductByIdSchema,
+  updateProductSchema,
+  deleteProductSchema
+} from '../validationSchemas'
+import { validateWithYupSchema } from '../helpers'
 
-// TODO: add types & validation
 export default factories.createCoreController('plugin::stripe-payment.product', ({ strapi }: { strapi: Strapi }) => ({
   async create(ctx) {
-    const data = ctx.request.body as CreateProductParams
-    const product = await strapi.plugin('stripe-payment').service('product').create(data)
+    const { name } = ctx.request.body as CreateProductParams
+
+    await validateWithYupSchema(createProductSchema, {
+      name
+    })
+
+    const product = await strapi.plugin('stripe-payment').service('product').create({
+      name
+    })
     ctx.send(product)
   },
 
   async getProductById(ctx) {
     const { id } = ctx.params as GetProductByIdParams
+
+    await validateWithYupSchema(getProductByIdSchema, { id })
+
     const product = await strapi.plugin('stripe-payment').service('product').getProductById({ id })
 
     if (!product) {
@@ -30,6 +46,8 @@ export default factories.createCoreController('plugin::stripe-payment.product', 
     const { id } = ctx.params
     const { name } = ctx.request.body as Omit<UpdateProductParams, 'id'>
 
+    await validateWithYupSchema(updateProductSchema, { id, name })
+
     const product = await strapi.plugin('stripe-payment').service('product').update({
       id,
       name
@@ -44,6 +62,9 @@ export default factories.createCoreController('plugin::stripe-payment.product', 
 
   async delete(ctx) {
     const { id } = ctx.params as DeleteProductParams
+
+    await validateWithYupSchema(deleteProductSchema, { id })
+
     const result = await strapi.plugin('stripe-payment').service('product').delete({ id })
 
     if (!result) {

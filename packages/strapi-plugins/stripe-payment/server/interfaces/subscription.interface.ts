@@ -1,8 +1,9 @@
 export interface CreateCheckoutSessionParams {
-  organizationName: string
+  organizationName?: string
   quantity: number
   planId: number
   userId: number
+  organizationId?: number
 }
 
 export interface CancelSubscriptionParams {
@@ -37,4 +38,25 @@ export interface UpdateSubscriptionParams {
 
 export interface ResubscribeParams {
   id: number
+}
+
+export interface CreateSessionParams {
+  success_url: string
+  customer?: string
+  metadata: {
+    organizationName: string
+    quantity: number
+    userId: number
+    planId: number
+  }
+  line_items: [
+    {
+      price: string
+      quantity: number
+    }
+  ]
+  mode?: string
+  subscription_data?: {
+    trial_period_days: number
+  }
 }

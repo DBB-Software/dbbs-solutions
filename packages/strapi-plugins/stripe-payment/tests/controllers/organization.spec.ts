@@ -3,7 +3,15 @@ import { Strapi } from '@strapi/strapi'
 import { errors } from '@strapi/utils'
 import organizationController from '../../server/controllers/organization'
 import { createMockContext, createMockStrapi } from '../factories'
-import { defaultOrganization, updatedOrganization, strapiOrganizationControllerMock } from '../mocks'
+import {
+  defaultOrganization,
+  updatedOrganization,
+  strapiOrganizationControllerMock,
+  defaultPaymentMethod,
+  defaultCheckoutSession,
+  currency,
+  successUrl
+} from '../mocks'
 
 describe('Organization Controller', () => {
   let strapi: Strapi
@@ -16,8 +24,11 @@ describe('Organization Controller', () => {
     it.each([
       {
         name: 'should create an organization',
-        ctxOverrides: { request: { body: { name: 'Test Organization' } }, state: { user: { id: 1 } } },
-        serviceMethodArgs: { name: 'Test Organization', ownerId: 1 },
+        ctxOverrides: {
+          request: { body: { name: 'Test Organization', quantity: 2, email: 'example@gmail.com' } },
+          state: { user: { id: 1 } }
+        },
+        serviceMethodArgs: { name: 'Test Organization', ownerId: 1, quantity: 2, email: 'example@gmail.com' },
         expectedResult: defaultOrganization
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult }) => {
@@ -25,6 +36,37 @@ describe('Organization Controller', () => {
       await organizationController({ strapi }).create(ctx)
       expect(strapi.plugin('stripe-payment').service('organization').create).toBeCalledWith(serviceMethodArgs)
       expect(ctx.send).toBeCalledWith(expectedResult)
+    })
+  })
+
+  describe('Get default payment method', () => {
+    it.each([
+      {
+        name: 'should retrieve a default payment method of an organization',
+        ctxOverrides: {
+          params: { id: 1 }
+        },
+        serviceMethodArgs: { id: 1 },
+        expectedResult: defaultPaymentMethod
+      },
+      {
+        name: 'should throw an error if organization not found',
+        ctxOverrides: { params: { id: 1 } },
+        serviceMethodArgs: { id: 1 },
+        error: errors.NotFoundError
+      }
+    ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
+      const ctx = createMockContext(ctxOverrides as Partial<Context>)
+      if (error) {
+        strapi.plugin('stripe-payment').service('organization').getDefaultPaymentMethod.mockResolvedValue(null)
+        await expect(organizationController({ strapi }).getDefaultPaymentMethod(ctx)).rejects.toThrow(error)
+      } else {
+        await organizationController({ strapi }).getDefaultPaymentMethod(ctx)
+        expect(strapi.plugin('stripe-payment').service('organization').getDefaultPaymentMethod).toBeCalledWith(
+          serviceMethodArgs
+        )
+        expect(ctx.send).toBeCalledWith(expectedResult)
+      }
     })
   })
 
@@ -57,7 +99,7 @@ describe('Organization Controller', () => {
     })
   })
 
-  describe('Get Organizations', () => {
+  describe('Get All Organizations', () => {
     it.each([
       {
         name: 'should get all organizations',
@@ -67,8 +109,8 @@ describe('Organization Controller', () => {
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
-      await organizationController({ strapi }).getOrganizations(ctx)
-      expect(strapi.plugin('stripe-payment').service('organization').getOrganizations).toBeCalledWith(
+      await organizationController({ strapi }).getAllOrganizations(ctx)
+      expect(strapi.plugin('stripe-payment').service('organization').getAllOrganizations).toBeCalledWith(
         ...serviceMethodArgs
       )
       expect(ctx.send).toBeCalledWith(expectedResult)
@@ -79,14 +121,14 @@ describe('Organization Controller', () => {
     it.each([
       {
         name: 'should update an organization',
-        ctxOverrides: { params: { id: 1 }, request: { body: { name: 'Updated Organization' } } },
-        serviceMethodArgs: { id: 1, name: 'Updated Organization' },
+        ctxOverrides: { params: { id: 1 }, request: { body: { name: 'Updated Organization', quantity: 10 } } },
+        serviceMethodArgs: { id: 1, name: 'Updated Organization', quantity: 10 },
         expectedResult: updatedOrganization
       },
       {
         name: 'should throw an error if updated organization not found',
-        ctxOverrides: { params: { id: 1 }, request: { body: { name: 'Updated Organization' } } },
-        serviceMethodArgs: { id: 1, name: 'Updated Organization' },
+        ctxOverrides: { params: { id: 1 }, request: { body: { name: 'Updated Organization', quantity: 10 } } },
+        serviceMethodArgs: { id: 1, name: 'Updated Organization', quantity: 10 },
         error: errors.NotFoundError
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
@@ -97,6 +139,48 @@ describe('Organization Controller', () => {
       } else {
         await organizationController({ strapi }).update(ctx)
         expect(strapi.plugin('stripe-payment').service('organization').update).toBeCalledWith(serviceMethodArgs)
+        expect(ctx.send).toBeCalledWith(expectedResult)
+      }
+    })
+  })
+
+  describe('Create checkout session for default payment method update', () => {
+    it.each([
+      {
+        name: 'should create checkout session for default payment method update',
+        ctxOverrides: {
+          params: { id: 1 }
+        },
+        serviceMethodArgs: {
+          id: 1
+        },
+        expectedResult: defaultCheckoutSession
+      },
+      {
+        name: 'should throw an error if organization is not found',
+        ctxOverrides: {
+          params: { id: 1 }
+        },
+        serviceMethodArgs: {
+          id: 1
+        },
+        error: errors.NotFoundError
+      }
+    ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
+      const ctx = createMockContext(ctxOverrides as unknown as Partial<Context>)
+      if (error) {
+        strapi
+          .plugin('stripe-payment')
+          .service('organization')
+          .createDefaultPaymentMethodUpdateCheckoutSession.mockResolvedValue(null)
+        await expect(
+          organizationController({ strapi }).createDefaultPaymentMethodUpdateCheckoutSession(ctx)
+        ).rejects.toThrow(error)
+      } else {
+        await organizationController({ strapi }).createDefaultPaymentMethodUpdateCheckoutSession(ctx)
+        expect(
+          strapi.plugin('stripe-payment').service('organization').createDefaultPaymentMethodUpdateCheckoutSession
+        ).toBeCalledWith(serviceMethodArgs)
         expect(ctx.send).toBeCalledWith(expectedResult)
       }
     })

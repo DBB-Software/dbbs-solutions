@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "transactions",
+  "info": {
+    "singularName": "transaction",
+    "pluralName": "transactions",
+    "displayName": "Payment transactions"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": ""
+  },
+  "attributes": {
+    "subscriptionId": {
+      "type": "integer"
+    },
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::stripe-payment.organization",
+      "inversedBy": "transactions"
+    },
+    "purchaseId": {
+      "type": "integer"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "completed",
+        "failed"
+      ]
+    },
+    "externalTransaction": {
+      "type": "json"
+    }
+  }
+}

@@ -1,10 +1,10 @@
-import extractUserMiddleware from '../middlewares/extractUser.middleware'
-import checkOrganizationOwnerMiddleware from '../middlewares/checkOrganizationOwner.middleware'
+import extractUserMiddleware from '../../middlewares/extractUser.middleware'
+import checkOrganizationOwnerMiddleware from '../../middlewares/checkOrganizationOwner.middleware'
 
 export default [
   {
     method: 'POST',
-    path: '/organizations',
+    path: '/api/organizations',
     handler: 'organization.create',
     config: {
       auth: false,
@@ -13,7 +13,7 @@ export default [
   },
   {
     method: 'GET',
-    path: '/organizations/:id',
+    path: '/api/organizations/:id',
     handler: 'organization.getOrganizationById',
     config: {
       auth: false,
@@ -22,16 +22,25 @@ export default [
   },
   {
     method: 'GET',
-    path: '/organizations',
-    handler: 'organization.getOrganizations',
+    path: '/api/organizations',
+    handler: 'organization.getUserOrganizations',
     config: {
       auth: false,
       middlewares: [extractUserMiddleware]
     }
   },
   {
+    method: 'GET',
+    path: '/api/organizations/:id/default-payment-method',
+    handler: 'organization.getDefaultPaymentMethod',
+    config: {
+      auth: false,
+      middlewares: [extractUserMiddleware, checkOrganizationOwnerMiddleware]
+    }
+  },
+  {
     method: 'PUT',
-    path: '/organizations/:id',
+    path: '/api/organizations/:id',
     handler: 'organization.update',
     config: {
       auth: false,
@@ -40,7 +49,7 @@ export default [
   },
   {
     method: 'DELETE',
-    path: '/organizations/:id',
+    path: '/api/organizations/:id',
     handler: 'organization.delete',
     config: {
       auth: false,
@@ -49,7 +58,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/organizations/:id/change-owner',
+    path: '/api/organizations/:id/change-owner',
     handler: 'organization.updateOwner',
     config: {
       auth: false,
@@ -58,7 +67,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/organizations/:id/add-user',
+    path: '/api/organizations/:id/add-user',
     handler: 'organization.addUser',
     config: {
       auth: false,
@@ -67,7 +76,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/organizations/:id/remove-user/:userId',
+    path: '/api/organizations/:id/remove-user/:userId',
     handler: 'organization.removeUser',
     config: {
       auth: false,
@@ -76,11 +85,20 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/organizations/:id/accept-invite',
+    path: '/api/organizations/:id/accept-invite',
     handler: 'organization.acceptInvite',
     config: {
       auth: false,
       middlewares: [extractUserMiddleware]
+    }
+  },
+  {
+    method: 'PATCH',
+    path: '/api/organizations/:id/update-default-payment-method',
+    handler: 'organization.createDefaultPaymentMethodUpdateCheckoutSession',
+    config: {
+      auth: false,
+      middlewares: [extractUserMiddleware, checkOrganizationOwnerMiddleware]
     }
   }
 ]

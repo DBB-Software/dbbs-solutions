@@ -1,10 +1,10 @@
-import extractUserMiddleware from '../middlewares/extractUser.middleware'
-import checkSubscriptionOwnerMiddleware from '../middlewares/checkSubscriptionOwner.middleware'
+import extractUserMiddleware from '../../middlewares/extractUser.middleware'
+import checkSubscriptionOwnerMiddleware from '../../middlewares/checkSubscriptionOwner.middleware'
 
 export default [
   {
     method: 'POST',
-    path: '/subscriptions/checkout-session',
+    path: '/api/subscriptions/checkout-session',
     handler: 'subscription.createCheckoutSession',
     config: {
       auth: false,
@@ -13,7 +13,7 @@ export default [
   },
   {
     method: 'GET',
-    path: '/subscriptions/my',
+    path: '/api/subscriptions/my',
     handler: 'subscription.getMySubscription',
     config: {
       auth: false,
@@ -22,7 +22,16 @@ export default [
   },
   {
     method: 'GET',
-    path: '/subscriptions',
+    path: '/api/subscriptions/:id',
+    handler: 'subscription.getSubscriptionById',
+    config: {
+      auth: false,
+      middlewares: [extractUserMiddleware, checkSubscriptionOwnerMiddleware]
+    }
+  },
+  {
+    method: 'GET',
+    path: '/api/subscriptions',
     handler: 'subscription.getSubscriptions',
     config: {
       auth: false,
@@ -31,7 +40,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/subscriptions/:id/pause',
+    path: '/api/subscriptions/:id/pause',
     handler: 'subscription.pauseSubscription',
     config: {
       auth: false,
@@ -40,7 +49,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/subscriptions/:id/cancel',
+    path: '/api/subscriptions/:id/cancel',
     handler: 'subscription.cancelSubscription',
     config: {
       auth: false,
@@ -49,7 +58,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/subscriptions/:id/resume',
+    path: '/api/subscriptions/:id/resume',
     handler: 'subscription.resumeSubscription',
     config: {
       auth: false,
@@ -58,7 +67,7 @@ export default [
   },
   {
     method: 'DELETE',
-    path: '/subscriptions/:id',
+    path: '/api/subscriptions/:id',
     handler: 'subscription.delete',
     config: {
       auth: false,
@@ -67,7 +76,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/subscriptions/:id/update',
+    path: '/api/subscriptions/:id/update',
     handler: 'subscription.updateStripeSubscription',
     config: {
       auth: false,
@@ -76,7 +85,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/subscriptions/:id/resubscribe',
+    path: '/api/subscriptions/:id/resubscribe',
     handler: 'subscription.resubscribe',
     config: {
       auth: false,

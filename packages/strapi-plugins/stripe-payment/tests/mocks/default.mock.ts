@@ -1,4 +1,10 @@
-import { defaultOrganization, updatedOrganization } from './organization.mock'
+import {
+  defaultCheckoutSession,
+  defaultOrganization,
+  defaultPaymentMethod,
+  stripePaymentMethod,
+  updatedOrganization
+} from './organization.mock'
 import { defaultPlan } from './plan.mock'
 import { defaultProduct, updatedProduct } from './product.mock'
 import { canceledSubscription, defaultSubscription, updatedSubscription } from './subscription.mock'
@@ -7,8 +13,10 @@ export const strapiOrganizationControllerMock = {
   plugin: jest.fn().mockReturnValue({
     service: jest.fn().mockReturnValue({
       create: jest.fn().mockResolvedValue(defaultOrganization),
+      getDefaultPaymentMethod: jest.fn().mockResolvedValue(defaultPaymentMethod),
       getOrganizationById: jest.fn().mockResolvedValue(defaultOrganization),
-      getOrganizations: jest.fn().mockResolvedValue([defaultOrganization]),
+      getAllOrganizations: jest.fn().mockResolvedValue([defaultOrganization]),
+      createDefaultPaymentMethodUpdateCheckoutSession: jest.fn().mockResolvedValue(defaultCheckoutSession),
       update: jest.fn().mockResolvedValue(updatedOrganization),
       delete: jest.fn().mockResolvedValue({ id: 1 }),
       updateOwner: jest.fn().mockResolvedValue({ id: 1, name: 'Test Organization', owner_id: 2 }),
@@ -56,24 +64,22 @@ export const strapiSubscriptionControllerMock = {
   })
 }
 
-export const defaultQueryMock = {
-  create: jest.fn(),
-  findOne: jest.fn(),
-  findMany: jest.fn(),
-  update: jest.fn(),
-  delete: jest.fn()
-}
-
 export const strapiOrganizationServiceMock = {
-  query: jest.fn().mockReturnValue(defaultQueryMock),
   plugin: jest.fn().mockReturnValue({
     service: jest.fn().mockReturnValue({
       customers: {
         create: jest.fn().mockResolvedValue({ id: 'cus_123', name: 'Test Organization' }),
-        del: jest.fn().mockResolvedValue({ id: 'cus_123', deleted: true })
+        del: jest.fn().mockResolvedValue({ id: 'cus_123', deleted: true }),
+        update: jest.fn().mockResolvedValue({ name: 'Updated Organization' }),
+        retrievePaymentMethod: jest.fn().mockResolvedValue(stripePaymentMethod)
       },
       subscriptions: {
         retrieve: jest.fn().mockResolvedValue({ id: 'sub_123', items: { data: [{ quantity: 2 }] } })
+      },
+      checkout: {
+        sessions: {
+          create: jest.fn().mockResolvedValue(defaultCheckoutSession)
+        }
       }
     })
   }),
@@ -85,7 +91,6 @@ export const strapiOrganizationServiceMock = {
 }
 
 export const strapiSubscriptionServiceMock = {
-  query: jest.fn().mockReturnValue(defaultQueryMock),
   plugin: jest.fn().mockReturnValue({
     service: jest.fn().mockReturnValue({
       checkout: {
@@ -114,7 +119,6 @@ export const strapiSubscriptionServiceMock = {
 }
 
 export const strapiProductServiceMock = {
-  query: jest.fn().mockReturnValue(defaultQueryMock),
   plugin: jest.fn().mockReturnValue({
     service: jest.fn().mockReturnValue({
       products: {
@@ -133,7 +137,6 @@ export const strapiProductServiceMock = {
 }
 
 export const strapiPlanServiceMock = {
-  query: jest.fn().mockReturnValue(defaultQueryMock),
   plugin: jest.fn().mockReturnValue({
     service: jest.fn().mockReturnValue({
       prices: {

@@ -203,7 +203,7 @@ describe('Product Service', () => {
           jest.spyOn(strapi.query('plugin::stripe-payment.product'), 'findOne').mockResolvedValue(null)
         },
         queryMethod: 'findOne',
-        queryArgs: { where: { id: 1 } }
+        queryArgs: { where: { id: 1 }, populate: { plans: true } }
       }
     ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, queryMethod, queryArgs }) => {
       setupMocks()

@@ -1,4 +1,3 @@
-import Stripe from 'stripe'
 import { factories, Strapi } from '@strapi/strapi'
 import { errors } from '@strapi/utils'
 import createHttpError from 'http-errors'
@@ -9,37 +8,87 @@ import {
   PauseSubscriptionParams,
   ResumeSubscriptionParams,
   UpdateSubscriptionParams,
-  ResubscribeParams
+  ResubscribeParams,
+  CreateSessionParams
 } from '../interfaces'
-import { SubscriptionStatus } from '../enums'
+import { PlanType, SubscriptionStatus } from '../enums'
 
 export default factories.createCoreService('plugin::stripe-payment.subscription', ({ strapi }: { strapi: Strapi }) => ({
   async createCheckoutSession(params: CreateCheckoutSessionParams) {
-    const { organizationName, userId, planId, quantity } = params
+    const { userId, planId, quantity, organizationId } = params
 
-    const successUrl: string = strapi.config.get('server.stripe.successPaymentUrl')
+    let organizationName: string
+    let customerId: string | undefined
+
+    if (params.organizationName) {
+      const organizationExisting = await strapi.query('plugin::stripe-payment.organization').count({
+        where: {
+          name: params.organizationName
+        }
+      })
+
+      if (organizationExisting) {
+        throw new errors.ForbiddenError(`Organization with name ${params.organizationName} already exists`)
+      }
+
+      organizationName = params.organizationName
+    } else {
+      const organizationById = await strapi.query('plugin::stripe-payment.organization').findOne({
+        where: { id: organizationId }
+      })
+
+      if (!organizationById) {
+        throw new errors.NotFoundError(`Organization with id ${organizationId} not found`)
+      }
+
+      customerId = organizationById.customer_id
+      organizationName = organizationById.name
+    }
 
     const plan = await strapi.query('plugin::stripe-payment.plan').findOne({
       where: { id: planId }
     })
 
-    const session = await strapi
-      .plugin('stripe-payment')
-      .service('stripe')
-      .checkout.sessions.create({
-        success_url: successUrl,
-        metadata: { organizationName, userId, planId, quantity },
-        line_items: [
-          {
-            price: plan.stripe_id,
-            quantity
-          }
-        ],
+    if (!plan) {
+      throw new Error('Plan not found')
+    }
+
+    const successUrl: string = strapi.config.get('server.stripe.successPaymentUrl')
+
+    const stripeQuantity = plan.type === PlanType.RECURRING ? quantity : 1
+    let sessionParams: CreateSessionParams = {
+      success_url: successUrl,
+      metadata: { organizationName, userId, planId, quantity },
+      line_items: [
+        {
+          price: plan.stripe_id,
+          quantity: stripeQuantity
+        }
+      ]
+    }
+    if (customerId) {
+      sessionParams = {
+        ...sessionParams,
+        customer: customerId
+      }
+    }
+
+    if (plan.type === PlanType.RECURRING) {
+      sessionParams = {
+        ...sessionParams,
         subscription_data: {
           trial_period_days: 30
         },
         mode: 'subscription'
-      })
+      }
+    } else {
+      sessionParams = {
+        ...sessionParams,
+        mode: 'payment'
+      }
+    }
+
+    const session = await strapi.plugin('stripe-payment').service('stripe').checkout.sessions.create(sessionParams)
 
     return session.url
   },
@@ -52,7 +101,19 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
       populate: { organization: true, plan: true }
     })
 
-    return subscription
+    if (!subscription) {
+      return null
+    }
+
+    const stripeSubscription = await strapi
+      .plugin('stripe-payment')
+      .service('stripe')
+      .subscriptions.retrieve(subscription.stripe_id)
+
+    return {
+      ...subscription,
+      quantity: stripeSubscription.quantity
+    }
   },
 
   async getMySubscription(params: GetMySubscriptionParams) {
@@ -65,10 +126,18 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
 
     const subscription = await strapi.query('plugin::stripe-payment.subscription').findOne({
       where: { organization: { id: organization.id } },
-      populate: { organization: true, plan: true }
+      populate: ['organization', 'plan', 'plan.product']
     })
 
-    return subscription
+    const stripeSubscription = await strapi
+      .plugin('stripe-payment')
+      .service('stripe')
+      .subscriptions.retrieve(subscription.stripe_id)
+
+    return {
+      ...subscription,
+      quantity: stripeSubscription.quantity
+    }
   },
 
   async getSubscriptions() {
@@ -95,7 +164,12 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
 
     await strapi.plugin('stripe-payment').service('stripe').subscriptions.cancel(subscription.stripe_id)
 
-    await strapi.query('plugin::stripe-payment.subscription').delete({ where: { id: subscription.id } })
+    await strapi.query('plugin::stripe-payment.subscription').update({
+      where: { id: subscription.id },
+      data: {
+        status: SubscriptionStatus.CANCELLED
+      }
+    })
 
     return true
   },

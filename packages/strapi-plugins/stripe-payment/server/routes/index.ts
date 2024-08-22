@@ -1,7 +1,4 @@
-import product from './product'
-import plan from './plan'
-import organization from './organization'
-import subscription from './subscription'
-import webhook from './webhook'
+import adminRoutes from './admin'
+import apiRoutes from './api'
 
-export default [...product, ...plan, ...organization, ...subscription, ...webhook]
+export default [...adminRoutes, ...apiRoutes]

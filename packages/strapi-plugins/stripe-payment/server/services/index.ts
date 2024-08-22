@@ -5,6 +5,8 @@ import organization from './organization'
 import subscription from './subscription'
 import webhook from './webhook'
 import notification from './notification'
+import transaction from './transaction'
+import user from './user'
 
 export default {
   stripe,
@@ -13,5 +15,7 @@ export default {
   organization,
   subscription,
   webhook,
-  notification
+  notification,
+  transaction,
+  user
 }

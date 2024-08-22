@@ -1,12 +1,12 @@
 /**
  *  router
  */
-import stripeWebhookMiddleware from '../middlewares/stripeWebhook.middleware'
+import stripeWebhookMiddleware from '../../middlewares/stripeWebhook.middleware'
 
 export default [
   {
     method: 'POST',
-    path: '/webhook',
+    path: '/api/webhook',
     handler: 'webhook.handleEvent',
     config: {
       auth: false,

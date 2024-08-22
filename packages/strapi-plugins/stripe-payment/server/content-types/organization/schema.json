@@ -40,8 +40,20 @@
       "target": "plugin::stripe-payment.subscription",
       "mappedBy": "organization"
     },
+    "purchases": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::stripe-payment.purchase",
+      "mappedBy": "organization"
+    },
     "quantity": {
       "type": "integer"
+    },
+    "transactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::stripe-payment.transaction",
+      "mappedBy": "organization"
     }
   }
 }

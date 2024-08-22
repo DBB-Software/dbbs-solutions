@@ -22,7 +22,21 @@ describe('Subscription Controller', () => {
           state: { user: { id: 1 } }
         },
         serviceMethodArgs: { organizationName: 'Test Organization', planId: 1, quantity: 1, userId: 1 },
-        expectedResult: 'https://checkout.session.url'
+        expectedResult: { url: 'https://checkout.session.url' }
+      },
+      {
+        name: 'should create a checkout session with organizationId',
+        ctxOverrides: {
+          request: { body: { planId: 1, quantity: 1, organizationId: 1 } },
+          state: { user: { id: 1 } }
+        },
+        serviceMethodArgs: {
+          planId: 1,
+          quantity: 1,
+          userId: 1,
+          organizationId: 1
+        },
+        expectedResult: { url: 'https://checkout.session.url' }
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)

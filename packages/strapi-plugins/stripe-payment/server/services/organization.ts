@@ -4,8 +4,11 @@ import {
   AcceptInviteParams,
   AddUserParams,
   CreateOrganizationParams,
+  CreateDefaultPaymentMethodUpdateCheckoutSessionParams,
   DeleteOrganizationParams,
+  GetMyOrganizationsParams,
   GetOrganizationByIdParams,
+  GetPaymentMethodParams,
   RemoveUserParams,
   SendOrganizationInviteNotificationParams,
   UpdateOrganizationParams,
@@ -16,10 +19,11 @@ import { getSendOrganizationInviteTemplate } from '../templates'
 
 export default factories.createCoreService('plugin::stripe-payment.organization', ({ strapi }: { strapi: Strapi }) => ({
   async create(params: CreateOrganizationParams) {
-    const { name, ownerId } = params
+    const { name, ownerId, email, quantity } = params
 
     const customer = await strapi.plugin('stripe-payment').service('stripe').customers.create({
-      name
+      name,
+      email
     })
 
     const organization = await strapi.query('plugin::stripe-payment.organization').create({
@@ -27,7 +31,8 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
         name,
         customer_id: customer.id,
         owner_id: ownerId,
-        users: [ownerId]
+        users: [ownerId],
+        quantity
       }
     })
 
@@ -39,7 +44,7 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
 
     const organization = await strapi.query('plugin::stripe-payment.organization').findOne({
       where: { id },
-      populate: ['users']
+      populate: ['subscription', 'subscription.plan', 'users', 'purchases', 'purchases.plan', 'purchases.plan.product']
     })
 
     if (!organization) {
@@ -49,7 +54,22 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
     return organization
   },
 
-  async getOrganizations() {
+  async getUserOrganizations(params: GetMyOrganizationsParams) {
+    const { userId } = params
+
+    const organizations = await strapi.query('plugin::stripe-payment.organization').findMany({
+      where: {
+        users: {
+          id: userId
+        }
+      },
+      populate: ['users']
+    })
+
+    return organizations
+  },
+
+  async getAllOrganizations() {
     const organizations = await strapi.query('plugin::stripe-payment.organization').findMany({
       populate: ['users']
     })
@@ -68,26 +88,49 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
       return null
     }
 
-    const stripeSubscription = await strapi
-      .plugin('stripe-payment')
-      .service('stripe')
-      .subscriptions.retrieve(organization.subscription.stripe_id)
+    if (organization.subscription) {
+      const stripeSubscription = await strapi
+        .plugin('stripe-payment')
+        .service('stripe')
+        .subscriptions.retrieve(organization.subscription.stripe_id)
 
-    if (stripeSubscription?.items?.data[0]?.quantity && quantity < stripeSubscription?.items?.data[0]?.quantity) {
-      throw new createHttpError.BadRequest(
-        'The new quantity value cannot be less than the current subscription quantity.'
-      )
+      if (stripeSubscription?.items?.data[0]?.quantity && quantity < stripeSubscription?.items?.data[0]?.quantity) {
+        throw new createHttpError.BadRequest(
+          'The new quantity value cannot be less than the current subscription quantity.'
+        )
+      }
     }
 
-    const updatedOrganization = await strapi.query('plugin::stripe-payment.organization').update({
+    await strapi.plugin('stripe-payment').service('stripe').customers.update(organization.customer_id, {
+      name
+    })
+
+    return strapi.query('plugin::stripe-payment.organization').update({
       where: { id: organization.id },
       data: {
         name,
         quantity
       }
     })
+  },
 
-    return updatedOrganization
+  async getDefaultPaymentMethod(params: GetPaymentMethodParams) {
+    const { id } = params
+
+    const organization = await strapi.query('plugin::stripe-payment.organization').findOne({ where: { id } })
+
+    if (!organization) {
+      return null
+    }
+
+    const { customer_id: customerId, payment_method_id: paymentMethodId } = organization
+    const paymentMethod = await strapi
+      .plugin('stripe-payment')
+      .service('stripe')
+      .customers.retrievePaymentMethod(customerId, paymentMethodId)
+
+    const { brand, exp_month: expMonth, exp_year: expYear, last4 } = paymentMethod.card
+    return { brand, expMonth, expYear, last4 }
   },
 
   async delete(params: DeleteOrganizationParams) {
@@ -117,6 +160,26 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
         owner_id: ownerId
       }
     })
+  },
+
+  async createDefaultPaymentMethodUpdateCheckoutSession(params: CreateDefaultPaymentMethodUpdateCheckoutSessionParams) {
+    const { id } = params
+
+    const organization = await strapi.query('plugin::stripe-payment.organization').findOne({ where: { id } })
+
+    if (!organization) {
+      return null
+    }
+
+    return strapi
+      .plugin('stripe-payment')
+      .service('stripe')
+      .checkout.sessions.create({
+        customer: organization.customer_id,
+        success_url: strapi.config.get('server.stripe.successSetupUrl'),
+        mode: 'setup',
+        currency: strapi.config.get('server.stripe.currency')
+      })
   },
 
   async addUser(params: AddUserParams) {
@@ -156,7 +219,7 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
       throw new createHttpError.BadRequest(`An invitation to ${organization.name} has already been sent to this email!`)
     }
 
-    const res = await strapi.query('plugin::stripe-payment.invite').create({
+    await strapi.query('plugin::stripe-payment.invite').create({
       data: {
         token: generatedInviteToken,
         status: InviteStatus.PENDING,
@@ -180,28 +243,29 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
 
   async removeUser(params: RemoveUserParams) {
     const { organizationId, userId } = params
-    const organization = await strapi
-      .query('plugin::stripe-payment.organization')
-      .findOne({ where: { id: organizationId } })
+    const organization = await strapi.query('plugin::stripe-payment.organization').findOne({
+      where: { id: organizationId },
+      populate: {
+        users: true
+      }
+    })
 
     if (!organization) {
       return null
     }
 
-    const organizationUsers = organization.users.filter((user) => user.id !== userId)
+    const organizationUsers = organization.users.filter((user) => user.id !== Number(userId))
 
     if (!organizationUsers.length || organizationUsers.length === 0) {
       return null
     }
 
-    const updatedOrganization = await strapi.query('plugin::stripe-payment.organization').update({
+    return strapi.query('plugin::stripe-payment.organization').update({
       where: { id: organizationId },
       data: {
         users: organizationUsers
       }
     })
-
-    return updatedOrganization
   },
 
   async acceptInvite(params: AcceptInviteParams) {

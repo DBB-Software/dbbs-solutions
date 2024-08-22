@@ -1,24 +1,26 @@
-/**
- *  router
- */
-
 export default [
   {
     method: 'POST',
-    path: '/plans',
+    path: '/admin/plans',
     handler: 'plan.create',
     config: {}
   },
   {
     method: 'GET',
-    path: '/plans/:id',
+    path: '/admin/plans/:id',
     handler: 'plan.getPlanById',
     config: {}
   },
   {
     method: 'GET',
-    path: '/plans',
+    path: '/admin/plans',
     handler: 'plan.getPlans',
+    config: {}
+  },
+  {
+    method: 'DELETE',
+    path: '/admin/plans/:id',
+    handler: 'plan.delete',
     config: {}
   }
 ]
