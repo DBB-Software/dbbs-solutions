@@ -1,0 +1,28 @@
+import { Meta } from '@storybook/blocks';
+
+
+<Meta title="Utilities/ScopedCSSBaseline" />
+
+# CssBaseline
+
+Sometimes, you might be progressively migrating a website to Natura Design System, and using a global reset might not be an option
+
+
+It is possible to apply the baseline only to the children by using the ScopedCssBaseline component.
+
+  
+  ```jsx  
+import React from "react";
+import MyApp from "./MyApp";
+import ScopedCssBaseline from "@mui-components/ScopedCssBaseline";
+
+export const MyAppWithScopedStyles = () => (
+  <ScopedCssBaseline>
+    {/* The rest of your application */}
+    <MyApp />
+  </ScopedCssBaseline>
+);
+  ``` 
+⚠️ Make sure you import ScopedCssBaseline first - as in the example above - to avoid box-sizing conflicts.
+
+The API documentation of the ScopedCssBaseline React component. Learn more about the props.

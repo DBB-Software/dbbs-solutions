@@ -1,7 +1,5 @@
-import { LambdaClient } from '@aws-sdk/client-lambda'
 import middy, { MiddlewareObj } from '@middy/core'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import AWSXRayCore from 'aws-xray-sdk-core'
 import { SettingServiceClient } from '../domain/setting-service-client.js'
 import { ICustomSettingsContext, ISettingsMiddlewareInput } from './types/settingsMiddleware.js'
 
@@ -21,13 +19,12 @@ export function settingsMiddleware({
   Error,
   ICustomSettingsContext
 > {
-  let lambdaClient = new LambdaClient({
+  const settingsService = new SettingServiceClient({
     region,
-    endpoint
+    endpoint,
+    settingsFunctionName: serviceName,
+    enableXRay
   })
-
-  lambdaClient = enableXRay ? AWSXRayCore.captureAWSv3Client(lambdaClient) : lambdaClient
-  const settingsService = new SettingServiceClient(lambdaClient, serviceName)
 
   const settingsMiddlewareBefore: middy.MiddlewareFn<
     APIGatewayProxyEvent,

@@ -17,3 +17,30 @@ export interface ISettingServiceClient {
    */
   getTenantSettings(tenantId: string): Promise<object>
 }
+
+/**
+ * Interface representing the options required to initialize the SettingServiceClient.
+ * It includes AWS Lambda function configurations such as region, endpoint, and settings function name.
+ * Optionally, it allows enabling AWS X-Ray for tracing Lambda invocations.
+ */
+export interface ISettingServiceClientOptions {
+  /**
+   * The AWS region where the Lambda function is deployed.
+   */
+  region: string
+
+  /**
+   * The endpoint URL for the Settings Lambda Function.
+   */
+  endpoint: string
+
+  /**
+   * The name of the Lambda function that returns tenant settings.
+   */
+  settingsFunctionName: string
+
+  /**
+   * Optional flag to enable AWS X-Ray tracing for the Lambda client.
+   */
+  enableXRay?: boolean
+}

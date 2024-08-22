@@ -34,7 +34,7 @@ export class CustomSesHandler {
    * @throws {Error} Throws an error if the input data is invalid.
    */
   async sendEmail(data: ISendEmailInput): Promise<SendEmailCommandOutput> {
-    if (!data || !data.senderEmail || !data.recipientsEmails || !data.message) {
+    if (!data?.senderEmail || !data?.recipientsEmails || !data?.message) {
       throw new ValidationError('Invalid input data')
     }
 

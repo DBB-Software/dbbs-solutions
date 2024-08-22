@@ -1,16 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { request } from '@strapi/helper-plugin'
-import { Button, Select, Option, TextInput } from '@strapi/design-system'
-import { Container, Title, Form, ActionsContainer, PermissionsList, PermissionsTitle, PermissionsItem } from './styles'
+import React, { useEffect, useState } from 'react'
+import { Flex } from '@strapi/design-system/Flex'
+import { Button, Select, Option, TextInput, Typography, Box, HeaderLayout } from '@strapi/design-system'
+import { ApiService } from '../../services/api'
+import { AddPermissionsInterface, Permission } from '../../interfaces/permissions'
 
 interface Permissions {
-  [key: string]: string[]
+  [key: string]: Permission[]
 }
 
 interface Role {
   id: string
   name: string
 }
+
+const _allKey = '_ALL'
 
 const PermissionsManager: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([])
@@ -22,123 +25,189 @@ const PermissionsManager: React.FC = () => {
   const [permissions, setPermissions] = useState<Permissions>({})
 
   useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const fetchedRoles = await request('/users-permissions/roles', { method: 'GET' })
-        setRoles(fetchedRoles.roles)
-      } catch (error) {
+    async function fetchRoles() {
+      const fetchedRoles = await ApiService.getRoles().catch((error: any) => {
         console.error('Failed to fetch roles', error)
-      }
+      })
+      setRoles(fetchedRoles.roles)
     }
-
     fetchRoles()
   }, [])
 
-  const handleRoleChange = useCallback((value: string) => {
+  const handleRoleChange = (value: string) => {
     setRole(value)
-  }, [])
-
-  const handlePluginChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  }
+  const handlePluginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPlugin(e.target.value)
     setApi('')
-  }, [])
-
-  const handleApiChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  }
+  const handleApiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApi(e.target.value)
     setPlugin('')
-  }, [])
-
-  const handleControllerChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  }
+  const handleControllerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setController(e.target.value)
-  }, [])
-
-  const handleActionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  }
+  const handleActionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAction(e.target.value)
-  }, [])
+  }
 
-  const handleAddPermission = useCallback(() => {
-    const permission = plugin ? `plugin::${plugin}.${controller}.${action}` : `api::${api}.${controller}.${action}`
+  const handleAddPermission = () => {
+    if ([action, controller, api || plugin].some((el) => el === '')) {
+      return
+    }
+    const formattedPermission = plugin
+      ? `plugin::${plugin}.${controller}.${action}`
+      : `api::${api}.${controller}.${action}`
+    const permission = {
+      controller,
+      action,
+      permissionString: formattedPermission,
+      plugin,
+      api
+    } satisfies Permission
 
     setPermissions((prevPermissions) => {
-      const hasRolePermissions = Object.keys(prevPermissions).some((key) => key !== '')
-      const hasNoRolePermissions = Object.keys(prevPermissions).includes('')
-
-      if ((role && hasNoRolePermissions) || (!role && hasRolePermissions)) {
-        alert('Cannot mix permissions with and without roles.')
-        return prevPermissions
-      }
-
+      const roleName = role || _allKey
       const updatedPermissions = { ...prevPermissions }
-      if (!updatedPermissions[role]) {
-        updatedPermissions[role] = []
+      if (!updatedPermissions[roleName]) {
+        updatedPermissions[roleName] = []
       }
-      if (!updatedPermissions[role].includes(permission)) {
-        updatedPermissions[role].push(permission)
+      if (!updatedPermissions[roleName].some((el) => el.permissionString === formattedPermission)) {
+        updatedPermissions[roleName].push(permission)
       }
-
       return updatedPermissions
     })
-  }, [role, plugin, api, controller, action])
+    setPlugin('')
+    setApi('')
+    setController('')
+    setAction('')
+    setRole('')
+  }
 
-  const handleSubmitPermissions = useCallback(async () => {
-    try {
-      const permissionsConfig = { permissions }
-
-      if (role) {
-        await request('/permissions-manager/add-permissions', { method: 'POST', body: { permissionsConfig } })
+  const deletePermissions = (role: string, permissionString: Permission['permissionString']) => {
+    setPermissions((prevPermissions) => {
+      const updatedPermissions = { ...prevPermissions }
+      const rolePermissions = updatedPermissions[role]
+      const updatedRolePermissions = rolePermissions.filter((el) => el.permissionString !== permissionString)
+      if (updatedRolePermissions.length === 0) {
+        const { [role]: _, ...restPermissions } = updatedPermissions
+        return restPermissions
       } else {
-        const actions = Object.values(permissions).flat()
-
-        await request('/permissions-manager/create-permissions', {
-          method: 'POST',
-          body: actions
-        })
+        updatedPermissions[role] = updatedRolePermissions
+        return updatedPermissions
       }
+    })
+  }
 
-      alert('Permissions submitted successfully')
+  const handleSubmitPermissions = async () => {
+    try {
+      let submitPermissions = permissions
+      if (submitPermissions[_allKey]) {
+        await ApiService.createPermissions(submitPermissions[_allKey].map((permission) => permission.permissionString))
+        const { [_allKey]: _, ...restPermissions } = permissions
+        submitPermissions = restPermissions
+      }
+      if (Object.keys(submitPermissions).length) {
+        const transformedPermissions = Object.keys(submitPermissions).reduce(
+          (acc: AddPermissionsInterface, key: string) => {
+            acc[key] = permissions[key].map((permission) => permission.permissionString)
+            return acc
+          },
+          {}
+        )
+        await ApiService.addPermissions(transformedPermissions)
+      }
     } catch (error) {
       alert('Failed to submit permissions')
+      return
     }
-  }, [permissions, role])
 
+    alert('Permissions submitted successfully')
+    setPermissions({})
+  }
+
+  const filledInputs = !((plugin || api) && controller && action)
   return (
-    <Container>
-      <Title>Manage Permissions</Title>
-      <Form>
-        <Select label="Role" name="role" onChange={handleRoleChange} value={role}>
-          <Option value="">Select a role</Option>
-          {roles.map((role) => (
-            <Option key={role.id} value={role.name}>
-              {role.name}
-            </Option>
-          ))}
-        </Select>
-        <TextInput label="Plugin" name="plugin" onChange={handlePluginChange} value={plugin} disabled={api !== ''} />
-        <TextInput label="API" name="api" onChange={handleApiChange} value={api} disabled={!!plugin} />
-        <TextInput label="Controller" name="controller" onChange={handleControllerChange} value={controller} />
-        <TextInput label="Action" name="action" onChange={handleActionChange} value={action} />
-        <ActionsContainer>
-          <Button onClick={handleAddPermission}>Add Permission</Button>
-          <Button onClick={handleSubmitPermissions}>Submit Permissions</Button>
-        </ActionsContainer>
-      </Form>
-
-      <PermissionsList>
-        <PermissionsTitle>Current Permissions</PermissionsTitle>
-        <ul>
+    <Box padding={8}>
+      <HeaderLayout title="Manage Permissions" />
+      <Box padding={4} marginBottom={4} background="neutral0">
+        <Flex gap={8} alignItems="stretch" marginBottom={4}>
+          <Flex width={'100%'} gap={5} direction="column" alignItems="stretch">
+            <Select label="Role" name="role" onChange={handleRoleChange} value={role}>
+              <Option value="">Select a role</Option>
+              {roles.map((role) => (
+                <Option key={role.id} value={role.name}>
+                  {role.name}
+                </Option>
+              ))}
+            </Select>
+            <TextInput label="Plugin" name="plugin" onChange={handlePluginChange} value={plugin} disabled={api} />
+            <TextInput label="API" name="api" onChange={handleApiChange} value={api} disabled={!!plugin} />
+          </Flex>
+          <Flex width={'100%'} gap={5} direction="column" alignItems="stretch">
+            <TextInput label="Controller" name="controller" onChange={handleControllerChange} value={controller} />
+            <TextInput label="Action" name="action" onChange={handleActionChange} value={action} />
+          </Flex>
+        </Flex>
+        <Button onClick={handleAddPermission} disabled={filledInputs}>
+          Add Permission
+        </Button>
+      </Box>
+      <Box>
+        <Typography variant="beta" as="h2">
+          Current Permissions
+        </Typography>
+        <Flex
+          padding={6}
+          marginTop={4}
+          alignItems="flex-start"
+          hasRadius
+          background="neutral0"
+          gap={4}
+          direction="column"
+        >
           {Object.entries(permissions).map(([role, actions], index) => (
-            <PermissionsItem key={index}>
-              <strong>Role {role}:</strong>
-              <ul>
-                {actions.map((action, idx) => (
-                  <PermissionsItem key={idx}>{action}</PermissionsItem>
+            <Box width={'100%'} padding={2} borderColor="neutral200" borderStyle="solid" borderWidth="1px" key={index}>
+              <Typography fontSize={20} as="h4" variant="sigma">
+                Role {role}:
+              </Typography>
+              <Flex gap={4}>
+                {actions.map(({ action, permissionString, controller, api, plugin }) => (
+                  <Box
+                    borderColor="primary500"
+                    key={permissionString}
+                    padding={4}
+                    borderStyle="solid"
+                    borderWidth="1px"
+                  >
+                    <Flex direction="column" alignItems="stretch" gap={2}>
+                      <Typography variant="delta">Action: {action}</Typography>
+                      <Typography variant="delta">Controller: {controller}</Typography>
+                      <Typography variant="delta">{api ? `Api: ${api}` : `Plugin: ${plugin}`}</Typography>
+                    </Flex>
+                    <Button
+                      background="secondary200"
+                      right={2}
+                      top={2}
+                      padding={2}
+                      onClick={() => {
+                        deletePermissions(role, permissionString)
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </Box>
                 ))}
-              </ul>
-            </PermissionsItem>
+              </Flex>
+            </Box>
           ))}
-        </ul>
-      </PermissionsList>
-    </Container>
+          <Button marginTop={4} disabled={!Object.keys(permissions).length} onClick={handleSubmitPermissions}>
+            Submit Permissions
+          </Button>
+        </Flex>
+      </Box>
+    </Box>
   )
 }
 

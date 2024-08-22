@@ -1,5 +1,4 @@
 {
-    "root": true,
-    "extends": ["@dbbs/eslint-config/react"]
+  "root": true,
+  "extends": ["@dbbs/eslint-config/react"]
 }
-  

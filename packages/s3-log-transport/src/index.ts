@@ -40,7 +40,7 @@ export interface IS3TransportOptions {
 function S3Transport(opts: IS3TransportOptions) {
   const { bucket, folder, region, batchSize = DEFAULT_BATCH_SIZE, uploadInterval = DEFAULT_UPLOAD_INTERVAL_MS } = opts
   const logBuffer: string[] = []
-  const pmInstanceId = process.env.pm_id || 0
+  const pmInstanceId = process.env.pm_id ?? 0
 
   const s3 = new S3Client({
     region

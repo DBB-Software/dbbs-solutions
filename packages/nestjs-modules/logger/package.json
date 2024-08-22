@@ -11,16 +11,16 @@
   ],
   "scripts": {
     "build": "npx tsc --build tsconfig.json",
-    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
-    "lint": "npx eslint \"src/**/*.ts*\" --fix",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
     "test": "npx jest --coverage --verbose",
     "watch": "npx tsc -w --preserveWatchOutput"
   },
   "dependencies": {
-    "@nestjs/common": "10.3.8",
+    "@nestjs/common": "10.4.1",
     "nestjs-pino": "4.1.0",
-    "pino": "9.1.0",
-    "pino-http": "10.1.0"
+    "pino": "9.3.2",
+    "pino-http": "10.2.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

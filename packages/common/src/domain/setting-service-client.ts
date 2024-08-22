@@ -1,7 +1,8 @@
 import { InvokeCommand, InvokeCommandInput, InvokeCommandOutput, LambdaClient, LogType } from '@aws-sdk/client-lambda'
 import { fromUtf8, toUtf8 } from '@aws-sdk/util-utf8-node'
 import { LRUCache } from 'typescript-lru-cache'
-import { ISettingServiceClient } from './types/setting-service-client.js'
+import AWSXRayCore from 'aws-xray-sdk-core'
+import { ISettingServiceClient, ISettingServiceClientOptions } from './types/setting-service-client.js'
 
 const entryExpirationTimeInMS = 3600000
 
@@ -18,21 +19,33 @@ export class SettingServiceClient implements ISettingServiceClient {
 
   /**
    * Initializes a new instance of the SettingServiceClient with necessary dependencies.
-   * @param {LambdaClient} client The Lambda client to interact with AWS Lambda.
-   * @param {string} settingsFunctionName The name of the Lambda function that returns tenant settings.
-   * @throws {Error} Throws an error if either the settings function name or the Lambda client is not provided.
+   * Configures the AWS Lambda client and optionally enables AWS X-Ray for tracing.
+   * @param {ISettingServiceClientOptions} opts The configuration options for the SettingServiceClient.
+   * @throws {Error} Throws an error if any required option is not provided.
    */
-  constructor(client: LambdaClient, settingsFunctionName: string) {
+  constructor(opts: ISettingServiceClientOptions) {
+    const { region, endpoint, settingsFunctionName, enableXRay = false } = opts
+
+    if (!region) {
+      throw new Error('region is not defined')
+    }
+
+    if (!endpoint) {
+      throw new Error('endpoint is not defined')
+    }
+
     if (!settingsFunctionName) {
       throw new Error('settingsFunctionName is not defined')
     }
 
-    if (!client) {
-      throw new Error('lambdaClient is not defined')
-    }
-
     this.settingsFunctionName = settingsFunctionName
-    this.lambdaClient = client
+
+    this.lambdaClient = new LambdaClient({
+      region,
+      endpoint
+    })
+
+    this.lambdaClient = enableXRay ? AWSXRayCore.captureAWSv3Client(this.lambdaClient) : this.lambdaClient
 
     this.cache = new LRUCache<string, object>({
       entryExpirationTimeInMS
@@ -66,7 +79,7 @@ export class SettingServiceClient implements ISettingServiceClient {
    * @returns {Promise<object>} A promise that resolves to the fetched settings.
    */
   async getSettings(tenantId?: string): Promise<object> {
-    const tenantIdOrAll = tenantId || 'all'
+    const tenantIdOrAll = tenantId ?? 'all'
     const cachedSettings = this.cache.peek(tenantIdOrAll)
     if (cachedSettings) {
       return cachedSettings

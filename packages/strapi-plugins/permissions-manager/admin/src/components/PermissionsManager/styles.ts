@@ -9,7 +9,8 @@ export const Title = styled.h1`
   font-size: 2rem;
   margin-bottom: 1.5rem;
   text-align: center;
-  color: #fff;
+  background-color: ${({ theme }) => theme.colors.neutral100};
+  color: ${({ theme }) => theme.colors.neutral900};
 `
 
 export const Form = styled.div`
@@ -31,11 +32,13 @@ export const PermissionsList = styled.div`
 export const PermissionsTitle = styled.h2`
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  color: #fff;
+  background-color: ${({ theme }) => theme.colors.neutral100};
+  color: ${({ theme }) => theme.colors.neutral900};
 `
 
 export const PermissionsItem = styled.li`
   list-style: none;
   margin-bottom: 0.5rem;
-  color: #fff;
+  background-color: ${({ theme }) => theme.colors.neutral100};
+  color: ${({ theme }) => theme.colors.neutral900};
 `
