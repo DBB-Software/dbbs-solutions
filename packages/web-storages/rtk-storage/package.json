@@ -1,0 +1,33 @@
+{
+  "name": "@dbbs/web-redux-storage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web redux storage",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "clean": "npx rimraf .turbo node_modules dist bin",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "test": "echo \"no test specified\" && exit 0"
+  },
+  "keywords": [
+    "redux",
+    "redux-toolkit",
+    "store",
+    "hooks",
+    "typescript"
+  ],
+  "author": "DBBS",
+  "dependencies": {
+    "@reduxjs/toolkit": "2.2.7",
+    "immer": "10.1.1",
+    "react-redux": "9.1.2"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*",
+    "typescript": "5.5.4"
+  },
+  "packageManager": "yarn@4.2.2"
+}
