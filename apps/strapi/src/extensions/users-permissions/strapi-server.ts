@@ -1,4 +1,3 @@
-import { Strapi } from '@strapi/strapi'
 import _ from 'lodash'
 import { errors } from '@strapi/utils'
 
@@ -77,12 +76,12 @@ export default (plugin) => {
     }
 
     await Promise.all(
-      role.users.map((user) => {
-        return strapi.query('plugin::users-permissions.user').update({
+      role.users.map((user) =>
+        strapi.query('plugin::users-permissions.user').update({
           where: { id: user.id },
           data: { role: publicRoleID }
         })
-      })
+      )
     )
 
     await strapi.query('plugin::users-permissions.role').delete({ where: { id: roleID } })

@@ -11,7 +11,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs20.x
   architecture: arm64
   stage: ${opt:stage, 'local'}
   region: ${env:REGION}
@@ -87,7 +87,7 @@ layers:
   HermesSettingsNodeModules:
     path: ../../serverless-layer
     compatibleRuntimes:
-      - nodejs18.x
+      - nodejs20.x
 
 functions:
   getSettings:

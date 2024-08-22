@@ -86,5 +86,15 @@ export default ({ env }) => ({
   },
   'stripe-payment': {
     enabled: true
+  },
+  sentry: {
+    enabled: true,
+    config: {
+      dsn: env('SENTRY_DSN'),
+      sendMetadata: true
+    }
+  },
+  ckeditor: {
+    enabled: true
   }
 })

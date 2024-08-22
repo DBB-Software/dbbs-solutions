@@ -4,7 +4,6 @@ import httpSecurityHeaders from '@middy/http-security-headers'
 import inputOutputLogger from '@middy/input-output-logger'
 import { configure as serverlessExpress } from '@vendia/serverless-express'
 import { APIGatewayEvent, Callback, Context, Handler } from 'aws-lambda'
-import ow from 'ow'
 import { asyncContextStorage } from './asyncContextStorage.js'
 import { initNestApp } from './nestApp.js'
 
@@ -52,7 +51,10 @@ export async function startServer(event: APIGatewayEvent, context: Context, call
   return server(event, context, callback)
 }
 
-ow(process.env.REGION, ow.string.not.empty)
+// Замена проверки с использованием if
+if (!process.env.REGION || typeof process.env.REGION !== 'string' || process.env.REGION.trim().length === 0) {
+  throw new Error('REGION must be a non-empty string')
+}
 
 /**
  * Middleware-enhanced serverless handler.

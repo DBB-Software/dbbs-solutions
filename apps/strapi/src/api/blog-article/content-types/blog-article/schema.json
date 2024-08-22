@@ -35,6 +35,19 @@
       "required": true,
       "targetField": "title"
     },
+    "recommendations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog-article.blog-article"
+    },
+    "tableOfContent": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "text"
+    },
     "keywords": {
       "pluginOptions": {
         "i18n": {
@@ -42,6 +55,35 @@
         }
       },
       "type": "text"
+    },
+    "previewImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "content": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "customField",
+      "options": {
+        "preset": "toolbar"
+      },
+      "required": true,
+      "customField": "plugin::ckeditor.CKEditor"
     },
     "description": {
       "pluginOptions": {
@@ -51,6 +93,11 @@
       },
       "type": "richtext",
       "required": true
+    },
+    "banners": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::banner.banner"
     },
     "createDate": {
       "pluginOptions": {

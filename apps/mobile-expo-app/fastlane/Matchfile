@@ -1,0 +1,13 @@
+# Part of s3 integration for match, instead of using github or gitlab integration
+storage_mode("s3")
+s3_region(ENV["FASTLANE_S3_REGION"])
+s3_bucket(ENV["FASTLANE_S3_BUCKET"])
+s3_access_key(ENV["FASTLANE_S3_ACCESS_KEY"])
+s3_secret_access_key(ENV["FASTLANE_S3_SECRET_ACCESS_KEY"])
+
+
+team_id(ENV["TEAM_ID"])
+team_name(ENV["TEAM_NAME"])
+app_identifier([ENV["APPLE_APP_IDENTIFIER"]])
+
+ENV['MATCH_PASSWORD'] = ENV["FASTLANE_MATCH_PASSWORD"]

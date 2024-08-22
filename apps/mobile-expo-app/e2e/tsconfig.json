@@ -1,0 +1,12 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "types": ["detox", "jest"]
+    },
+    "include": [
+        "**/*.e2e.ts",
+        "**/*.e2e.tsx",
+        "./testUtils/**/*",
+        "./detox.config.ts"
+    ]
+}

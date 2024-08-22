@@ -18,15 +18,15 @@ export async function getSettings(event: { tenantId?: string }, context: ICustom
     throw new Error('No SETTINGS_FILE variable provided')
   }
 
-  const s3Handler = new CustomS3Handler(REGION as string, STAGE === LOCAL_STAGE)
+  const s3Handler = new CustomS3Handler(REGION, STAGE === LOCAL_STAGE)
 
   const { logger } = context
 
   logger.info(`Start getting settings from s3: ${SETTINGS_BUCKET} / ${SETTINGS_FILE}`)
 
   const settingObj = await s3Handler.downloadJSONfromS3({
-    bucket: SETTINGS_BUCKET as string,
-    key: SETTINGS_FILE as string
+    bucket: SETTINGS_BUCKET,
+    key: SETTINGS_FILE
   })
 
   logger.info(`Finished getting settings from s3: ${SETTINGS_BUCKET} / ${SETTINGS_FILE}`)

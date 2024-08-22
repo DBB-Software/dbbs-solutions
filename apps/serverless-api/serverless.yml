@@ -12,7 +12,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs20.x
   architecture: arm64
   stage: ${opt:stage}
   region: ${env:REGION}
@@ -27,6 +27,8 @@ provider:
     STAGE: ${opt:stage}
     REGION: ${env:REGION}
     NODE_ENV: ${env:NODE_ENV}
+    SETTINGS_SERVICE_ENDPOINT: ${env:SETTINGS_SERVICE_ENDPOINT}
+    SETTINGS_SERVICE_NAME: ${env:SETTINGS_SERVICE_NAME}
   deploymentBucket:
     name: ${env:DEPLOYMENT_BUCKET}
   iam:
@@ -92,7 +94,7 @@ layers:
   DBBsServerlessNodeModules:
     path: ../../serverless-layer
     compatibleRuntimes:
-      - nodejs18.x
+      - nodejs20.x
 
 functions:
   api:

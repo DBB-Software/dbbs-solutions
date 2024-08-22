@@ -1,4 +1,4 @@
 {
-    "root": true,
-    "extends": ["@dbbs/eslint-config/node"]
+  "root": true,
+  "extends": ["@dbbs/eslint-config/node"]
 }

@@ -1,6 +1,5 @@
 import { Controller, HttpCode, Post, Get, Body, Param } from '@nestjs/common'
 import { CommandBus, QueryBus } from '@nestjs/cqrs'
-import ow from 'ow'
 import { AcknowledgementResponse } from '../types/common.js'
 import { CreateUserRequest, UserMain } from '../types/user.js'
 import { CreateUserCommand } from './commands/index.js'
@@ -27,7 +26,9 @@ export class UserController {
   @Post('/create-user')
   @HttpCode(200)
   async createUser(@Body() payload: CreateUserRequest): Promise<AcknowledgementResponse> {
-    ow(payload.name, ow.string.not.empty)
+    if (!payload.name || payload.name.trim() === '') {
+      throw new Error('Name must be a non-empty string')
+    }
 
     const command = new CreateUserCommand(payload)
     return this.commandBus.execute(command)
@@ -51,7 +52,9 @@ export class UserController {
    */
   @Get('/main/:id')
   async getUserByIdMain(@Param('id') id: string): Promise<UserMain> {
-    ow(id, ow.string.not.empty)
+    if (!id || id.trim() === '') {
+      throw new Error('ID must be a non-empty string')
+    }
 
     return this.queryBus.execute(new GetUserByIdMain(id))
   }

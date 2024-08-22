@@ -2,7 +2,6 @@
  * Settings service responsible for interacting with AWS Lambda and retrieving tenant settings.
  */
 
-import { LambdaClient } from '@aws-sdk/client-lambda'
 import { SettingServiceClient } from '@dbbs/common'
 
 class SettingsService {
@@ -35,12 +34,11 @@ class SettingsService {
       throw new Error('serviceName is not defined')
     }
 
-    const lambdaClient = new LambdaClient({
+    this.settingsServiceClient = new SettingServiceClient({
       region,
-      endpoint
+      endpoint,
+      settingsFunctionName: serviceName
     })
-
-    this.settingsServiceClient = new SettingServiceClient(lambdaClient, serviceName)
   }
 
   /**

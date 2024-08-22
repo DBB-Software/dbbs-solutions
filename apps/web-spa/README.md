@@ -14,7 +14,7 @@ npx turbo gen web-spa
 
 ## Features
 
-The DBBS platform enables the generation of a single page application template with opinionated settings. This simplifies and accelerates the initial stages of development while promoting code consistency across different applications. Additionally, it lays the groundwork for streamlining updates to the common aspects of applications when the platform undergoes updates.
+The DBBS Pre-Built Solutions enables the generation of a single page application template with opinionated settings. This simplifies and accelerates the initial stages of development while promoting code consistency across different applications. Additionally, it lays the groundwork for streamlining updates to the common aspects of applications when the pre-built solutions undergoes updates.
 
 ## Feature Keywords
 
@@ -40,7 +40,7 @@ The DBBS platform enables the generation of a single page application template w
 
 ## License
 
-The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+The DBBS Pre-Built Solutions is open-source software licensed under the [MIT License](LICENSE).
 
 ## Authors and owners
 
