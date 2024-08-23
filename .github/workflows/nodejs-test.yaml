@@ -1,0 +1,86 @@
+name: nodejs-test
+
+on:
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
+
+      runs_on:
+        required: false
+        description: 'Platform to execute on. Default ["ubuntu-22.04"]'
+        type: string
+        default: '["ubuntu-22.04"]'
+
+      node_version_file:
+        required: false
+        description: 'File with nodejs version. Default ".tool-versions"'
+        type: string
+        default: '.tool-versions'
+
+      timeout:
+        required: false
+        description: "Timeout in minutes for the job execution. Defaults 15."
+        type: number
+        default: 15
+
+jobs:
+  build:
+    name: Test ${{ inputs.app_name }}
+    runs-on: ${{ fromJSON(inputs.runs_on) }}
+    timeout-minutes: ${{ inputs.timeout }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure node environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ inputs.node_version_file }}
+
+      - name: Use Setup Yarn action
+        uses: ./.github/actions/setup-yarn
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: |
+          echo "dir=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore cache
+        uses: actions/cache/restore@v4
+        id: cache
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-cache-${{ hashFiles('./yarn.lock') }}
+          restore-keys: |
+            yarn-${{ github.ref_name }}-
+
+      - name: Build dependencies
+        run: |
+          yarn install --immutable
+
+      - name: Install AWS CLI
+        uses: unfor19/install-aws-cli-action@master
+
+      - name: Configure AWS Credentials
+        run: |
+          mkdir -p ~/.aws/
+          echo "${{ inputs.aws_credentials }}" > ~/.aws/credentials
+          echo "${{ inputs.aws_config }}" > ~/.aws/config
+        shell: bash
+
+      # TODO: Add new workflow for python tests
+      - name: Setup Python
+        if: inputs.app_name == 'django-server'
+        uses: ./.github/actions/setup-python
+
+      - name: Test
+        run: |
+          yarn download:env
+          target="${{ inputs.app_name }}" yarn test
+        env:
+          STAGE: development
+          AWS_PROFILE: dbbs-development
+          SECRET_PREFIX: dbbs-pre-built-solutions

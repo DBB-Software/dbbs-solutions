@@ -1,0 +1,7 @@
+# IOS
+app_identifier(ENV["APPLE_APP_IDENTIFIER"]) # The bundle identifier of your app
+team_id(ENV["TEAM_ID"]) # Developer Portal Team ID
+team_name(ENV["TEAM_NAME"]) # Developer Portal Team Name
+# android
+json_key_file("fastlane/google-play-sa.json")
+package_name(ENV["ANDROID_APP_IDENTIFIER"])

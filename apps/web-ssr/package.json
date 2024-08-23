@@ -3,21 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "clean": "npx rimraf .turbo node_modules .next bin coverage *.tsbuildinfo || exit 0",
+    "clean": "npx rimraf .turbo node_modules .next bin coverage \"*.tsbuildinfo\" || exit 0",
+    "deploy": "npx next-serverless-deployment deploy --stage $STAGE --siteName $APP",
     "build": "npx next build",
     "cypress:open": "npx cypress open",
     "cypress:run": "npx cypress run",
     "dev": "npx next dev",
-    "lint": "npx next lint",
-    "dev:sst": "npx sst bind next dev",
-    "build:sst": "npx sst bind next build",
-    "deploy": "npx sst deploy --stage $STAGE",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "start": "npx next start",
     "test": "npx jest --coverage --verbose"
   },
   "dependencies": {
+    "@dbbs/next-serverless-deployment": "1.0.0",
     "@dbbs/tailwind-components": "*",
-    "next": "14.2.3",
+    "@dbbs/web-features": "*",
+    "next": "14.2.5",
     "react": "18.3.1"
   },
   "devDependencies": {
@@ -25,8 +25,8 @@
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3"
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10"
   }
 }

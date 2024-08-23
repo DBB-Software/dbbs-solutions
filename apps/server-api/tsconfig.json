@@ -1,11 +1,12 @@
 {
   "extends": "@dbbs/tsconfig/nestjs.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": ".",
+    "outDir": "./dist"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "package.json"
   ],
   "exclude": [
     "node_modules",

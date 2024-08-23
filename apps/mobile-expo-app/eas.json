@@ -1,0 +1,31 @@
+{
+  "build": {
+    "dev": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDevDebug",
+        "credentialsSource": "local"
+      },
+      "ios": {
+        "buildConfiguration": "Debug",
+        "scheme": "DBBSExpo Dev"
+      }
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "prod": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleProdDebug",
+        "credentialsSource": "local"
+      },
+      "ios": {
+        "buildConfiguration": "Release",
+        "scheme": "DBBSExpo Prod"
+      }
+    }
+  }
+}

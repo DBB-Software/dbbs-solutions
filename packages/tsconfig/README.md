@@ -2,7 +2,7 @@
 
 ## Description
 
-The tsconfig package provides custom TypeScript configurations for all ts-based applications within dbbs-platform.
+The tsconfig package provides custom TypeScript configurations for all ts-based applications within dbbs-pre-built-solutions.
 
 ## Usage
 
@@ -62,7 +62,7 @@ The package provides configurations for all types of application with appropriat
 
 ## License
 
-The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+The DBBS Pre-Built Solutions is open-source software licensed under the [MIT License](LICENSE).
 
 ## Authors and owners
 
@@ -75,7 +75,7 @@ The DBBS Platform Base is open-source software licensed under the [MIT License](
 
 ## Relations
 
-- /apps/* 
+- /apps/*
 
 ## External dependencies
 

@@ -285,6 +285,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport (>= 6.1.7.3, < 7.1.0)
   cocoapods (= 1.15.2)
+  dotenv (= 2.8.1)
   fastlane (= 2.219.0)
   fastlane-plugin-firebase_app_distribution
   fastlane-plugin-increment_version_code

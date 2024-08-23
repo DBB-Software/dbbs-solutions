@@ -19,6 +19,21 @@ xcodeproj_path = "ios/MobileApp.xcodeproj"
 gradle_path = "android/app/build.gradle"
 entitlements_file_path = "MobileApp/MobileApp.entitlements"
 
+before_all do |lane, options|
+  raise ArgumentError, "build variant is required!" unless options[:variant]
+  # Define wich env file should be used
+  env_file = options[:variant] == 'prod' ? '.env.production' : '.env.development'
+  UI.success("Using env file: #{env_file}")
+  Dotenv.load(env_file)
+  check_env
+end
+
+lane :check_env do
+  raise ArgumentError, "APPLICATION_VERSION ENV should be provided!" unless application_version
+  raise ArgumentError, "APPLICATION_BUILD_NUMBER ENV should be provided!" unless application_build_number
+  UI.success("APPLICATION_VERSION:#{application_version} and APPLICATION_BUILD_NUMBER:#{application_build_number} environments successfully loaded!")
+end
+
 platform :ios do
   desc "Increment Build number"
   lane :increment_build do

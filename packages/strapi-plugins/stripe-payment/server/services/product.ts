@@ -1,5 +1,6 @@
 import Stripe from 'stripe'
 import { factories, Strapi } from '@strapi/strapi'
+import createHttpError from 'http-errors'
 import { CreateProductParams, DeleteProductParams, GetProductByIdParams, UpdateProductParams } from '../interfaces'
 
 export default factories.createCoreService('plugin::stripe-payment.product', ({ strapi }: { strapi: Strapi }) => ({
@@ -72,12 +73,22 @@ export default factories.createCoreService('plugin::stripe-payment.product', ({ 
 
   async delete(params: DeleteProductParams) {
     const { id } = params
-    const product = await strapi.query('plugin::stripe-payment.product').findOne({ where: { id } })
+    const product = await strapi.query('plugin::stripe-payment.product').findOne({
+      where: { id },
+      populate: {
+        plans: true
+      }
+    })
 
     if (!product) {
       return null
     }
 
+    if (product.plans && product.plans.length > 0) {
+      throw new createHttpError.BadRequest('You cannot delete a product with plans')
+    }
+
+    await strapi.plugin('stripe-payment').service('stripe').products.del(product.stripe_id)
     await strapi.query('plugin::stripe-payment.product').delete({ where: { id } })
 
     return { id }

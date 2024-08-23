@@ -1,7 +1,14 @@
 import { Strapi } from '@strapi/strapi'
 import organizationService from '../../server/services/organization'
 import { createMockStrapi } from '../factories'
-import { defaultOrganization, strapiOrganizationServiceMock, updatedOrganization } from '../mocks'
+import {
+  currency,
+  defaultCheckoutSession,
+  defaultOrganization,
+  defaultPaymentMethod,
+  strapiOrganizationServiceMock,
+  updatedOrganization
+} from '../mocks'
 
 jest.mock('stripe')
 jest.mock('crypto', () => ({
@@ -19,7 +26,7 @@ describe('Organization Service', () => {
     it.each([
       {
         name: 'should create an organization',
-        serviceMethodArgs: { name: 'Test Organization', ownerId: '1' },
+        serviceMethodArgs: { name: 'Test Organization', ownerId: '1', quantity: 1, email: 'example@gmail.com' },
         expectedResult: defaultOrganization,
         setupMocks: () => {
           jest
@@ -31,9 +38,11 @@ describe('Organization Service', () => {
           })
         },
         stripeServiceMethod: 'create',
-        stripeServiceArgs: [{ name: 'Test Organization' }],
+        stripeServiceArgs: [{ name: 'Test Organization', email: 'example@gmail.com' }],
         queryMethod: 'create',
-        queryArgs: { data: { name: 'Test Organization', customer_id: 'cus_123', owner_id: '1', users: ['1'] } }
+        queryArgs: {
+          data: { name: 'Test Organization', customer_id: 'cus_123', owner_id: '1', users: ['1'], quantity: 1 }
+        }
       }
     ])(
       '$name',
@@ -77,7 +86,17 @@ describe('Organization Service', () => {
             .mockResolvedValue(defaultOrganization)
         },
         queryMethod: 'findOne',
-        queryArgs: { where: { id: 1 }, populate: ['users'] }
+        queryArgs: {
+          where: { id: 1 },
+          populate: [
+            'subscription',
+            'subscription.plan',
+            'users',
+            'purchases',
+            'purchases.plan',
+            'purchases.plan.product'
+          ]
+        }
       }
     ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, queryMethod, queryArgs }) => {
       setupMocks()
@@ -100,7 +119,17 @@ describe('Organization Service', () => {
           jest.spyOn(strapi.query('plugin::stripe-payment.organization'), 'findOne').mockResolvedValue(null)
         },
         queryMethod: 'findOne',
-        queryArgs: { where: { id: 1 }, populate: ['users'] }
+        queryArgs: {
+          where: { id: 1 },
+          populate: [
+            'subscription',
+            'subscription.plan',
+            'users',
+            'purchases',
+            'purchases.plan',
+            'purchases.plan.product'
+          ]
+        }
       }
     ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, queryMethod, queryArgs }) => {
       setupMocks()
@@ -131,11 +160,46 @@ describe('Organization Service', () => {
     ])('$name', async ({ expectedResult, setupMocks, queryMethod, queryArgs }) => {
       setupMocks()
 
-      const result = await organizationService({ strapi }).getOrganizations()
+      const result = await organizationService({ strapi }).getAllOrganizations()
 
       if (queryMethod && queryArgs) {
         expect(strapi.query('plugin::stripe-payment.organization')[queryMethod]).toBeCalledWith(queryArgs)
       }
+
+      expect(result).toEqual(expectedResult)
+    })
+  })
+
+  describe('Get default payment method', () => {
+    it.each([
+      {
+        name: 'should retrieve a default payment method of an organization',
+        serviceMethodArgs: { id: 1 },
+        expectedResult: defaultPaymentMethod,
+        setupMocks: () => {
+          jest
+            .spyOn(strapi.query('plugin::stripe-payment.organization'), 'findOne')
+            .mockResolvedValue(defaultOrganization)
+        },
+        queryMethod: 'findOne',
+        queryArgs: { where: { id: 1 } }
+      },
+      {
+        name: 'should return null if organization by id is not found',
+        serviceMethodArgs: { id: 1 },
+        expectedResult: null,
+        setupMocks: () => {
+          jest.spyOn(strapi.query('plugin::stripe-payment.organization'), 'findOne').mockResolvedValue(null)
+        },
+        queryMethod: 'findOne',
+        queryArgs: { where: { id: 1 } }
+      }
+    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, queryMethod, queryArgs }) => {
+      setupMocks()
+
+      const result = await organizationService({ strapi }).getDefaultPaymentMethod(serviceMethodArgs)
+
+      expect(strapi.query('plugin::stripe-payment.organization')[queryMethod]).toBeCalledWith(queryArgs)
 
       expect(result).toEqual(expectedResult)
     })
@@ -169,6 +233,43 @@ describe('Organization Service', () => {
       if (queryMethod && queryArgs) {
         expect(strapi.query('plugin::stripe-payment.organization')[queryMethod]).toBeCalledWith(queryArgs)
       }
+
+      expect(result).toEqual(expectedResult)
+    })
+  })
+
+  describe('Update default payment method', () => {
+    it.each([
+      {
+        name: 'should return a checkout session for the new payment method setup',
+        serviceMethodArgs: { id: 1, successUrl: 'https://checkout.stripe.com', currency },
+        expectedResult: defaultCheckoutSession,
+        setupMocks: () => {
+          jest
+            .spyOn(strapi.query('plugin::stripe-payment.organization'), 'findOne')
+            .mockResolvedValue(defaultOrganization)
+        },
+        queryMethod: 'findOne',
+        queryArgs: { where: { id: 1 } }
+      },
+      {
+        name: 'should return null if organization by id is not found',
+        serviceMethodArgs: { id: 1, successUrl: 'https://checkout.stripe.com', currency },
+        expectedResult: null,
+        setupMocks: () => {
+          jest.spyOn(strapi.query('plugin::stripe-payment.organization'), 'findOne').mockResolvedValue(null)
+        },
+        queryMethod: 'findOne',
+        queryArgs: { where: { id: 1 } }
+      }
+    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, queryMethod, queryArgs }) => {
+      setupMocks()
+
+      const result = await organizationService({ strapi }).createDefaultPaymentMethodUpdateCheckoutSession(
+        serviceMethodArgs
+      )
+
+      expect(strapi.query('plugin::stripe-payment.organization')[queryMethod]).toBeCalledWith(queryArgs)
 
       expect(result).toEqual(expectedResult)
     })

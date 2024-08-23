@@ -30,6 +30,19 @@
       "targetField": "title",
       "required": true
     },
+    "recommendations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::showcase.showcase"
+    },
+    "tableOfContent": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "keywords": {
       "type": "text",
       "required": true,
@@ -38,6 +51,30 @@
           "localized": true
         }
       }
+    },
+    "previewImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "content": {
+      "type": "customField",
+      "options": {
+        "preset": "toolbar"
+      },
+      "required": true,
+      "customField": "plugin::ckeditor.CKEditor"
     },
     "description": {
       "type": "richtext",

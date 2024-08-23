@@ -11,16 +11,16 @@
   ],
   "scripts": {
     "build": "npx tsc --build tsconfig.json",
-    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
-    "lint": "npx eslint \"src/**/*.ts*\" --fix",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
     "test": "echo \"no test specified\" && exit 0",
     "watch": "npx tsc -w --preserveWatchOutput",
     "docs:generate": "npx compodoc -p tsconfig.json",
     "docs:serve": "yarn docs:generate -s"
   },
   "dependencies": {
-    "@nestjs/common": "10.3.8",
-    "@nestjs/config": "3.2.2",
+    "@nestjs/common": "10.4.1",
+    "@nestjs/config": "3.2.3",
     "@nestjs/passport": "10.0.3",
     "jwks-rsa": "3.1.0",
     "passport-jwt": "4.0.1"

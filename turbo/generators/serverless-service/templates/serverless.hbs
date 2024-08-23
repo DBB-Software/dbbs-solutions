@@ -11,7 +11,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs20.x
   architecture: arm64
   stage: ${opt:stage}
   region: ${env:REGION}
@@ -31,6 +31,9 @@ provider:
     SETTINGS_FILE: ${env:SETTINGS_FILE}
   deploymentBucket:
     name: ${env:DEPLOYMENT_BUCKET}
+  apiGateway:
+    apiKeys:
+      - {{camelCase name}}ApiKey-${env:STAGE}
   iam:
     role:
       statements:
@@ -84,13 +87,25 @@ custom:
       - functionDuration
 
 layers:
-  HermesSettingsNodeModules:
+  {{properCase name}}NodeModules:
     path: ../../serverless-layer
     compatibleRuntimes:
-      - nodejs18.x
+      - nodejs20.x
 
 functions:
-  getSettings:
-    handler: dist/handler.getSettingsHandler
+  getService:
+    handler: dist/handler.getServiceHandler
     layers:
-      - { Ref: HermesSettingsNodeModulesLambdaLayer }
+      - { Ref: {{properCase name}}NodeModulesLambdaLayer }
+{{#if wantAPI}}
+  getApiRequest:
+    handler: dist/handler.getApiRequest
+    layers:
+      - { Ref: {{properCase name}}NodeModulesLambdaLayer }
+    events:
+      - http:
+          path: request-path
+          method: get
+          cors: true
+          private: true
+{{/if}}

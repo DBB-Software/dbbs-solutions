@@ -1,0 +1,40 @@
+name: Run tests and Sonarcloud scan
+
+run-name: Test ${{ github.head_ref || github.ref }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-all:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run build, Tests, Configure AWS
+        uses: ./.github/actions/build-and-tests
+        with:
+          ref: ${{ github.ref }}
+          aws_credentials: ${{ secrets.AWS_CREDENTIALS }}
+          aws_config: ${{ secrets.AWS_CONFIG }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Alert on main fail
+        uses: archive/github-actions-slack@v2.6.0
+        if: failure()
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          slack-channel:  ${{ vars.SLACK_ALERTS_CHANNEL_ID }}
+          slack-text: |
+            :this-is-fine-fire: *GitHub Action Job auto-run-test-jobs.yml Failed*
+            *Job*: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            *Author*: https://github.com/${{ github.actor }}

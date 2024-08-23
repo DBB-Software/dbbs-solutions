@@ -6,6 +6,9 @@ import ThemeRegistry from './ThemeRegistry'
 {{#ifCond cssFramework '===' 'tailwind'}}
 import './global.css'
 {{/ifCond}}
+{{#if isReduxToolkit}}
+import StoreProvider from './StoreProvider'
+{{/if}}
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -15,13 +18,19 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      {{#ifCond cssFramework '===' 'mui'}}
       <body>
+        {{#if isReduxToolkit}}
+        <StoreProvider>
+        {{/if}}
+      {{#ifCond cssFramework '===' 'mui'}}
         <ThemeRegistry>{children}</ThemeRegistry>
-      </body>
       {{else}}
-      <body>{children}</body>
+        {children}
       {{/ifCond}}
+    {{#if isReduxToolkit}} 
+    </StoreProvider>
+    {{/if}}
+      </body>
     </html>
   )
 }

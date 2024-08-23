@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "build": "npx tsc --build tsconfig.json",
-    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
-    "lint": "npx eslint \"src/**/*.ts*\" --fix",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --forceExit --coverage --verbose --testTimeout=10000000 --detectOpenHandles",
     "watch": "npx tsc -w --preserveWatchOutput",
     "docs:generate": "npx compodoc -p tsconfig.json",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@dbbs/nestjs-module-decorators": "*",
-    "@nestjs/common": "10.3.8"
+    "@nestjs/common": "10.4.1"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

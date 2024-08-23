@@ -2,7 +2,7 @@
 
 ## Description
 
-The eslint-config package provides custom eslint configurations for all js-based applications within dbbs-platform.
+The eslint-config package provides custom eslint configurations for all js-based applications within dbbs-pre-built-solutions.
 
 ## Usage
 
@@ -61,7 +61,7 @@ To utilize the eslint configuration provided by the eslint-config package, the r
 
 ## License
 
-The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+The DBBS Pre-Built Solutions is open-source software licensed under the [MIT License](LICENSE).
 
 ## Authors and owners
 
@@ -74,7 +74,7 @@ The DBBS Platform Base is open-source software licensed under the [MIT License](
 
 ## Relations
 
-- /apps/* 
+- /apps/*
 
 ## External dependencies
 

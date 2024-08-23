@@ -65,7 +65,7 @@ export class AppModule {}
 
 ## License
 
-The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+The DBBS Pre-Built Solutions is open-source software licensed under the [MIT License](LICENSE).
 
 ## Authors and owners
 

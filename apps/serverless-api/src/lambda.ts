@@ -10,7 +10,6 @@ import inputOutputLogger from '@middy/input-output-logger'
 import { configure as serverlessExpress } from '@vendia/serverless-express'
 import { APIGatewayEvent, Callback, Context, Handler } from 'aws-lambda'
 import ow from 'ow'
-import { settingsMiddleware } from '@dbbs/common'
 import { asyncContextStorage } from './asyncContextStorage.js'
 import { initNestApp } from './nestApp.js'
 
@@ -65,17 +64,6 @@ export const bootstrapNestServerHandler = middy(startServer)
 
 bootstrapNestServerHandler.use(doNotWaitForEmptyEventLoop({ runOnError: true }))
 bootstrapNestServerHandler.use(httpSecurityHeaders())
-
-/**
- * Middleware for setting up all settings.
- */
-bootstrapNestServerHandler.use(
-  settingsMiddleware({
-    region: process.env.REGION,
-    endpoint: process.env.SETTINGS_SERVICE_ENDPOINT || '',
-    serviceName: process.env.SETTINGS_SERVICE_NAME || ''
-  })
-)
 
 /**
  * Middleware for logging input and output.

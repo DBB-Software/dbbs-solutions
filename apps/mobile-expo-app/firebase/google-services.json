@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "317131157922",
+    "project_id": "dbbs-test",
+    "storage_bucket": "dbbs-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317131157922:android:18572134f75178ad3702fb",
+        "android_client_info": {
+          "package_name": "com.dbbs.expo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASKEIzpDT7JAGNtbSRvSb4jA8G2_wQZJk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317131157922:android:0990e64d5dc5eca13702fb",
+        "android_client_info": {
+          "package_name": "com.dbbs.mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASKEIzpDT7JAGNtbSRvSb4jA8G2_wQZJk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

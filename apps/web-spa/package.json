@@ -4,17 +4,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
     "build": "npx tsc && npx vite build",
     "cypress:open": "npx cypress open",
     "cypress:run": "npx cypress run",
     "dev": "npx vite",
-    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "preview": "npx vite preview",
     "test": "npx jest --coverage --verbose"
   },
   "dependencies": {
     "@dbbs/tailwind-components": "*",
+    "@dbbs/web-features": "*",
+    "@tanstack/react-router": "1.48.4",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
@@ -23,7 +25,9 @@
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "postcss": "8.4.38",
-    "tailwindcss": "3.4.3"
+    "@tanstack/router-devtools": "1.48.4",
+    "@tanstack/router-plugin": "1.48.3",
+    "postcss": "8.4.41",
+    "tailwindcss": "3.4.10"
   }
 }

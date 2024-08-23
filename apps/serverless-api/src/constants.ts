@@ -7,3 +7,10 @@ export const { AWS_S3_LOGS_BUCKET } = process.env
 export const { AWS_CLOUDWATCH_LOGS_PREFIX } = process.env
 export const AWS_CLOUDWATCH_LOGS_GROUP = process.env.AWS_CLOUDWATCH_LOGS_GROUP || 'default'
 export const CLS_STORAGE_NAME = 'storage'
+export const { REGION = 'eu-central-1' } = process.env
+export const {
+  SETTINGS_SERVICE_ENDPOINT = 'http://localhost:3032',
+  SETTINGS_SERVICE_NAME = 'serverless-settings-service-local-getSettings'
+} = process.env
+
+export const SETTINGS_SERVICE_ENABLE_XRAY = false

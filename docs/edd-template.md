@@ -67,11 +67,11 @@ The details of the proposed solutions. Include various alternative proposals. No
 
 <!-- Pros and cons of proposal, and evaluation against above listed goals -->
 
-## Platform Components
+## pre-built solutions Components
 
 <!--
 
-Replace this text with an explanation of what shared / platform components are related to this project.
+Replace this text with an explanation of what shared / pre-built solutions components are related to this project.
 
 - What existing shared components are utilized?
 - Do any of them require changes?

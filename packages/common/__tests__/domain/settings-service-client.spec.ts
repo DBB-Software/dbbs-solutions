@@ -7,6 +7,9 @@ describe('SettingServiceClient', () => {
     TENANTS: { 'dbbs-uk': { NAME: 'dbbs-uk' } }
   }
   const mockedFunctionName: string = 'getSettingsLambda'
+  const mockedRegion: string = 'eu-central-1'
+  const mockedEnableXRay: boolean = false
+  const mockedEndpoint: string = 'http://localhost:3000'
   const mockedTenantId: string = 'dbbs-uk'
   let lambdaClientMock: LambdaClient
 
@@ -20,36 +23,55 @@ describe('SettingServiceClient', () => {
 
   describe('constructor', () => {
     it('should create cache object and init lambda client', () => {
-      const input = { functionName: mockedFunctionName }
+      const input = { region: mockedRegion, endpoint: mockedEndpoint, settingsFunctionName: mockedFunctionName }
 
-      const settingServiceClient = new SettingServiceClient(lambdaClientMock, input.functionName)
+      const settingServiceClient = new SettingServiceClient(input)
 
       expect(settingServiceClient.lambdaClient).toBeDefined()
       expect(settingServiceClient.cache).toBeDefined()
-      expect(settingServiceClient.settingsFunctionName).toBe(input.functionName)
+      expect(settingServiceClient.settingsFunctionName).toBe(input.settingsFunctionName)
     })
 
-    it('should throw not defined function name error ', () => {
-      const input = { functionName: undefined as any }
-
-      expect(() => new SettingServiceClient(lambdaClientMock, input.functionName)).toThrowError(
-        'settingsFunctionName is not defined'
-      )
-    })
-
-    it('should throw not defined lambdaClient error ', () => {
-      const input = { functionName: mockedFunctionName, lambdaClient: undefined as any }
-
-      expect(() => new SettingServiceClient(input.lambdaClient, input.functionName)).toThrowError(
-        'lambdaClient is not defined'
-      )
+    test.each([
+      {
+        description: 'should throw not defined region error ',
+        input: {
+          region: undefined as any,
+          endpoint: mockedEndpoint,
+          settingsFunctionName: mockedFunctionName,
+          enableXRay: mockedEnableXRay
+        },
+        expectedError: 'region is not defined'
+      },
+      {
+        description: 'should throw not defined endpoint error ',
+        input: {
+          region: mockedRegion,
+          endpoint: undefined as any,
+          settingsFunctionName: mockedFunctionName,
+          enableXRay: mockedEnableXRay
+        },
+        expectedError: 'endpoint is not defined'
+      },
+      {
+        description: 'should throw not defined settingsFunctionName error ',
+        input: {
+          region: mockedRegion,
+          endpoint: mockedEndpoint,
+          settingsFunctionName: undefined as any,
+          enableXRay: mockedEnableXRay
+        },
+        expectedError: 'settingsFunctionName is not defined'
+      }
+    ])('$description', async ({ input, expectedError }) => {
+      expect(() => new SettingServiceClient(input)).toThrowError(expectedError)
     })
   })
 
   describe('getAllTenantSettings', () => {
     it('should call getTenantSettings func with expected input', async () => {
-      const input = { functionName: mockedFunctionName }
-      const settingServiceClient = new SettingServiceClient(lambdaClientMock, input.functionName)
+      const input = { region: mockedRegion, endpoint: mockedEndpoint, settingsFunctionName: mockedFunctionName }
+      const settingServiceClient = new SettingServiceClient(input)
 
       jest.spyOn(settingServiceClient, 'getSettings').mockResolvedValue({})
 
@@ -59,10 +81,15 @@ describe('SettingServiceClient', () => {
 
   describe('getTenantSettings', () => {
     it('should call getSettings func with without input params', async () => {
-      const input = { functionName: mockedFunctionName, tenantId: mockedTenantId }
+      const input = {
+        region: mockedRegion,
+        endpoint: mockedEndpoint,
+        settingsFunctionName: mockedFunctionName,
+        tenantId: mockedTenantId
+      }
       const expectedInput = mockedTenantId
 
-      const settingServiceClient = new SettingServiceClient(lambdaClientMock, input.functionName)
+      const settingServiceClient = new SettingServiceClient(input)
 
       jest.spyOn(settingServiceClient, 'getSettings').mockResolvedValue({})
 
@@ -77,7 +104,12 @@ describe('SettingServiceClient', () => {
       {
         description:
           'should call lambdaClient send command with correct input, return tenant settings from send command or cache',
-        input: { functionName: mockedFunctionName, tenantId: mockedTenantId },
+        input: {
+          region: mockedRegion,
+          endpoint: mockedEndpoint,
+          settingsFunctionName: mockedFunctionName,
+          tenantId: mockedTenantId
+        },
         expectedReturn: correctSettingsContent,
         expectedSendReturn: { Payload: fromUtf8(JSON.stringify(correctSettingsContent)) } as never,
         expectedInput: {
@@ -89,7 +121,12 @@ describe('SettingServiceClient', () => {
       },
       {
         description: 'should call lambdaClient send command with wrong input params',
-        input: { functionName: mockedFunctionName, tenantId: null as any },
+        input: {
+          region: mockedRegion,
+          endpoint: mockedEndpoint,
+          settingsFunctionName: mockedFunctionName,
+          tenantId: null as any
+        },
         expectedReturn: correctSettingsContent,
         expectedSendReturn: { Payload: fromUtf8(JSON.stringify(correctSettingsContent)) } as never,
         expectedInput: {
@@ -100,7 +137,7 @@ describe('SettingServiceClient', () => {
         expectedCallTimes: 1
       }
     ])('$description', async ({ input, expectedSendReturn, expectedInput, expectedReturn, expectedCallTimes }) => {
-      const settingServiceClient = new SettingServiceClient(lambdaClientMock, input.functionName)
+      const settingServiceClient = new SettingServiceClient(input)
       jest.spyOn(settingServiceClient.lambdaClient, 'send').mockResolvedValue(expectedSendReturn)
       const result = await settingServiceClient.getSettings(input.tenantId)
 

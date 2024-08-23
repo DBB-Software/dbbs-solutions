@@ -8,6 +8,7 @@
         "dist"
     ],
     "scripts": {
+        "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
         "build": "npx tsc --build tsconfig.json"
     },
     "publishConfig": {

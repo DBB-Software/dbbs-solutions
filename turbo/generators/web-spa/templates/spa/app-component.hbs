@@ -1,21 +1,58 @@
-{{#ifCond cssFramework '===' 'tailwind'}}
+{{#if isMUI}}
+import { ThemeProvider,{{#unless isTanstackRouterEnabled}} Typography,{{/unless}} theme } from '@dbbs/mui-components'
+{{/if}}
+{{#if isTailwind}}
+{{#unless isTanstackRouterEnabled}}
 import { Button } from '@dbbs/tailwind-components'
+{{/unless}}
 import './index.css'
+{{/if}}
+{{#if isReduxToolkit}}
+import { Provider as StoreProvider } from '@dbbs/web-redux-storage'
+{{/if}}
+{{#if isTanstackRouterEnabled}}
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { routeTree } from './routeTree.gen'
+{{/if}}
+{{#if isReduxToolkit}}
+import { store } from './store'
+{{/if}}
 
-function App() {
-  return <Button>Sample APP</Button>
+{{#if isTanstackRouterEnabled}}
+const router = createRouter({ routeTree })
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
 }
-{{/ifCond}}
-{{#ifCond cssFramework '===' 'mui'}}
-import { ThemeProvider, Typography, theme } from '@dbbs/mui-components'
+{{/if}}
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <Typography data-testid="app-title">Sample APP</Typography>
-    </ThemeProvider>
+    {{#if isReduxToolkit}}
+    <StoreProvider store={store}>
+    {{/if}}
+      {{#if isMUI}}
+      <ThemeProvider theme={theme}>
+      {{/if}}
+        {{#if isTanstackRouterEnabled}}
+        <RouterProvider router={router} />
+        {{else}}
+          {{#if isTailwind}} 
+            <Button>Sample APP</Button>
+          {{/if}}
+          {{#if isMUI}}
+            <Typography data-testid="app-title">Sample APP</Typography>
+          {{/if}}
+        {{/if}}
+      {{#if isMUI}}
+      </ThemeProvider>
+      {{/if}}
+    {{#if isReduxToolkit}}
+    </StoreProvider>
+    {{/if}} 
   )
 }
-{{/ifCond}}
 
 export default App

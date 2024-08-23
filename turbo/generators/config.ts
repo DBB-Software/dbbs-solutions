@@ -7,6 +7,8 @@ import serverlessServiceGenerators from './serverless-service/generators'
 import mobileAppGenerators from './mobile-app/generators'
 import storybookGenerators from './storybook/generators'
 import mobileStorybookGenerators from './mobile-storybook/generators'
+import mobileStorageGenerators from './mobile-storages/generators'
+import djangoServerGenerators from './django-server/generators'
 import helpers from './hbsHelpers'
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
@@ -18,5 +20,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
   mobileAppGenerators(plop)
   storybookGenerators(plop)
   mobileStorybookGenerators(plop)
+  mobileStorageGenerators(plop)
+  djangoServerGenerators(plop)
   helpers(plop)
 }

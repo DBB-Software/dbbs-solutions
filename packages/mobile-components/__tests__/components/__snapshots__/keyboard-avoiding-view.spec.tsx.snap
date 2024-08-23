@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`KeyboardView renders with the correct data for {
+  children: [Object],
+  iosBehavior: 'height',
+  androidBehavior: 'height'
+}: 1`] = `
+<View
+  androidBehavior="height"
+  iosBehavior="height"
+  onLayout={[Function]}
+  style={
+    {
+      "flex": 1,
+    }
+  }
+  testID="KEYBOARD_AVOIDING_VIEW_TEST_ID"
+>
+  <Text>
+    Content
+  </Text>
+</View>
+`;
+
+exports[`KeyboardView renders with the correct data for {
+  children: [Object],
+  iosBehavior: 'padding',
+  androidBehavior: 'padding'
+}: 1`] = `
+<View
+  androidBehavior="padding"
+  iosBehavior="padding"
+  onLayout={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      {
+        "paddingBottom": 0,
+      },
+    ]
+  }
+  testID="KEYBOARD_AVOIDING_VIEW_TEST_ID"
+>
+  <Text>
+    Content
+  </Text>
+</View>
+`;
+
+exports[`KeyboardView renders with the correct data for {
+  children: [Object],
+  iosBehavior: 'position',
+  androidBehavior: 'position'
+}: 1`] = `
+<View
+  androidBehavior="position"
+  iosBehavior="position"
+  onLayout={[Function]}
+  style={
+    {
+      "flex": 1,
+    }
+  }
+  testID="KEYBOARD_AVOIDING_VIEW_TEST_ID"
+>
+  <View
+    style={
+      {
+        "bottom": 0,
+      }
+    }
+  >
+    <Text>
+      Content
+    </Text>
+  </View>
+</View>
+`;

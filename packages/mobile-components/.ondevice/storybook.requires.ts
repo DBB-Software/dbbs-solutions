@@ -55,4 +55,4 @@ if (!global.view) {
   })
 }
 
-export const view = global.view
+export const { view } = global

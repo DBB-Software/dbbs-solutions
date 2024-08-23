@@ -53,6 +53,12 @@ export const generateAndroid = (answers: Parameters<PlopTypes.DynamicActionsFunc
     },
     {
       type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/android/app/signing.gradle`,
+      templateFile: 'mobile-app/templates/android/signing.gradle.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
       path: `{{ turbo.paths.root }}/apps/${appName}/android/app/src/main/AndroidManifest.xml`,
       templateFile: 'mobile-app/templates/android/AndroidManifest.hbs',
       data: templateProps

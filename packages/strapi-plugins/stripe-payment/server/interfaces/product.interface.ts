@@ -1,3 +1,5 @@
+import { Plan } from './plan.interface'
+
 export interface CreateProductParams {
   name: string
 }
@@ -13,4 +15,11 @@ export interface GetProductByIdParams {
 
 export interface DeleteProductParams {
   id: number
+}
+
+export interface Product {
+  name: string
+  id: number
+  stripe_id: string
+  plans: Plan[]
 }

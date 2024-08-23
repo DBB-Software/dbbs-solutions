@@ -8,19 +8,19 @@
   "scripts": {
     "build": "bob build",
     "clean": "npx rimraf .turbo node_modules dist bin",
-    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "test": "jest --coverage --verbose"
   },
   "dependencies": {
     "@react-native-firebase/remote-config": "20.0.0",
-    "react-native": "0.74.1"
+    "react-native": "0.74.5"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
     "react-native-builder-bob": "0.23.2",
-    "typescript": "5.4.5"
+    "typescript": "5.5.4"
   },
   "react-native-builder-bob": {
     "source": "src",

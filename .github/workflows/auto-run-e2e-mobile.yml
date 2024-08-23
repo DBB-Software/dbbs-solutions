@@ -1,0 +1,37 @@
+name: Auto run of E2E tests for a specific mobile application.
+
+run-name: Test ${{ github.head_ref || github.ref }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'yarn.lock'
+
+jobs:
+  test-dev:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: ${{ format('{0}_{1}', 'mobile-app', 'production') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run build, and e2e
+        uses: ./.github/actions/build-and-e2e
+        with:
+          ref: ${{ github.ref }}
+          ENV_CONFIG: ${{ secrets.ENV_CONFIG }}
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          SIGNING_CREDENTIALS: ${{ secrets.SIGNING_CREDENTIALS }}
+          workspace: mobile-app
+          device_api: 34
+          device_profile: pixel
+          device_target: default
+          restore_key: './apps/mobile-app/package.json'

@@ -1,0 +1,53 @@
+[tool.poetry]
+name = "{{ name }}"
+version = "0.1.0"
+description = "Simple Django application using Django Rest Framework"
+authors = [
+    "Artem Brytan <artem.brytan@dbbsoftware.com>",
+    "Hryhoriy Bilenko <hryhoriy.bilenko@dbbsoftware.com>"
+]
+readme = "README.md"
+
+[tool.ruff]
+extend = "../../packages/python-config/pyproject.toml"
+exclude = ["**/migrations/*.py"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.0.7"
+djangorestframework = "^3.15.2"
+djangorestframework-simplejwt = "^5.3.1"
+gunicorn = "^22.0.0"
+django-debug-toolbar = "^4.4.6"
+django-extensions = "^3.2.3"
+python-dotenv = "^1.0.1"
+psycopg2 = "^2.9.9"
+setuptools = "^70.3.0"
+coverage = "^7.6.0"
+whitenoise = "^6.7.0"
+ruff = "^0.5.2"
+django-health-check = "^3.18.3"
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+omit = ["*/migrations/*", "*/tests/*", "manage.py", "{{ module }}/settings/*", "*/__init__.py"]
+
+[tool.coverage.report]
+exclude_also = [
+    "def __repr__",
+    "def __str__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    ]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

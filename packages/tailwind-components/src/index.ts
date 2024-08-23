@@ -27,6 +27,15 @@ export {
 } from './components/breadcrumb'
 export { Button, buttonVariants } from './components/button'
 export { Calendar } from './components/calendar'
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './components/card'
+export {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext
+} from './components/carousel'
 export { Checkbox } from './components/checkbox'
 export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './components/collapsible'
 export {

@@ -4,6 +4,7 @@ import { errors } from '@strapi/utils'
 import planController from '../../server/controllers/plan'
 import { createMockContext, createMockStrapi } from '../factories'
 import { defaultPlan, strapiPlanControllerMock } from '../mocks'
+import { BillingPeriod, PlanType } from '../../server/enums'
 
 describe('Plan Controller', () => {
   let strapi: Strapi
@@ -16,8 +17,10 @@ describe('Plan Controller', () => {
     it.each([
       {
         name: 'should create a plan',
-        ctxOverrides: { request: { body: { price: 1000, interval: 'month', product_id: 1 } } },
-        serviceMethodArgs: { price: 1000, interval: 'month', product_id: 1 },
+        ctxOverrides: {
+          request: { body: { price: 1000, interval: BillingPeriod.MONTH, productId: 1, type: PlanType.RECURRING } }
+        },
+        serviceMethodArgs: { price: 1000, interval: BillingPeriod.MONTH, productId: 1, type: PlanType.RECURRING },
         expectedResult: defaultPlan
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult }) => {

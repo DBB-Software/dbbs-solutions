@@ -2,7 +2,7 @@
 
 ## Description
 
-The jest-config package provides custom jest configurations for all js-based applications within dbbs-platform.
+The jest-config package provides custom jest configurations for all js-based applications within dbbs-pre-built-solutions.
 
 ## Usage
 
@@ -65,7 +65,7 @@ export default async (): Promise<Config> => ({
 
 ## License
 
-The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+The DBBS Pre-Built Solutions is open-source software licensed under the [MIT License](LICENSE).
 
 ## Authors and owners
 
@@ -78,7 +78,7 @@ The DBBS Platform Base is open-source software licensed under the [MIT License](
 
 ## Relations
 
-- /apps/* 
+- /apps/*
 
 ## External dependencies
 

@@ -1,0 +1,23 @@
+{
+  "name": "@dbbs/django-server",
+  "version": "1.0.0",
+  "description": "DBBs Django Server",
+  "type": "module",
+  "main": "manage.py",
+  "private": true,
+  "scripts": {
+    "dev": "poetry run python manage.py runserver --settings=core.settings.local",
+    "format": "poetry run ruff check --fix",
+    "lint": "poetry install --no-root && poetry run ruff check .",
+    "start:dev": "poetry run python manage.py runserver --settings=core.settings.dev",
+    "start:prod": "poetry run gunicorn --env DJANGO_SETTINGS_MODULE=core.settings.prod core.wsgi:application --workers 4 --threads 2",
+    "test": "poetry run coverage run manage.py test --settings=core.settings.test && poetry run coverage xml",
+    "test:cov": "poetry run coverage run manage.py test --settings=core.settings.test && coverage report",
+    "migrate": "poetry run python manage.py migrate --run-syncdb --settings=core.settings.local",
+    "migrate:show": "poetry run python manage.py showmigrations --settings=core.settings.local",
+    "migrate:make": "poetry run python manage.py makemigrations --settings=core.settings.local",
+    "db:flush": "poetry run python manage.py flush --no-input --settings=core.settings.local",
+    "admin:create": "poetry run python manage.py createsuperuser --settings=core.settings.local",
+    "static:collect": "poetry run python manage.py collectstatic --settings=core.settings.local"
+  }
+}

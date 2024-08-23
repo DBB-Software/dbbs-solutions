@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useMemo, useState } from 'react'
+import React, { Fragment, useCallback, useMemo, useState, JSX } from 'react'
 import { useWindowDimensions } from 'react-native'
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler'
 import Animated, {
@@ -42,7 +42,7 @@ export const SmoothSlideTrack = <T,>({
   const maxTranslateX = useMemo(() => totalContentWidth - width, [totalContentWidth, width])
   const prevPosition = useSharedValue(0)
   const currentPosition = useSharedValue(0)
-  const [isPositiveDirection, setPositiveDirection] = useState(0 - currentPosition.value === maxTranslateX)
+  const [isPositiveDirection, setIsPositiveDirection] = useState(0 - currentPosition.value === maxTranslateX)
 
   const getDuration = useCallback(() => {
     if (isPositiveDirection) {
@@ -50,11 +50,10 @@ export const SmoothSlideTrack = <T,>({
       const processedDistance = remainingDistance === 0 ? maxTranslateX : remainingDistance
       const currentNumberOfItems = Math.round(processedDistance / itemWidth)
       return currentNumberOfItems * durationPerItem
-    } else {
-      const remainingDistance = maxTranslateX + currentPosition.value
-      const currentNumberOfItems = Math.round(remainingDistance / itemWidth)
-      return currentNumberOfItems * durationPerItem
     }
+    const remainingDistance = maxTranslateX + currentPosition.value
+    const currentNumberOfItems = Math.round(remainingDistance / itemWidth)
+    return currentNumberOfItems * durationPerItem
   }, [currentPosition.value, durationPerItem, isPositiveDirection, itemWidth, maxTranslateX])
 
   const baseAnimation = useCallback(
@@ -84,7 +83,7 @@ export const SmoothSlideTrack = <T,>({
         },
         () => {
           cancelAnimation(currentPosition)
-          runOnJS(setPositiveDirection)(!isPositiveDirection)
+          runOnJS(setIsPositiveDirection)(!isPositiveDirection)
         }
       )
       // Waiting for ending previous animation
@@ -137,7 +136,7 @@ export const SmoothSlideTrack = <T,>({
 
       const isEndReached = maxTranslateX + processedScrollDistance === 0
       const precessedDistanceDirection = isEndReached ? true : isPositiveNumber(event.translationX)
-      setPositiveDirection(processedScrollDistance === 0 ? false : precessedDistanceDirection)
+      setIsPositiveDirection(processedScrollDistance === 0 ? false : precessedDistanceDirection)
     })
     .onTouchesDown(stop)
     .onTouchesUp(play)

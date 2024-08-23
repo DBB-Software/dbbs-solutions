@@ -10,6 +10,12 @@ enum StylingFrameworks {
   TAILWIND = 'tailwind'
 }
 
+enum StoreFrameworks {
+  ReduxToolkit = 'redux-toolkit',
+  Jotai = 'jotai',
+  none = 'none'
+}
+
 const appBasePaths: Record<Applications, string> = {
   [Applications.SPA]: 'apps',
   [Applications.PACKAGE]: 'packages'
@@ -34,7 +40,13 @@ const generateConfigs = (
   const basePath = `{{ turbo.paths.root }}/${appBasePaths[type]}/{{name}}`
   const isAPP = type === Applications.SPA
   const transformedAppName = answers?.name.replace(/-/g, '_').toUpperCase()
-  const templateProps = { isAPP, appName: transformedAppName, cssFramework: answers?.cssFramework }
+  const templateProps = {
+    isAPP,
+    appName: transformedAppName,
+    cssFramework: answers?.cssFramework,
+    isTanstackRouterEnabled: answers?.isTanstackRouterEnabled,
+    storeFramework: answers?.storeFramework
+  }
 
   const actions: PlopTypes.ActionType[] = [
     {
@@ -118,8 +130,13 @@ const generateConfigs = (
 }
 
 const generateSPAFiles = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): PlopTypes.ActionType[] => {
-  const templateProps = { cssFramework: answers?.cssFramework }
-
+  const templateProps = {
+    cssFramework: answers?.cssFramework,
+    isMUI: answers?.cssFramework === StylingFrameworks.MUI,
+    isTailwind: answers?.cssFramework === StylingFrameworks.TAILWIND,
+    isTanstackRouterEnabled: answers?.isTanstackRouterEnabled,
+    isReduxToolkit: answers?.storeFramework === StoreFrameworks.ReduxToolkit
+  }
   const actions: PlopTypes.ActionType[] = [
     {
       type: 'add',
@@ -172,6 +189,43 @@ const generateSPAFiles = (answers: Parameters<PlopTypes.DynamicActionsFunction>[
     )
   }
 
+  if (answers?.isTanstackRouterEnabled) {
+    actions.push(
+      ...([
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/routes/__root.tsx',
+          templateFile: 'web-spa/templates/spa/root-tanstack.hbs',
+          data: templateProps
+        },
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/routes/index.lazy.tsx',
+          templateFile: 'web-spa/templates/spa/index-tanstack.hbs',
+          data: templateProps
+        },
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/routeTree.gen.ts',
+          templateFile: 'web-spa/templates/spa/default-root-tree.hbs',
+          data: templateProps
+        }
+      ] satisfies PlopTypes.ActionType[])
+    )
+  }
+
+  if (answers?.storeFramework === StoreFrameworks.ReduxToolkit) {
+    actions.push(
+      ...([
+        {
+          type: 'add',
+          path: '{{ turbo.paths.root }}/apps/{{ name }}/src/store/index.ts',
+          templateFile: 'web-spa/templates/store/index-rtk.hbs',
+          data: templateProps
+        }
+      ] satisfies PlopTypes.ActionType[])
+    )
+  }
   return actions
 }
 
@@ -196,6 +250,13 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         name: 'cssFramework',
         message: 'Choose the UI library what you want to use',
         choices: [StylingFrameworks.MUI, StylingFrameworks.TAILWIND]
+      },
+      { type: 'confirm', name: 'isTanstackRouterEnabled', message: 'Do you want to use Tanstack Router?' },
+      {
+        type: 'list',
+        name: 'storeFramework',
+        message: 'Choose the state management library what you want to use',
+        choices: [StoreFrameworks.ReduxToolkit, StoreFrameworks.Jotai, StoreFrameworks.none]
       }
     ],
     actions: (answers) => [
@@ -204,7 +265,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       ...generateCypressActions(Applications.SPA)
     ]
   })
-  plop.setGenerator('web-spa-package', {
+  plop.setGenerator(Applications.PACKAGE, {
     description: 'Create a new Web SPA package',
     prompts: [
       {

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Check if STAGE is set
-if [ -z "$STAGE" ]; then
-  echo "Error: STAGE must be set."
+# Check if STAGE, AWS_PROFILE, and SECRET_PREFIX are set
+if [ -z "$STAGE" ] || [ -z "$AWS_PROFILE" ] || [ -z "$SECRET_PREFIX" ]; then
+  echo "Error: STAGE, AWS_PROFILE, and SECRET_PREFIX must be set."
   echo "Usage: STAGE=\"your-stage\" AWS_PROFILE=\"your-aws-profile\" SECRET_PREFIX=\"your-secret-prefix\" ./upload-env.sh"
   exit 1
 fi
@@ -41,10 +41,10 @@ do
   aws secretsmanager describe-secret --secret-id "$SECRET_NAME" --profile "$AWS_PROFILE" &> /dev/null
   if [ $? -eq 0 ]; then
     echo "Updating secret: $SECRET_NAME"
-    aws secretsmanager update-secret --secret-id "$SECRET_NAME" --secret-string "$SECRET_VALUE" --profile "$AWS_PROFILE"
+    aws secretsmanager update-secret --secret-id "$SECRET_NAME" --secret-string "$SECRET_VALUE" --profile "$AWS_PROFILE" > /dev/null 2>&1
   else
     echo "Creating secret: $SECRET_NAME"
-    aws secretsmanager create-secret --name "$SECRET_NAME" --secret-string "$SECRET_VALUE" --profile "$AWS_PROFILE"
+    aws secretsmanager create-secret --name "$SECRET_NAME" --secret-string "$SECRET_VALUE" --profile "$AWS_PROFILE" > /dev/null 2>&1
   fi
 done
 

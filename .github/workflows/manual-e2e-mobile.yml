@@ -1,0 +1,71 @@
+name: Manual run of E2E tests for a specific mobile application.
+
+run-name: Test ${{ github.head_ref || github.ref }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      workspace:
+        description: A folder of mobile application
+        required: true
+        type: choice
+        default: mobile-app
+        options:
+          - mobile-app
+          - mobile-expo-app
+      device_api:
+        description: Version of API for android, which will be used for creating android emulator.
+        required: true
+        type: choice
+        default: 34
+        options:
+          - 29
+          - 30
+          - 31
+          - 32
+          - 33
+          - 34
+      device_profile:
+        description: Profile of device, which will be used for creating android emulator.
+        required: true
+        type: choice
+        default: pixel
+        options:
+          - pixel
+          # For up-to-date device lists, run the command: avdmanager list device 
+      device_target:
+        description: Target of the system image, which will be used for creating android emulator.
+        required: true
+        type: choice
+        default: default
+        options:
+          - default
+          - google_apis
+          - playstore
+          - android-wear
+          - android-wear-cn
+jobs:
+  test-dev:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: ${{ format('{0}_{1}', inputs.workspace, 'production') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run build, and e2e
+        uses: ./.github/actions/build-and-e2e
+        with:
+          ref: ${{ github.ref }}
+          ENV_CONFIG: ${{ secrets.ENV_CONFIG }}
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          SIGNING_CREDENTIALS: ${{ secrets.SIGNING_CREDENTIALS }}
+          workspace: ${{ inputs.workspace }}
+          device_api: ${{ inputs.device_api }}
+          device_profile: ${{ inputs.device_profile }}
+          device_target: ${{ inputs.device_target }}
+          restore_key: './apps/${{ inputs.workspace }}/package.json'

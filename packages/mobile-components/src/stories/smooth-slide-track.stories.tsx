@@ -6,6 +6,13 @@ import { SmoothSlideTrack } from '../components/smooth-slide-track'
 const data = ['Item 1', 'Item 2', 'Item 3']
 const itemWidth = 300
 
+const styles = StyleSheet.create({
+  item: {
+    height: 100,
+    width: 300
+  }
+})
+
 const meta: Meta<typeof SmoothSlideTrack> = {
   title: 'SmoothSlideTrack',
   component: SmoothSlideTrack,
@@ -26,10 +33,3 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Basic: Story = {}
-
-const styles = StyleSheet.create({
-  item: {
-    height: 100,
-    width: 300
-  }
-})

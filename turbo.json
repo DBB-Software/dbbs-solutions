@@ -1,61 +1,87 @@
 {
-    "$schema": "https://turbo.build/schema.json",
-    "globalDotEnv": [".env"],
-    "globalDependencies": [
-        ".env.*",
-        "tsconfig.json"
-    ],
-    "pipeline": {
-        "lint": {
-            "outputs": [],
-            "dependsOn": ["^lint"]
-        },
-        "build": {
-            "cache": false,
-            "dependsOn": [
-                "lint",
-                "^build"
-            ]
-        },
-        "test": {
-            "dependsOn": [
-                "build",
-                "^test"
-            ]
-        },
-        "e2e": {
-            "dependsOn": ["build"]
-        },
-        "cypress:run": {
-            "dependsOn": ["build"]
-        },
-        "cypress:open": {
-            "persistent": true,
-            "dependsOn": ["build"]
-        },
-        "clean": {
-            "cache": false
-        },
-        "dev": {
-            "cache": false,
-            "persistent": true,
-            "dependsOn": [
-                "build"
-            ]
-        },
-        "start": {
-            "cache": false,
-            "persistent": true,
-            "dependsOn": [
-                "build"
-            ]
-        },
-        "start:localstack": {
-            "cache": false,
-            "persistent": true,
-            "dependsOn": [
-                "^start:localstack"
-            ]
-        }
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    ".env.*",
+    "tsconfig.json",
+    ".env"
+  ],
+  "tasks": {
+    "lint": {
+      "outputs": [],
+      "dependsOn": [
+        "^lint"
+      ]
+    },
+    "build": {
+      "cache": false,
+      "dependsOn": [
+        "lint",
+        "^build"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "build",
+        "^test"
+      ]
+    },
+    "e2e": {
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "e2e:ci": {
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "cypress:run": {
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "cypress:open": {
+      "persistent": true,
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "start": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "start:localstack": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "^start:localstack"
+      ]
+    },
+    "migrate": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "lint"
+      ]
+    },
+    "test:cov": {
+      "dependsOn": [
+        "lint",
+        "^test"
+      ]
     }
+  }
 }

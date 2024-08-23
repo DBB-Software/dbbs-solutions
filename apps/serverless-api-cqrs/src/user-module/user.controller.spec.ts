@@ -20,7 +20,7 @@ describe('UserController', () => {
       {
         description: 'should throw a validation error',
         payload: { name: '' },
-        expectedError: 'Expected string to not be empty, got ``'
+        expectedError: 'Name must be a non-empty string'
       }
     ]
     test.each(testCases)('$description', async ({ payload, expected, expectedError }) => {
@@ -71,7 +71,7 @@ describe('UserController', () => {
       {
         description: 'should throw a validation error',
         id: '',
-        expectedError: 'Expected string to not be empty, got ``'
+        expectedError: 'ID must be a non-empty string'
       }
     ]
     test.each(testCases)('$description', async ({ id, expected, expectedError }) => {

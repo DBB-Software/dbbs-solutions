@@ -21,25 +21,21 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Set up Yarn
-      run: |
-        corepack enable
-        yarn set version stable
-      shell: bash
+    - name: Use Setup Yarn action
+      uses: ./.github/actions/setup-yarn
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ inputs.ref }}
 
-    - name: Extract Node.js version from .tool-versions
-      run: echo "NODE_VERSION=$(cat .tool-versions | grep nodejs | awk '{print $2}')" >> $GITHUB_ENV
-      shell: bash
+    - name: Setup Python
+      uses: ./.github/actions/setup-python
 
     - name: Set up NodeJs
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ env.NODE_VERSION }}
+        node-version-file: '.tool-versions'
         cache: 'yarn'
 
     - name: Cache node_modules
@@ -81,6 +77,11 @@ runs:
       env:
         STAGE: development
         AWS_PROFILE: dbbs-development
+        SECRET_PREFIX: dbbs-pre-built-solutions
+      shell: bash
+
+    - name: Override Coverage Source Path for Sonar
+      run: sed -i "s|<source>.*</source>|<source>/github/workspace/apps/django-server</source>|g" apps/django-server/coverage.xml
       shell: bash
 
     - name: Sonarcloud Scan

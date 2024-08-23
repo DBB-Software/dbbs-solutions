@@ -2,10 +2,16 @@ import { type PlopTypes } from '@turbo/gen'
 import { execSync } from 'child_process'
 import path from 'path'
 import addPackageJsonScript from '../utils/addPackageJsonScript'
+import { getAllProjects } from '../utils/getAllProjects'
+import { AppTypes } from '../mobile-app/config'
 
 const packagesToInstall = [
+  '@react-native-community/datetimepicker@8.0.1',
+  '@react-native-community/slider@4.5.2',
+  'react-native-web@0.19.12'
+]
+const devPackagesToInstall = [
   'storybook@8.1.7',
-  '@babel/preset-react@7.24.7',
   '@storybook/addon-actions@8.1.7',
   '@storybook/addon-controls@8.1.7',
   '@storybook/addon-essentials@8.1.7',
@@ -24,25 +30,15 @@ const packagesToInstall = [
   'babel-plugin-transform-inline-environment-variables@0.4.4'
 ]
 
-const getAllProjects = () => {
-  try {
-    const projectsNDJSON = execSync('yarn workspaces list --json').toString()
-    const projects = projectsNDJSON
-      .split(/\r?\n/)
-      .filter((line) => line.trim())
-      .map((line) => JSON.parse(line))
-
-    return projects
-  } catch (_e) {
-    return []
-  }
-}
-
 const addDependencies = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]) => {
   const projects = getAllProjects()
   const projectPath = projects.find((p) => p.name === answers?.project)?.location
 
-  execSync(`cd ${projectPath} && yarn add -D ${packagesToInstall.join(' ')}`)
+  execSync(`cd ${projectPath} && yarn add ${packagesToInstall.join(' ')}`)
+  execSync(`cd ${projectPath} && yarn add -D ${devPackagesToInstall.join(' ')}`)
+  if (answers?.appType === AppTypes.REACT_NATIVE_CLI) {
+    execSync(`cd ${projectPath} && yarn add -D @babel/preset-react@7.24.7`)
+  }
 }
 
 const updateStorybookProject = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]) => {
@@ -74,7 +70,9 @@ const generateStorybook = (answers: Parameters<PlopTypes.DynamicActionsFunction>
   const projects = getAllProjects()
   const projectPath = projects.find((p) => p.name === answers?.project)?.location
   const basePath = `{{ turbo.paths.root }}/${projectPath}`
-
+  const isExpo = answers?.appType === AppTypes.EXPO
+  const isReactNative = answers?.appType === AppTypes.REACT_NATIVE_CLI
+  const templateProps = { isExpo, isReactNative }
   execSync(`cd ${projectPath}`)
 
   return [
@@ -111,7 +109,8 @@ const generateStorybook = (answers: Parameters<PlopTypes.DynamicActionsFunction>
     {
       type: 'add',
       path: `${basePath}/AppEntryPoint.tsx`,
-      templateFile: 'mobile-app/templates/AppEntryPoint.hbs'
+      templateFile: 'mobile-app/templates/AppEntryPoint.hbs',
+      data: templateProps
     },
     {
       type: 'updateStorybookProject'
@@ -134,6 +133,12 @@ export default async function generator(plop: PlopTypes.NodePlopAPI) {
         name: 'project',
         message: 'Project to add storybook into:',
         choices: projects.map((p) => p.name)
+      },
+      {
+        type: 'list',
+        name: 'appType',
+        message: 'Select select type of your application, which framework you want to use?',
+        choices: [AppTypes.REACT_NATIVE_CLI, AppTypes.EXPO]
       }
     ],
     actions: (answers) => [...generateStorybook(answers)]

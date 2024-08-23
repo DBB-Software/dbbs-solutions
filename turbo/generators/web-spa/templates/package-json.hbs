@@ -18,8 +18,17 @@
   }{{#if isAPP}},{{/if}}
   {{#if isAPP}}
   "dependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    {{#ifCond storeFramework '===' 'redux-toolkit'}}
+    "@dbbs/web-redux-storage":"*",
+    {{/ifCond}}
+    {{#if isTanstackRouterEnabled}} 
+    "@tanstack/react-router": "1.43.6",
+    {{/if}}
+    {{#ifCond storeFramework '===' 'jotai'}}
+    "@dbbs/web-jotai-storage": "*",
+    {{/ifCond}}
     {{#ifCond cssFramework '===' 'mui'}}
     "@dbbs/mui-components": "*"
     {{/ifCond}}
@@ -28,7 +37,14 @@
     {{/ifCond}}
   },
   "devDependencies": {
-    "@dbbs/cypress": "*"
+    {{#if isTanstackRouterEnabled}} 
+    "@tanstack/router-devtools": "1.43.6",
+    "@tanstack/router-plugin": "1.43.5",
+    {{/if}}
+    "@dbbs/cypress": "*",
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
   }
   {{/if}}
 }

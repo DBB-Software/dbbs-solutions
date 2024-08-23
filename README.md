@@ -1,4 +1,4 @@
-# DBBS Platform Base
+# DBBS Pre-Built Solutions
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -14,12 +14,12 @@
 
 
 ## Introduction
-Welcome to the DBBS Platform Base, a comprehensive solution developed by DBB Software that is designed to revolutionize the management and development of complex software ecosystems. This platform is the foundation of a robust monorepo approach, enabling the creation of diverse applications, including APIs (both server-based and serverless), mobile apps with React Native, and web applications (React SPA and SSR).
+Welcome to the DBBS Pre-Built Solutions, a comprehensive solution developed by DBB Software that is designed to revolutionize the management and development of complex software ecosystems. This platform is the foundation of a robust monorepo approach, enabling the creation of diverse applications, including APIs (both server-based and serverless), mobile apps with React Native, and web applications (React SPA and SSR).
 
-At DBBS Platform Base, our focus is on providing a strong and adaptable foundation for software development. We address the challenges of managing multiple applications within a single repository with our seamless, efficient approach to generating a base monorepo structure complete with all necessary applications and tools.
+At DBBS Pre-Built Solutions, our focus is on providing a strong and adaptable foundation for software development. We address the challenges of managing multiple applications within a single repository with our seamless, efficient approach to generating a base monorepo structure complete with all necessary applications and tools.
 
-Our platform is defined by its opinionated design, offering a suite of predefined, rigorously tested configurations and modules. This framework minimizes the time developers spend on architectural decisions, allowing more focus on innovation. DBBS Platform Base is more than a tool; it represents a shift in how development ecosystems are managed and scaled, merging industry best practices with cutting-edge technologies. Join us in advancing the future of software development.
-### Key Advantages of DBBS Platform Base:
+Our platform is defined by its opinionated design, offering a suite of predefined, rigorously tested configurations and modules. This framework minimizes the time developers spend on architectural decisions, allowing more focus on innovation. DBBS Pre-Built Solutions is more than a tool; it represents a shift in how development ecosystems are managed and scaled, merging industry best practices with cutting-edge technologies. Join us in advancing the future of software development.
+### Key Advantages of DBBS Pre-Built Solutions:
 - **Streamlined Development Process:**
   Through our CLI interface or configuration files, developers can easily assign necessary modules to each application, tailoring functionalities to meet specific needs within the monorepo.
 - **Time Efficiency:**
@@ -30,18 +30,20 @@ Our platform is defined by its opinionated design, offering a suite of predefine
 
 ## Prerequisites
 
-Before diving into the DBBS Platform Base, ensure the following prerequisites are met for a smooth experience:
+Before diving into the DBBS Pre-Built Solutions, ensure the following prerequisites are met for a smooth experience:
 
 - **Git**: Essential for source control management.
 - **Node.js & NPM**: Required for managing dependencies and running scripts. Check the `.nvmrc` file for the exact Node.js version.
+- **Python & Poetry**: Required for managing dependencies and running apps for Python projects.
 - **AWS CLI**: Necessary for handling AWS services, version 2.14.0 or higher.
 - **Serverless Framework**: Version 3.38.0 or higher for deploying serverless applications.
 - **Knowledge Base**: Familiarity with JavaScript/TypeScript, React, and serverless concepts will be beneficial.
 
-These tools and knowledge are key to effectively using and contributing to the DBBS Platform Base.
+These tools and knowledge are key to effectively using and contributing to the DBBS Pre-Built Solutions.
 ### Essential Tools
 - **Git:** Required for version control and repository management. Ensure Git is installed on your machine.
 - **Node.js & NPM:** The platform is dependent on Node.js. The required version is specified in the `.nvmrc` file in the root of the repository. The corresponding npm version should be used as per the Node.js version.
+- **Python & Poetry:** The part of platform is depended on Python. The required version is specified in the `pyproject.toml` file in each python applications directory
 
 ### AWS Integration
 - **AWS CLI v2.14.0 or Higher:** For managing AWS services, install AWS CLI version 2.14.0 or higher.
@@ -58,60 +60,81 @@ These tools and knowledge are key to effectively using and contributing to the D
     - SecretsManagerReadWrite
 
 ### Recommended Knowledge
-- **JavaScript/TypeScript:** Familiarity with JavaScript or TypeScript is essential, as our platform is heavily based on these languages.
+- **JavaScript/TypeScript:** Familiarity with JavaScript or TypeScript is essential, as our pre-built solutions is heavily based on these languages.
 - **React & React Native:** Basic understanding of React for web apps and React Native for mobile app development.
 - **Serverless Architecture:** Knowledge of serverless concepts is beneficial for working with serverless APIs.
 
-## Installation
-Setting up the DBBS Platform Base is straightforward. Follow these steps to get started:
+## Installation DBBS Pre-Built Solutions
+Setting up the DBBS Pre-Built Solutions is straightforward. Follow these steps to get started:
 1. **Clone the Repository**
    Begin by cloning the repository to your local machine.
    ```bash
-   git clone https://github.com/DBB-Software/dbbs-platform-base
+   git clone https://github.com/DBB-Software/pre-built-solutions
    ```
-   This command clones the DBBS Platform Base repository from GitHub.
-2. **Install Dependencies**
-   Makefile is designed to automate the setup of dependencies for project. 
-   It uses Homebrew, asdf, and Yarn to manage installations and versions of tools and packages. Required steps:
-   Navigate to the root directory of the cloned repository.
+   This command clones the DBBS Pre-Built Solutions repository from GitHub.
+
+2. **AWS Credentials Setup**
+   For deploying applications and accessing AWS services, set your AWS credentials.
    ```bash
-   cd dbbs-platform-base
+   aws configure --profile <profile-name>
    ```
-   Install all dependencies while in the root directory of the cloned repository.
-   ```bash
-   make setup-dependencies
+   Replace `<AWS_ACCESS_KEY_ID>` and `<AWS_SECRET_ACCESS_KEY>` with your actual AWS credentials.
    ```
-   Check the versions of installed tools while in the root directory of the cloned repository.
-   ```bash
-   make check-versions
+   AWS Access Key ID [None]: AWS_ACCESS_KEY_ID
+   AWS Secret Access Key [None]: AWS_SECRET_ACCESS_KEY
+   Default region name [None]: eu-central-1
+   Default output format [None]: json
    ```
-   Ensure that Homebrew and asdf are correctly set in your PATH. If not, the script will open instructions for installation and adding Homebrew and asdf to your shell.
-   If Yarn is not installed or is outdated, the Makefile will install or update it using Corepack.
-3. **Build the Monorepo**
-   Once the dependencies are installed, build the entire monorepo to ensure all components are properly compiled.
-   ```bash
-   yarn build
-   ```
-4. **AWS Credentials Setup**
-   For deploying applications and accessing AWS services, set your AWS credentials. Replace `<AWS_ACCESS_KEY_ID>` and `<AWS_SECRET_ACCESS_KEY>` with your actual AWS credentials.
-   ```bash
-   export AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
-   export AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
-   ```
-5. **Run Example Applications**
+
+3. **Run Example Applications**
+   Makefile is designed to automate the setup of dependencies, download environment variables for projects, build and run all example applications.
    To start all example applications, use the following command:
    ```bash
-   yarn dev
+   make all
    ```
-6. **Generate New Applications**
-   If you want to create a new application, use the `npx turbo gen` command and follow the instructions in the console.
+   When the makefile asks you to enter your AWS profile, you must enter the profile you specified in Step 2.
+
+4. **Testing**
+   Running tests is crucial for maintaining code quality. Use the test command to execute your test suites.
    ```bash
-   npx turbo gen
+   make test
    ```
 
-## Usage
+## Installation A Specific Applications DBBS Pre-Built Solutions
+If you want run a specific applications follow these steps:
+1. **Follow steps 1-2 in Installation DBBS Platform**
 
-The DBBS Platform Base offers a set of commands to manage and operate your monorepo efficiently. These commands are designed to enhance flexibility and enable targeted development tasks for specific packages or applications. Below is a guide to the key commands and their functionalities:
+2. **Setup**
+   Setting up dependencies and environment variables.
+   Makefile is designed to automate the setup of dependencies and environment variables for project.
+   It uses Homebrew, asdf, and Yarn to manage installations and versions of tools and packages and AWS CLI for download environment variables.
+   Navigate to the root directory of the cloned repository.
+   ```bash
+   cd pre-built-solutions
+   ```
+   Install all dependencies and environments while in the root directory of the cloned repository.
+   ```bash
+   make setup
+   ```
+   When the makefile asks you to enter your AWS profile, you must enter the profile you specified in Step 2.
+3. **Build A Specific application**
+   Once the dependencies are installed, build specific application to ensure all components are properly compiled.
+   ```bash
+   make build-<app-name>
+   ```
+4. **Run A Specific Applications**
+   If you want start a specific application, use the following command:
+   ```bash
+   make dev-<app-name>
+   ```
+5. **Test A Specific Applications**   
+   ```bash
+   make test-<app-name>
+   ```
+
+## Usage DBBS Pre-Built Solutions
+
+The DBBS Pre-Built Solutions offers a set of commands to manage and operate your monorepo efficiently. These commands are designed to enhance flexibility and enable targeted development tasks for specific packages or applications. Below is a guide to the key commands and their functionalities:
 
 1. **Linting**
    To ensure code quality and consistency, use the lint command. This will check your code for any stylistic or programming errors.
@@ -146,14 +169,14 @@ The DBBS Platform Base offers a set of commands to manage and operate your monor
    Replace `<app-name>` with the name of the application you're developing.
 
 6. **Local start**
-   For local environment to emulate AWS resources [LocalStack](https://www.localstack.cloud/) is used. To start the local environment and emulate AWS resources using LocalStack, run the start:localstack command from the root directory. This will start applications along with additional AWS services in docker container such as S3, etc. 
+   For local environment to emulate AWS resources [LocalStack](https://www.localstack.cloud/) is used. To start the local environment and emulate AWS resources using LocalStack, run the start:localstack command from the root directory. This will start applications along with additional AWS services in docker container such as S3, etc.
 
 ### Additional Tips
 
 - **Targeted Commands:** Most commands support a `target` env variable at the beginning of command to specify which package or app the command should run for. This allows for more granular control over your development workflow.
 - **Custom Scripts:** You can also define custom scripts in your `package.json` to streamline your workflow further.
 
-With these commands and tips, you can fully leverage the capabilities of the DBBS Platform Base to streamline your development process.
+With these commands and tips, you can fully leverage the capabilities of the DBBS Pre-Built Solutions to streamline your development process.
 
 #### Commands:
 - `yarn dev`
@@ -167,7 +190,7 @@ In addition to the standard development commands, the DBBS Platform includes Cyp
 - `target=web-spa yarn cypress:run` - Executes Cypress tests in a headless mode, suitable for automated test runs in continuous integration (CI) pipelines.
 
 #### Makefile Targets:
-- `setup-dependencies` - The main target for setting up all dependencies. It runs the following targets in order: `check-brew`, `asdf-install`, and `install-deps`.
+- `setup-dependencies` - The main target for setting up all dependencies and environment variables. It runs the following targets in order: `check-brew`, `asdf-install`, `install-deps`, `install-docker`, `check-versions`, `prompt-aws-profile`.
 - `check-brew` - Checks if Homebrew is installed on the system. If not, it prompts the user to install Homebrew by providing the installation instructions.
 - `asdf-install` - Installs asdf and its plugins for managing Node.js, Ruby, and Cocoapods versions. It also updates all asdf plugins and installs the specified versions of the tools.
 - `install-deps` - Installs the project's dependencies, which include Node.js modules and the AWS CLI. It runs the `install-node-modules` and `install-awscli` targets.
@@ -176,6 +199,24 @@ In addition to the standard development commands, the DBBS Platform includes Cyp
 - `check-yarn` - Checks if Yarn is installed and up to date. If not, it installs Yarn using Corepack. It also updates local Yarn to the stable version if the installed version is lower than 4.0.
 - `install-awscli` - Installs the AWS CLI using Homebrew.
 - `check-versions` - Checks and prints the versions of installed tools, including asdf, Node.js, Ruby, Cocoapods, Yarn and the AWS CLI.
+- `all` - The main target for running all essential operations. It runs the following targets in order: `setup`, `run-build`, and `run-dev`.
+- `run-build` - Builds the platform. It executes the `yarn build` command.
+- `run-build-%` - Pattern rule that runs the `yarn build` command in the specified subdirectory. The subdirectory is determined by replacing `%` with the name of the subdirectory.
+- `prompt-aws-profile` - Prompts the user to select a AWS profile. After selecting the stage, it runs the `after-prompt` target.
+- `after-prompt` - Runs the following targets after the stage is selected: `check-profile`, `check-secrets`, and `download-env`.
+- `check-profile` - Checks if the AWS profile $(AWS_PROFILE) exists. If the profile is not found, it provides instructions for setting up the profile and credentials. After this, it runs the `check-secrets` target.
+- `check-secrets` - Checks for the existence of secrets in AWS Secrets Manager for each app in the $(SECRETS) list. If a secret is not found, it outputs an error message. After this, it runs the `download-env` target.
+- `download-env` - Downloads environment variables from AWS Secrets Manager using the AWS profile and region specified in the $(AWS_PROFILE) and $(REGION) variables.
+- `run-dev` - Runs the `yarn dev` command in the root directory of the project.
+- `run-dev-%` - Pattern rule that runs the `yarn dev` command in the specified subdirectory. The subdirectory is determined by replacing `%` with the name of the subdirectory.
+- `run-test` - Runs the `yarn test` command in the root directory of the project.
+- `run-test-%` - Pattern rule that runs the `yarn test` command in the specified subdirectory. The subdirectory is determined by replacing `%` with the name of the subdirectory.
+- `install-awscli-local` - Installs the LocalStack AWS CLI using Homebrew.
+- `install-docker` - Installs Docker and Docker Compose if they are not already installed, using Homebrew.
+- `check-versions` - Checks and prints the versions of installed tools, including asdf, Node.js, Ruby, Cocoapods, Yarn, AWS CLI, Docker and Docker Compose.
+- `localstack-up` and `localstack-down` - Commands to manage LocalStack services with Docker Compose.
+- `set-docker-volume-permissions` - Sets permissions for Docker volumes to ensure accessibility.
+- Target-specific rules like `install-gems-%`, `install-pods-%`, `fastlane-build-%`, `firebase-distribution-%`, and `beta-distribution-%` are designed to handle operations in specific subdirectories for various deployment and testing scenarios.
 
 #### Scripts:
 The .sh scripts are in **`/scripts`** folder. Below is an outline of the scripts, along with their purpose:
@@ -260,7 +301,7 @@ Script for uploading environment variables from AWS Secret Manager. It requires 
    ```
 
 ## Repository Structure
-The DBBS Platform Base monorepo is structured to facilitate ease of navigation and development across various components. Below is an outline of the key directories and files, along with their purpose:
+The DBBS Pre-Built Solutions monorepo is structured to facilitate ease of navigation and development across various components. Below is an outline of the key directories and files, along with their purpose:
 - **`/apps`**: This directory contains the individual applications developed within the monorepo. Each sub-directory represents a separate application, such as server, serverless APIs, React SPA, React SSR, and React Native mobile apps.
 - **`/packages`**: Contains shared packages or libraries that are used across multiple applications within the monorepo. This promotes code reusability and consistency.
 - **`/serverless-layer`**: Specific to serverless applications, this directory hosts the common layers used in serverless deployments, such as shared libraries and utilities.
@@ -280,17 +321,53 @@ This directory encompasses a diverse array of applications, spanning web, server
 - Server NestJS App
 - Serverless NestJS App
 - Serverless App
+- Strapi App
+- Server Django App
 
-#### Mobile application
-- React Native cross-platform mobile app
+#### Mobile applications
+- React Native cross-platform mobile app, can be presented using react-native-cli and expo.
 
 For each application, a predefined set of initial configurations is supplied. These include:
 - ESLint Configuration
 - Jest Configuration
+- Detox Configuration
 - TypeScript Configurations
+- Firebase configuration: Remote config and messaging
+- Fastlane implementation of cross-platform distribution
+- Sentry Configuration
+- Storybook Configuration: on device and web
 
 Additionally, a sample component is provided for each application, serving as a practical illustration of the application's structure.
 These applications serve as diverse templates for building customer systems. Whether you are constructing a web interface, server logic, mobile application, or a serverless function, the DBBS Platform offers a solid foundation to expedite development.
+
+##### Setup Instructions after generating app template via turbo generator
+
+##### For `react-native-cli` Template
+
+1. **Generate Required Firebase Files**:
+   - `google-services.json` for Android
+   - `GoogleService-Info.plist` for iOS
+
+2. **Add Firebase Files**:
+   - Place the `google-services.json` file into the `android/app` directory.
+   - Place the `GoogleService-Info.plist` file into the `ios` directory.
+
+3. **Complete the Setup**:
+   - Ensure that all other configurations and dependencies are correctly set up according to the provided templates.
+
+##### For Expo Template
+
+1. **Generate Required Firebase Files**:
+   - `google-services.json`
+   - `GoogleService-Info.plist`
+
+2. **Add Firebase File**:
+   - Place the `google-services.json` and `GoogleService-Info.plist` file into the `firebase` directory within the Expo template.
+
+3. **Run Prebuild Command**:
+   - Execute the command `yarn prebuild` to generate the native parts of the application.
+
+By following these instructions, you ensure that the necessary Firebase configurations are properly integrated into your mobile application setup, whether you are using `react-native-cli` or `expo`.
 
 ### Packages
 The packages folder serves as a repository for common elements shared across various applications within the DBBS Platform. It encapsulates fundamental configurations, reusable components, and essential features, providing a centralized resource for streamlined development. These are modules that are used in apps to cover the basic logic of end-customer applications, such as authorization, logging, multi-tenancy configuration, etc.
@@ -303,11 +380,20 @@ The packages folder serves as a repository for common elements shared across var
 #### React Components and Features:
 A collection of React components and features designed to enhance the user interface and functionality across applications.
 
+#### Mobile Components and Features:
+Presented as two packages:
+- mobile-components: A collection of ReactNative components using the react-native-paper, react-native-gesture-handler, react-native-svg, react-native-reanimated, react-native-tab-view, react-native-vector-icons, etc. libraries. Designed to improve the user interface of ReactNative and Expo applications.
+- mobile-features: A collection of universal solutions for ReactNative applications including implementation of firebase service handling.
+- mobile-storages: This package provides a basic implementation for two storage options - RTK and Jotai, with a persistence implementation using @react-native-async-storage/async-storage.
+
 #### NestJS Modules:
-A set of NestJS modules, including middlewares, filters, interceptors, guards, and pipes. These modules contribute to the backend logic and functionality shared among applications.
+A set of NestJS modules, including middlewares, filters, interceptors, guards, and pipes. These modules contribute to the backend logic and functionality shared among applications. Detailed information about each NestJS module can be found in the packages/nest-modules directory, where each module includes its own README file.
 
 #### AWS Package Wrapper:
 To ensure smoother integration with AWS services, the packages folder includes a wrapper for key AWS packages. This simplifies the usage of AWS functionalities across different applications.
+
+#### Strapi Plugins:
+A collection of custom Strapi plugins that enhance and extend the functionality of Strapi applications. These plugins cover various use cases such as permissions management, Stripe integration, and more. Detailed information about each Strapi plugin can be found in the packages/strapi-plugins directory, where each plugin includes its own README file.
 
 The packages folder consolidates common elements critical for maintaining consistency and efficiency in development. By centralizing configurations, components, and modules, developers can seamlessly integrate shared functionalities into their respective applications.
 
@@ -340,7 +426,7 @@ The generator folder simplifies and accelerates the application creation process
 
 ## Configuration Details
 
-The DBBS Platform Base is designed to be highly configurable to meet a variety of development needs. Below is an overview of key configuration files and settings within the monorepo:
+The DBBS Pre-Built Solutions is designed to be highly configurable to meet a variety of development needs. Below is an overview of key configuration files and settings within the monorepo:
 
 - **`package.json`**: This file at the root level defines project dependencies and scripts. It's essential for managing npm packages and can be customized to include additional scripts or dependencies as required.
 
@@ -358,27 +444,33 @@ The DBBS Platform Base is designed to be highly configurable to meet a variety o
 - **Document Customizations**: If you add custom scripts or make significant changes to configuration files, document these changes either in the README or a separate documentation file.
 - **Version Control**: Regularly commit changes to your configuration files to version control, allowing you to track and revert changes if needed.
 
-By properly configuring the DBBS Platform Base, you can ensure that it aligns with your development objectives and works seamlessly across different environments.
+By properly configuring the DBBS Pre-Built Solutions, you can ensure that it aligns with your development objectives and works seamlessly across different environments.
 
 
 ## Technology Stack
 
-The DBBS Platform Base utilizes a diverse and modern technology stack to offer a robust and efficient development experience. Below is an overview of the key technologies used and their specific roles within the platform:
+The DBBS Pre-Built Solutions utilizes a diverse and modern technology stack to offer a robust and efficient development experience. Below is an overview of the key technologies used and their specific roles within the platform:
 - **[NestJS](https://github.com/nestjs/nest)**: A progressive Node.js framework used for building efficient, reliable, and scalable server-side applications.
+- **[Django](https://github.com/django/django)**: Is a high-level Python web framework that encourages rapid development and clean, pragmatic design.
 - **[Next.js](https://github.com/vercel/next.js)**: A React framework that enables functionalities such as server-side rendering and generating static websites, enhancing the performance of web applications.
 - **[Material UI](https://github.com/mui/material-ui)**: A popular UI framework for React applications, known for its responsive and customizable components that speed up the design process.
 - **[Serverless](https://github.com/serverless/serverless)**: A framework for building and deploying serverless applications, streamlining the process of managing cloud resources and reducing operational overhead.
-- **[OpenNext](https://github.com/sst/open-next)**: This technology enhances Next.js applications, providing additional capabilities and integrations for a more comprehensive development toolkit.
+- **[NextServerlessDeployment](https://github.com/DBB-Software/next-serverless-deployment)**: This technology enhances Next.js applications, providing serverless self-hosted solution with a robust caching solution.
 - **[Turbo](https://github.com/vercel/turbo)**: A high-performance build system and repository management tool designed to optimize the development and scaling of monorepos like ours.
 - **[Vite](https://vitejs.dev/)**: An innovative front-end build tool that significantly improves the development experience with features like instant server start and lightning-fast hot module replacement (HMR).
 - **[Jest](https://jestjs.io/)**: A delightful JavaScript testing framework with a focus on simplicity, providing a flexible and scalable testing solution for our applications.
+- **[ReactNative](https://reactnative.dev/): A framework for building native applications using React, enabling the development of cross-platform mobile applications with a single codebase.
+- **[Expo](https://expo.dev/): A framework and platform for universal React applications, providing a set of tools and services to build, deploy, and quickly iterate on iOS, Android, and web apps from the same JavaScript/TypeScript codebase.
+- **[Firebase](https://firebase.google.com/): A comprehensive app development platform that offers a variety of tools and services such as authentication, real-time databases, cloud storage, and analytics, facilitating the development of high-quality apps.
+- **[Fastlane](https://fastlane.tools/): An open-source platform aimed at simplifying Android and iOS deployment, automating every aspect of building and releasing mobile applications.
+- **[Detox](https://wix.github.io/Detox/): A gray-box end-to-end testing and automation library for mobile apps, designed to test your mobile application from the perspective of a real user.
 
 Our technology stack is carefully selected to ensure the platform remains at the forefront of development innovation, offering a powerful combination of speed, efficiency, and scalability.
 
 
 ## Contribution Guidelines
 
-We warmly welcome contributions to the DBBS Platform Base! Whether you're fixing bugs, improving documentation, or suggesting new features, your input is invaluable. Here's how you can contribute:
+We warmly welcome contributions to the DBBS Pre-Built Solutions! Whether you're fixing bugs, improving documentation, or suggesting new features, your input is invaluable. Here's how you can contribute:
 
 ### Getting Started
 1. **Fork the Repository**: Start by forking the repository on GitHub. This creates your own copy of the project where you can make changes.
@@ -416,16 +508,16 @@ We warmly welcome contributions to the DBBS Platform Base! Whether you're fixing
 ### Code of Conduct
 - Please adhere to the Code of Conduct while interacting with the project. Respectful and constructive communication is expected from all participants.
 
-By following these guidelines, you can contribute to making DBBS Platform Base an even better tool for everyone. We look forward to your contributions!
+By following these guidelines, you can contribute to making DBBS Pre-Built Solutions an even better tool for everyone. We look forward to your contributions!
 
 ### Questions or Issues?
 - If you have any questions or run into issues, don't hesitate to reach out for help or clarification.
 
-Thank you for contributing to the DBBS Platform Base!
+Thank you for contributing to the DBBS Pre-Built Solutions!
 
 ## FAQs/Troubleshooting
 
-This section aims to address common questions and provide solutions to frequent issues that users might encounter while working with the DBBS Platform Base.
+This section aims to address common questions and provide solutions to frequent issues that users might encounter while working with the DBBS Pre-Built Solutions.
 
 ### Frequently Asked Questions (FAQs)
 
@@ -458,7 +550,7 @@ For detailed documentation and guides, refer to the `/documentation` directory i
 
 ## Contact Information
 
-We value your feedback and contributions to the DBBS Platform Base. If you have any questions or suggestions or need support, here are several ways to get in touch with us:
+We value your feedback and contributions to the DBBS Pre-Built Solutions. If you have any questions or suggestions or need support, here are several ways to get in touch with us:
 
 - **General Inquiries and Support**: For any general questions about the platform or if you need assistance, please visit our website [DBB Software](https://dbbsoftware.com/) and use the contact form provided.
 
@@ -472,12 +564,12 @@ We value your feedback and contributions to the DBBS Platform Base. If you have 
 
 - **Email Contact**: For more formal or detailed inquiries, feel free to reach out to us via email at [in@dbbsoftware.com](mailto:in@dbbsoftware.com).
 
-We're always here to help and are committed to ensuring you have the best experience with the DBBS Platform Base. Your input and participation drive the continuous improvement of our platform.
+We're always here to help and are committed to ensuring you have the best experience with the DBBS Pre-Built Solutions. Your input and participation drive the continuous improvement of our platform.
 
 
 ## License
 
-The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+The DBBS Pre-Built Solutions is open-source software licensed under the [MIT License](LICENSE).
 
 ### Key Points of the MIT License:
 - **Freedom to Use**: You are free to use this software in your own projects, commercial or otherwise.
@@ -487,4 +579,4 @@ The DBBS Platform Base is open-source software licensed under the [MIT License](
 
 This license allows for maximum flexibility and broad use, encouraging innovation and collaboration. For the full terms and conditions, please refer to the [LICENSE](LICENSE) file in the repository.
 
-We believe in open-source software and the power of community collaboration, and we hope this licensing choice helps foster a vibrant and supportive ecosystem around the DBBS Platform Base.
+We believe in open-source software and the power of community collaboration, and we hope this licensing choice helps foster a vibrant and supportive ecosystem around the DBBS Pre-Built Solutions.

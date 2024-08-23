@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+branch_name="$(git branch --show-current)"
+branch_regex="^(bug|chore|feat)\/([a-zA-Z]+-[0-9]+)(-(.*))?"
+
+if [[ ! $branch_name =~ $branch_regex ]]; then
+  echo "Branch name does not match expected format. Ex. feat/TYPE-000-desc"
+  exit 1
+fi
+
+
+npx lint-staged

@@ -1,0 +1,29 @@
+{
+  "build": {
+    "dev": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDevDebug"
+      },
+      "ios": {
+        "buildConfiguration": "Debug",
+        "scheme": "{{ appName }} Dev"
+      }
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "prod": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleProdDebug"
+      },
+      "ios": {
+        "buildConfiguration": "Release",
+        "scheme": "{{ appName }} Prod"
+      }
+    }
+  }
+}

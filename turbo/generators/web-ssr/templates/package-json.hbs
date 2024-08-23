@@ -5,6 +5,9 @@
   "scripts": {
     "clean": "npx rimraf .turbo node_modules .next bin coverage *.tsbuildinfo || exit 0",
     "dev": "npx next dev",
+    {{#if useServerless}}
+    "deploy": "npx next-serverless-deployment deploy --stage $STAGE --siteName $APP",
+    {{/if}}
     "build": "npx next build",
     "start": "npx next start",
     "lint": "npx next lint",
@@ -13,14 +16,26 @@
     "cypress:run": "npx cypress run"
   },
   "dependencies": {
+    {{#if isReduxToolkit}}
+    "@dbbs/web-redux-storage":"*",
+    {{#if usePageRouter}}
+    "next-redux-wrapper": "8.1.0",
+    {{/if}}
+    {{/if}}
+    {{#if isJotaiStore}}
+    "@dbbs/web-jotai-storage": "*",
+    {{/if}}
     {{#ifCond cssFramework '===' 'tailwind'}}
     "@dbbs/tailwind-components": "*",
     {{/ifCond}}
     {{#ifCond cssFramework '===' 'mui'}}
     "@dbbs/mui-components": "*",
     {{/ifCond}}
-    "next": "14.0.1",
-    "react": "18.2.0",
+    {{#if useServerless}}
+    "@dbbs/next-serverless-deployment": "1.0.0",
+    {{/if}}
+    "next": "14.2.3",
+    "react": "18.3.1",
     "react-dom": "18.2.0"
   },
   "devDependencies": {

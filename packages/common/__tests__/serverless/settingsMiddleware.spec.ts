@@ -1,5 +1,3 @@
-import { LambdaClient } from '@aws-sdk/client-lambda'
-import AWSXRayCore from 'aws-xray-sdk-core'
 import { SettingServiceClient } from '../../src/domain/setting-service-client.js'
 import { settingsMiddleware } from '../../src/serverless/settingsMiddleware.js'
 import { ICustomSettingsContext } from '../../src/serverless/types/settingsMiddleware.js'
@@ -68,8 +66,6 @@ describe('settingsMiddleware', () => {
     ])('$description', async ({ input, expectedClientInput, expectedCallTimes }) => {
       const middleware = settingsMiddleware(input)
 
-      expect(LambdaClient).toHaveBeenCalledWith(expectedClientInput)
-      expect(AWSXRayCore.captureAWSv3Client).toHaveBeenCalledTimes(expectedCallTimes)
       expect(SettingServiceClient).toHaveBeenCalled()
       expect(middleware).toHaveProperty('before')
     })

@@ -21,16 +21,17 @@ export default ({ env }) => ({
     publicPath: '/admin'
   },
   settings: {
-    region: env('REGION', ''),
-    endpoint: env('SETTINGS_SERVICE_ENDPOINT', ''),
-    serviceName: env('SETTINGS_SERVICE_NAME', '')
+    region: env('REGION', 'eu-central-1'),
+    endpoint: env('SETTINGS_SERVICE_ENDPOINT', 'http://localhhost:3003'),
+    serviceName: env('SETTINGS_SERVICE_NAME', 'settingsServiceFunction')
   },
   stripe: {
     apiKey: env('STRIPE_API_KEY', ''),
     currency: 'usd',
     successPaymentUrl: env('STRIPE_SUCCESS_PAYMENT_URL', 'http://localhost:8080/success'),
+    successSetupUrl: env('STRIPE_SUCCESS_SETUP_URL', 'http://localhost:8080/success'),
     webhookSecret: env('STRIPE_WEBHOOK_SECRET', ''),
-    awsRegion: env('STRIPE_SES_REGION', ''),
+    awsRegion: env('STRIPE_SES_REGION', 'eu-central-1'),
     sesSenderEmail: env('STRIPE_SES_SENDER_EMAIL', ''),
     domainUrl: env('DOMAIN_URL', '')
   }

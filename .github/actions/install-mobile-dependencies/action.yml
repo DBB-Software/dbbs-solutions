@@ -1,0 +1,75 @@
+name: Install dependencies
+description: Install React Native dependencies (NodeJS packages/Gems/Cocoapods) with caching for each.
+
+inputs:
+  app_name:
+    description: App name
+    required: true
+  js_only:
+    description: JavaScript only dependencies
+    required: true
+  pods_restore_key:
+    description: Pods restore key
+    required: true
+  stage:
+    description: The stage of deployment
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Verify Xcode version
+      if: ${{ inputs.js_only == 'false' }}
+      run: xcodebuild -version
+      shell: bash
+    - name: Use Setup Yarn action
+      uses: ./.github/actions/setup-yarn
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.tool-versions'
+        cache: 'yarn'
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '.tool-versions'
+        bundler-cache: true
+    - name: Cache node_modules
+      id: node-cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+    - name: Cache Pods
+      if: ${{ inputs.js_only == 'false' }}
+      id: pods-cache
+      uses: actions/cache@v4
+      with:
+        path: ./apps/${{ inputs.app_name }}/ios/Pods
+        key: ${{ runner.os }}-pods-${{ hashFiles(inputs.pods_restore_key) }}
+        restore-keys: |
+          ${{ runner.os }}-pods-${{ hashFiles(inputs.pods_restore_key) }}
+
+    - name: Install NPM dependencies
+      run: yarn
+      shell: bash
+    - name: Install gems
+      run: make install-gems-${{ inputs.app_name }}
+      shell: bash
+    - name: Install pods
+      if: ${{ inputs.js_only == 'false' }}
+      run: make install-pods-${{ inputs.app_name }}
+      shell: bash
+    - name: Download env file, depends on stage
+      run: |
+        yarn download:env
+      env:
+        STAGE: ${{ inputs.stage }}
+        AWS_PROFILE: dbbs-development
+        SECRET_PREFIX: dbbs
+      shell: bash
+    - name: Build for application-related packages
+      run: npx turbo run build --filter=./apps/${{ inputs.app_name }}
+      shell: bash

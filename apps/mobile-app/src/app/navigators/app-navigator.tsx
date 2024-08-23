@@ -8,24 +8,22 @@ const { Navigator, Screen } = createMaterialBottomTabNavigator()
 
 export const navigationRef = createNavigationContainerRef()
 
-export const AppNavigator = () => {
-  return (
-    <NavigationContainer
-      ref={navigationRef}
-      onReady={() => {
-        BootSplash.hide({ fade: true })
-      }}
-    >
-      <Navigator>
-        <Screen
-          name="Home"
-          component={HomeComponent}
-          options={{
-            tabBarLabel: 'Home',
-            tabBarIcon: ({ color }) => <Icon size={20} source="home" color={color} />
-          }}
-        />
-      </Navigator>
-    </NavigationContainer>
-  )
-}
+export const AppNavigator = () => (
+  <NavigationContainer
+    ref={navigationRef}
+    onReady={() => {
+      BootSplash.hide({ fade: true })
+    }}
+  >
+    <Navigator>
+      <Screen
+        name="Home"
+        component={HomeComponent}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ color }: { color: string }) => <Icon size={20} source="home" color={color} />
+        }}
+      />
+    </Navigator>
+  </NavigationContainer>
+)

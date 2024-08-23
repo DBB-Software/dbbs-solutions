@@ -9,20 +9,32 @@
     "src"
   ],
   "scripts": {
-    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
-    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
-    "test": "echo \"Error: no test specified\""
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
+    "test": "echo \"Error: no test specified\"",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@emotion/cache": "11.11.0",
-    "@emotion/react": "11.11.4",
-    "@emotion/styled": "11.11.5",
-    "@mui/material": "5.15.18",
-    "@mui/styled-engine": "5.15.14",
-    "@mui/system": "5.15.15"
+    "@emotion/cache": "11.13.1",
+    "@emotion/react": "11.13.0",
+    "@emotion/styled": "11.13.0",
+    "@mui/material": "5.16.7",
+    "@mui/styled-engine": "5.16.6",
+    "@mui/system": "5.16.7"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "@storybook/addon-essentials": "8.2.9",
+    "@storybook/addon-interactions": "8.2.9",
+    "@storybook/addon-links": "8.2.9",
+    "@storybook/addon-onboarding": "8.2.9",
+    "@storybook/addon-themes": "8.2.9",
+    "@storybook/blocks": "8.2.9",
+    "@storybook/react": "8.2.9",
+    "@storybook/react-vite": "8.2.9",
+    "eslint-plugin-storybook": "0.8.0",
+    "storybook": "8.2.9"
   }
 }

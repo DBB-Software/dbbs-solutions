@@ -1,7 +1,8 @@
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config')
 const { getMetroTools, getMetroAndroidAssetsResolutionFix } = require('react-native-monorepo-tools')
-const { generate } = require('@storybook/react-native/scripts/generate');
+const { generate } = require('@storybook/react-native/scripts/generate')
 const exclusionList = require('metro-config/src/defaults/exclusionList')
+const { withSentryConfig } = require("@sentry/react-native/metro")
 const path = require('path')
 
 generate({
@@ -64,4 +65,4 @@ const config = {
   }
 }
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config)
+module.exports = withSentryConfig(mergeConfig(getDefaultConfig(__dirname), config))

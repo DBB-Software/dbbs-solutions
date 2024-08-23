@@ -78,9 +78,10 @@ export const BaseTabBar = <T,>({
   jumpTo
 }: BaseTabBarProps<T>) => {
   const { width } = useWindowDimensions()
-  const currentTab = useMemo(() => {
-    return navigationState.routes[navigationState.index]
-  }, [navigationState.index, navigationState.routes])
+  const currentTab = useMemo(
+    () => navigationState.routes[navigationState.index],
+    [navigationState.index, navigationState.routes]
+  )
 
   return (
     <View style={styles.container}>

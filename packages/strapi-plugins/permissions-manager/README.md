@@ -1,4 +1,4 @@
-## Name: Strapi Plugin: Permissions Manager
+# Strapi plugin: permissions-manager
 
 ## Description
 
@@ -24,7 +24,6 @@ First, you need to enable and configure the config-sync plugin along with the pe
 },
 'permissions-manager': {
   enabled: true,
-  resolve: './src/plugins/permissions-manager',
 }
 ```
 
@@ -32,7 +31,7 @@ Ensure you have the necessary dependencies installed:
 
 ```bash
 yarn add strapi-plugin-config-sync
-yarn add @dbbs/strapi-plugin-permissions-manage
+yarn add @dbbs/strapi-plugin-permissions-manager
 ```
 
 ### Manual Usage
@@ -123,7 +122,7 @@ To dynamically add permissions, send a POST request to /add-permissions with the
 
 ## Type
 
-- Package
+- strapi-plugin
 
 ## Tech Category
 
@@ -136,7 +135,7 @@ To dynamically add permissions, send a POST request to /add-permissions with the
 
 ## License
 
-The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+The DBBS Pre-Built Solutions is open-source software licensed under the [MIT License](LICENSE).
 
 ## Authors and owners
 

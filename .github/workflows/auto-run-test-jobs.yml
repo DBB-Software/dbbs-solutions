@@ -1,4 +1,4 @@
-name: Run tests and Sonarcloud scan
+name: Run tests
 
 run-name: Test ${{ github.head_ref || github.ref }}
 
@@ -7,24 +7,50 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    paths:
+      - 'apps/**'
+      - 'package.json'
+      - 'packages/**'
+      - 'yarn.lock'
 
 jobs:
-  test-dev:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  prepare-cache:
+    uses: ./.github/workflows/nodejs-cache.yaml
+    if: github.event.pull_request.draft == false
 
-      - name: Run build, Tests, Configure AWS
-        uses: ./.github/actions/build-and-tests
+  changes:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      apps: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
         with:
-          ref: ${{ github.ref }}
-          aws_credentials: ${{ secrets.AWS_CREDENTIALS }}
-          aws_config: ${{ secrets.AWS_CONFIG }}
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          filters: .github/change_path_filter.yaml
+
+  test-changed-apps:
+    needs:
+      - prepare-cache
+      - changes
+    if: github.event.pull_request.draft == false
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        app: ${{fromJson(needs.changes.outputs.apps)}}
+    uses: ./.github/workflows/nodejs-test.yaml
+    with:
+      app_name: ${{ matrix.app }}

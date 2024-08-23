@@ -1,0 +1,1 @@
+default: npm run start:pm2

@@ -20,6 +20,5 @@ export default [
   },
   'strapi::session',
   'strapi::favicon',
-  'strapi::public',
-  'global::settings'
+  'strapi::public'
 ]

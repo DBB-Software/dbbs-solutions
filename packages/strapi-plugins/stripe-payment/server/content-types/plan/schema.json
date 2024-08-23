@@ -4,7 +4,7 @@
   "info": {
     "singularName": "plan",
     "pluralName": "plans",
-    "displayName": "plan"
+    "displayName": "Plan"
   },
   "options": {
     "draftAndPublish": false,
@@ -23,6 +23,14 @@
         "month",
         "year"
       ]
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "recurring",
+        "one-time"
+      ],
+      "default": "recurring"
     },
     "product": {
       "type": "relation",

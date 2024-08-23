@@ -21,7 +21,7 @@ npx serverless invoke local --function getSettings
 
 ## Features
 
-The DBBS platform enables the generation of a serverless application template with opinionated settings. This simplifies and accelerates the initial stages of development while promoting code consistency across different applications. Additionally, it lays the groundwork for streamlining updates to the common aspects of applications when the platform undergoes updates.
+The DBBS Pre-Built Solutions enables the generation of a serverless application template with opinionated settings. This simplifies and accelerates the initial stages of development while promoting code consistency across different applications. Additionally, it lays the groundwork for streamlining updates to the common aspects of applications when the pre-built solutions undergoes updates.
 
 The `settings-service` application provides an endpoint for retrieving tenant settings in a multi-tenant system. The endpoint accepts a tenant ID, requests settings for the specified tenant from the ABC C3 service, and returns them to the client application. If the tenant ID is not provided, the service will return settings for all tenants.
 
@@ -52,7 +52,7 @@ The `settings-service` application provides an endpoint for retrieving tenant se
 
 ## License
 
-The DBBS Platform Base is open-source software licensed under the [MIT License](LICENSE).
+The DBBS Pre-Built Solutions is open-source software licensed under the [MIT License](LICENSE).
 
 ## Authors and owners
 

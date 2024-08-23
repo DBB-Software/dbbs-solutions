@@ -7,7 +7,7 @@ readonly ENVIRONMENTS=("local" "development" "production" "staging")
 AWS_PROFILE="${AWS_PROFILE:-default-aws-profile}"
 
 # Define the secret prefix or namespace (default value)
-SECRET_PREFIX="${SECRET_PREFIX:-dbbs-platform}"
+SECRET_PREFIX="${SECRET_PREFIX:-dbbs-pre-built-solutions}"
 
 # Define the stage (default value)
 STAGE="${STAGE:-default-stage}"
