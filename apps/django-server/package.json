@@ -11,7 +11,7 @@
     "lint": "poetry install --no-root && poetry run ruff check .",
     "start:dev": "poetry run python manage.py runserver --settings=core.settings.dev",
     "start:prod": "poetry run gunicorn --env DJANGO_SETTINGS_MODULE=core.settings.prod core.wsgi:application --workers 4 --threads 2",
-    "test": "echo \"no test specified\" && exit 0",
+    "test": "poetry run coverage run manage.py test --settings=core.settings.test && poetry run coverage xml",
     "test:cov": "poetry run coverage run manage.py test --settings=core.settings.test && coverage report",
     "migrate": "poetry run python manage.py migrate --run-syncdb --settings=core.settings.local",
     "migrate:show": "poetry run python manage.py showmigrations --settings=core.settings.local",
