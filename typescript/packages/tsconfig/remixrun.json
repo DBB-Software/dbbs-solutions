@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./base.json",
+  "display": "RemixRun",
+  "files": [],
+  "compilerOptions": {
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
+    "types": [
+      "@remix-run/node",
+      "vite/client"
+    ],
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
+    "allowJs": true,
+    "paths": {
+      "~/*": [
+        "./app/*"
+      ]
+    },
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/.server/**/*.ts",
+    "**/.server/**/*.tsx",
+    "**/.client/**/*.ts",
+    "**/.client/**/*.tsx"
+  ],
+}

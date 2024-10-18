@@ -1,0 +1,27 @@
+name: 'Push release versions'
+description: 'Execute common steps necessary for tracking release version in VCS'
+
+inputs:
+  ref:
+    description: Ref for checkout. Use the github.ref
+    required: true
+  stage:
+    description: Deploy stage
+  app_name:
+    description: Deploy app name
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref }}
+
+    - name: Push created tags and bump version commits to origin
+      run: |
+        git config --global user.email "github-ci@gmail.com"
+        git config --global user.name "github-ci"
+        git tag ${{ inputs.app_name }}-${{ inputs.stage }}-${{ github.run_id }}
+        git push origin HEAD:${{ inputs.ref }}
+      shell: bash

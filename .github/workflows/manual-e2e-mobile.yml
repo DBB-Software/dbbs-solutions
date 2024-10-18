@@ -68,4 +68,4 @@ jobs:
           device_api: ${{ inputs.device_api }}
           device_profile: ${{ inputs.device_profile }}
           device_target: ${{ inputs.device_target }}
-          restore_key: './apps/${{ inputs.workspace }}/package.json'
+          restore_key: './typescript/apps/${{ inputs.workspace }}/package.json'

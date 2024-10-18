@@ -3,7 +3,19 @@ SHELL := /bin/bash
 all: setup run-build run-dev
 
 # Main target for setting up dependencies
-setup: check-brew asdf-install install-deps install-docker check-versions prompt-aws-profile
+setup: check-brew install-asdf
+	make -C typescript setup
+	make -C python setup
+	make install-aws install-docker check-versions setup-aws-credentials download-env
+
+# Target for setting up dependencies for typescript
+setup-ts: check-brew install-asdf
+	make -C typescript setup
+	make install-aws install-docker check-versions setup-aws-credentials download-env
+
+# Target for setting up dependencies for python
+setup-py: check-brew install-asdf
+	make -C python setup
 
 # Check if Homebrew is installed and prompt to install if not
 check-brew:
@@ -12,37 +24,12 @@ check-brew:
 		exit 1; \
 	)
 
-# Installs dependencies via asdf
-asdf-install: check-brew check-asdf-path
-	command -v asdf >/dev/null 2>&1 || brew install asdf
-
-	asdf plugin-list | grep -q nodejs || asdf plugin-add nodejs
-	asdf plugin-list | grep -q ruby || asdf plugin-add ruby
-	asdf plugin-list | grep -q cocoapods || asdf plugin-add cocoapods
-	asdf plugin-list | grep -q python || asdf plugin-add python
-	asdf plugin-list | grep -q poetry || asdf plugin-add poetry
-
-	asdf plugin update --all
-
-	asdf install
-
-	asdf reshim
-
-# Install Node.js modules and AWS CLI
-install-deps: install-node-modules install-awscli install-awscli-local
-
-# Install Node.js modules
-install-node-modules: check-asdf-path check-yarn
-	yarn
-
-# Check that asdf has priority in PATH, or else open up instructions.
-check-asdf-path:
-	@echo "Checking if asdf is correctly set in PATH..."
-	@ command -v asdf >/dev/null || { \
-		echo "WARNING: asdf not in PATH or Node.js not installed via asdf. Make sure to follow instructions for adding asdf to shell after a brew install."; \
-		echo "Opening instructions..."; \
-		open "https://asdf-vm.com/guide/getting-started.html#_3-install-asdf"; \
-		exit 1; \
+# Check that asdf is installed or install it via brew.
+install-asdf:
+	@command -v asdf >/dev/null || { \
+		 echo "Installing asdf..."; \
+		 brew install asdf; \
+		 echo "asdf is installed."; \
 	}
 
 # Check if yarn is installed, and install it if not
@@ -71,6 +58,9 @@ check-yarn:
 		fi; \
 	}
 
+# Install AWS CLI
+install-aws: install-awscli install-awscli-local
+
 # Install AWS CLI using Homebrew
 install-awscli: check-brew
 	@echo "Installing AWS CLI using Homebrew..."
@@ -93,20 +83,6 @@ install-awscli-local: check-brew
 check-versions: check-brew check-yarn
 	# Check if asdf is installed
 	@command -v asdf >/dev/null 2>&1 && echo "asdf is installed" || echo "asdf is not installed"
-
-	# If asdf is installed, check the versions of Node.js, Ruby, Cocoapods, Python, and Poetry
-	@command -v asdf >/dev/null 2>&1 && ( \
-		echo "Node.js version:"; \
-		asdf current nodejs | awk '{print $$2}' || echo "Node.js not installed"; \
-		echo "Ruby version:"; \
-		asdf current ruby | awk '{print $$2}' || echo "Ruby not installed"; \
-		echo "Cocoapods version:"; \
-		asdf current cocoapods | awk '{print $$2}' || echo "Cocoapods not installed"; \
-		echo "Python version:"; \
-		asdf current python | awk '{print $$2}' || echo "Python not installed"; \
-		echo "Poetry version:"; \
-		asdf current poetry | awk '{print $$2}' || echo "Poetry not installed"; \
-	) || echo "Skipping version checks for Node.js, Ruby, Cocoapods, Python, and Poetry"
 
 	# Check Yarn version
 	@command -v yarn >/dev/null 2>&1 && ( \
@@ -155,64 +131,29 @@ run-build:
 
 # Pattern rule to run `yarn build` in the specified subdirectory
 run-build-%:
-	TARGET=$* && yarn build
+	target=$* yarn build
 
 # Define variables
-SECRETS := $(shell find apps -mindepth 1 -maxdepth 1 -type d)
-SECRET_NAME_PREFIX := dbbs-pre-built-solutions
-REGION := eu-central-1
-STAGE := local
+#SECRETS := $(shell find apps -mindepth 1 -maxdepth 1 -type d)
+AWS_REGION := eu-central-1
+STAGE := development
+SECRET_PREFIX := dbbs-pre-built-solutions
+AWS_PROFILE := $(SECRET_PREFIX)-$(STAGE)
 
-# Ensure AWS_PROFILE is set by prompting the user
-prompt-aws-profile:
-	@echo "Please select the AWS profile."
-	@read -p "Enter AWS profile: " AWS_PROFILE; \
-	if [ -z "$$AWS_PROFILE" ]; then \
-	 echo "AWS profile cannot be empty."; \
-   exit 1; \
-  fi; \
-  echo "Selected AWS profile: $$AWS_PROFILE"; \
-  export AWS_PROFILE=$$AWS_PROFILE; \
-  $(MAKE) after-prompt AWS_PROFILE=$$AWS_PROFILE
+setup-aws-credentials:
+	if ! test -f ~/.aws/config; then mkdir -p ~/.aws && touch ~/.aws/config; fi
+	if ! grep "$(AWS_PROFILE)" ~/.aws/config; then cat infra/aws_configs/config >> ~/.aws/config; fi
+	if ! aws sts get-caller-identity --profile $(AWS_PROFILE); then aws sso login --profile $(AWS_PROFILE); fi
 
- # After prompt target
-after-prompt: check-profile check-secrets download-env
-
-# Check if the AWS profile exists
-check-profile:
-	@echo "Checking if AWS profile '$(AWS_PROFILE)' exists"
-	@if aws configure list-profiles | grep -q "^$(AWS_PROFILE)$$"; then \
-   echo "AWS profile '$(AWS_PROFILE)' exists"; \
-  else \
-   echo "AWS profile '$(AWS_PROFILE)' does not exist"; \
-   echo "Please set up the AWS profile and credentials by running the following commands:"; \
-   echo "1. Configure the profile:"; \
-   echo "   aws configure --profile your-aws-profile"; \
-   echo "2. Set up the credentials (if needed, open ~/.aws/credentials and add the following):"; \
-   echo "   [your-aws-profile]"; \
-   echo "   aws_access_key_id = YOUR_ACCESS_KEY_ID"; \
-   echo "   aws_secret_access_key = YOUR_SECRET_ACCESS_KEY"; \
-   exit 1; \
-  fi
-
-# Check if secrets exist for each app
-check-secrets:
-	@for app in $(SECRETS); do \
-   SECRET_NAME=$(SECRET_NAME_PREFIX)/$(STAGE)/$${app}; \
-   echo "Checking secret $$SECRET_NAME"; \
-   AWS_PROFILE=$(AWS_PROFILE) AWS_REGION=$(REGION) aws secretsmanager get-secret-value --secret-id $$SECRET_NAME > /dev/null 2>&1; \
-   if [ $$? -eq 0 ]; then \
-    echo "Secret found for $$app"; \
-   else \
-    echo "Secret not found for $$app"; \
-    exit 1; \
-   fi \
-  done
+aws-login:
+	@if ! (aws sts get-caller-identity --profile $(AWS_PROFILE) >/dev/null 2>&1); then \
+		echo "Not logged in. Redirecting to SSO."; \
+		aws sso login --profile $(AWS_PROFILE) && echo "Logged in."; fi;
 
 # Download environment variables
-download-env:
+download-env: aws-login
 	@echo "Downloading environment variables"
-	AWS_PROFILE=$(AWS_PROFILE) AWS_REGION=$(REGION) yarn download:env
+	STAGE=$(STAGE) SECRET_PREFIX=$(SECRET_PREFIX) AWS_PROFILE=$(AWS_PROFILE) yarn download:env
 
 .PHONY: run-dev
 
@@ -222,7 +163,7 @@ run-dev:
 
 # Pattern rule to run `yarn dev` in the specified subdirectory
 run-dev-%:
-	TARGET=$* && yarn dev
+	target=$* yarn dev
 
 .PHONY: run-test
 
@@ -232,22 +173,22 @@ run-test:
 
 # Pattern rule to run `yarn test` in the specified subdirectory
 run-test-%:
-	TARGET=$* && yarn test
+	target=$* yarn test
 
 install-gems-%:
-	cd apps/$(*F) && bundle install
+	cd typescript/apps/$(*F) && bundle install
 
 install-pods-%:
-	cd apps/$(*F) && npx pod-install
+	cd typescript/apps/$(*F) && npx pod-install
 
 fastlane-build-%:
-	cd apps/$(*F) && bundle exec fastlane $(P) build variant:$(V) type:$(T)
+	cd typescript/apps/$(*F) && bundle exec fastlane $(P) build variant:$(V) type:$(T)
 
 firebase-distribution-%:
-	cd apps/$(*F) && bundle exec fastlane $(P) distribution variant:$(V)
+	cd typescript/apps/$(*F) && bundle exec fastlane $(P) distribution variant:$(V)
 
 beta-distribution-%:
-	cd apps/$(*F) && bundle exec fastlane $(P) beta variant:$(V)
+	cd typescript/apps/$(*F) && bundle exec fastlane $(P) beta variant:$(V)
 
 localstack-up: install-docker local-network-up
 	docker compose -f docker-compose/docker-compose.localstack.yml --env-file ./.env --project-name backend-localstack up --build -d

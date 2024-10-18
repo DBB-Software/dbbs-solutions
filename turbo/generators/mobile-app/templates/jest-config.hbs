@@ -22,7 +22,7 @@ const jestConfig: JestConfigWithTsJest = {
   testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
   setupFilesAfterEnv: [
     './__tests__/testUtils/setupTests.ts',
-    '../../node_modules/react-native-gesture-handler/jestSetup.js'
+    '../../../node_modules/react-native-gesture-handler/jestSetup.js'
   ],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' })
 }

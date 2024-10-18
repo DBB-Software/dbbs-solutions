@@ -73,26 +73,48 @@ Setting up the DBBS Pre-Built Solutions is straightforward. Follow these steps t
    ```
    This command clones the DBBS Pre-Built Solutions repository from GitHub.
 
-2. **AWS Credentials Setup**
-   For deploying applications and accessing AWS services, set your AWS credentials.
+2. **Setup AWS Config File**
+   Before you start setting up DBBS Pre-Built Solutions, you need to configure the AWS config.
    ```bash
-   aws configure --profile <profile-name>
+   cd pre-built-solutions/infra/aws_configs
    ```
-   Replace `<AWS_ACCESS_KEY_ID>` and `<AWS_SECRET_ACCESS_KEY>` with your actual AWS credentials.
-   ```
-   AWS Access Key ID [None]: AWS_ACCESS_KEY_ID
-   AWS Secret Access Key [None]: AWS_SECRET_ACCESS_KEY
-   Default region name [None]: eu-central-1
-   Default output format [None]: json
-   ```
+   Open the `config` file and change the following values ​​to your own:
+   - `sso_start_url`
+   - `profile`
+   - `sso_session`
+   - `sso_account_id`
 
 3. **Run Example Applications**
-   Makefile is designed to automate the setup of dependencies, download environment variables for projects, build and run all example applications.
-   To start all example applications, use the following command:
-   ```bash
-   make all
-   ```
-   When the makefile asks you to enter your AWS profile, you must enter the profile you specified in Step 2.
+   1. **Linux/macOS**
+      Makefile is designed to automate the setup of dependencies, download environment variables for projects, build and run all example applications.
+      To start all example applications, use the following command:
+      ```bash
+      make all
+      ```
+   2. **Windows with WSL**
+      Install Windows Subsystem for Linux (WSL): [Setup WSL on Windows](https://learn.microsoft.com/en-us/windows/wsl/install)  
+      Once WSL is installed, open the WSL terminal. You can do this by searching for "Ubuntu" (or the name of your Linux distribution) in the Start Menu and selecting it.  
+      Navigate to your project directory on the Windows file system using the WSL terminal (example):
+      ```bash
+      cd /mnt/c/Users/User/Documents/DBB/platform
+      ```
+      Install Homebrew on WSL:
+      ```bash
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      ```
+      Follow the on-screen instructions to add Homebrew to your PATH:
+      ```bash
+      echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
+      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+      ```
+      Verify the installation:
+      ```bash
+      brew --version
+      ```
+      To start all example applications, use the following command:
+      ```bash
+      make all
+      ```
 
 4. **Testing**
    Running tests is crucial for maintaining code quality. Use the test command to execute your test suites.
@@ -102,7 +124,7 @@ Setting up the DBBS Pre-Built Solutions is straightforward. Follow these steps t
 
 ## Installation A Specific Applications DBBS Pre-Built Solutions
 If you want run a specific applications follow these steps:
-1. **Follow steps 1-2 in Installation DBBS Platform**
+1. **Follow steps 1-2 in Installation DBBS Pre-Built Solutions**
 
 2. **Setup**
    Setting up dependencies and environment variables.
@@ -113,10 +135,19 @@ If you want run a specific applications follow these steps:
    cd pre-built-solutions
    ```
    Install all dependencies and environments while in the root directory of the cloned repository.
+
+   For all available languages
    ```bash
    make setup
    ```
-   When the makefile asks you to enter your AWS profile, you must enter the profile you specified in Step 2.
+   Only for TypeScript
+   ```bash
+   make setup-ts
+   ```
+   Only for Python
+   ```bash
+   make setup-py
+   ```
 3. **Build A Specific application**
    Once the dependencies are installed, build specific application to ensure all components are properly compiled.
    ```bash
@@ -190,7 +221,9 @@ In addition to the standard development commands, the DBBS Platform includes Cyp
 - `target=web-spa yarn cypress:run` - Executes Cypress tests in a headless mode, suitable for automated test runs in continuous integration (CI) pipelines.
 
 #### Makefile Targets:
-- `setup-dependencies` - The main target for setting up all dependencies and environment variables. It runs the following targets in order: `check-brew`, `asdf-install`, `install-deps`, `install-docker`, `check-versions`, `prompt-aws-profile`.
+- `setup` - The main target for setting up all dependencies and environment variables. It runs the following targets in order: `install-aws`, `install-asdf`, `install-docker`, `check-versions`, `setup-aws-credentials`, `download-env`.
+- `setup-ts` - The main target for setting up all dependencies and environment variables for TypeScript. It first runs the Makefile in the TypeScript directory, and then executes the following targets in order: `install-aws`, `install-asdf`, `install-docker`, `check-versions`, `setup-aws-credentials`, `download-env`.
+- `setup-py` - The main target for setting up all dependencies and environment variables for Python. It runs the Makefile in the Python directory.
 - `check-brew` - Checks if Homebrew is installed on the system. If not, it prompts the user to install Homebrew by providing the installation instructions.
 - `asdf-install` - Installs asdf and its plugins for managing Node.js, Ruby, and Cocoapods versions. It also updates all asdf plugins and installs the specified versions of the tools.
 - `install-deps` - Installs the project's dependencies, which include Node.js modules and the AWS CLI. It runs the `install-node-modules` and `install-awscli` targets.
@@ -202,11 +235,9 @@ In addition to the standard development commands, the DBBS Platform includes Cyp
 - `all` - The main target for running all essential operations. It runs the following targets in order: `setup`, `run-build`, and `run-dev`.
 - `run-build` - Builds the platform. It executes the `yarn build` command.
 - `run-build-%` - Pattern rule that runs the `yarn build` command in the specified subdirectory. The subdirectory is determined by replacing `%` with the name of the subdirectory.
-- `prompt-aws-profile` - Prompts the user to select a AWS profile. After selecting the stage, it runs the `after-prompt` target.
-- `after-prompt` - Runs the following targets after the stage is selected: `check-profile`, `check-secrets`, and `download-env`.
-- `check-profile` - Checks if the AWS profile $(AWS_PROFILE) exists. If the profile is not found, it provides instructions for setting up the profile and credentials. After this, it runs the `check-secrets` target.
-- `check-secrets` - Checks for the existence of secrets in AWS Secrets Manager for each app in the $(SECRETS) list. If a secret is not found, it outputs an error message. After this, it runs the `download-env` target.
-- `download-env` - Downloads environment variables from AWS Secrets Manager using the AWS profile and region specified in the $(AWS_PROFILE) and $(REGION) variables.
+- `setup-aws-credentials` - Automatically configures AWS credentials.
+- `aws-login` - This target logs into AWS if the SSO session has expired.
+- `download-env` - Downloads environment variables from AWS Secrets Manager using the AWS profile and region specified in the $(AWS_PROFILE), $(STAGE) and $(REGION) variables.
 - `run-dev` - Runs the `yarn dev` command in the root directory of the project.
 - `run-dev-%` - Pattern rule that runs the `yarn dev` command in the specified subdirectory. The subdirectory is determined by replacing `%` with the name of the subdirectory.
 - `run-test` - Runs the `yarn test` command in the root directory of the project.
@@ -384,7 +415,7 @@ A collection of React components and features designed to enhance the user inter
 Presented as two packages:
 - mobile-components: A collection of ReactNative components using the react-native-paper, react-native-gesture-handler, react-native-svg, react-native-reanimated, react-native-tab-view, react-native-vector-icons, etc. libraries. Designed to improve the user interface of ReactNative and Expo applications.
 - mobile-features: A collection of universal solutions for ReactNative applications including implementation of firebase service handling.
-- mobile-storages: This package provides a basic implementation for two storage options - RTK and Jotai, with a persistence implementation using @react-native-async-storage/async-storage.
+- mobile-storages: This package provides a basic implementation for two storage options - RTK and Jotai, with a persistence implementation using react-native-mmkv.
 
 #### NestJS Modules:
 A set of NestJS modules, including middlewares, filters, interceptors, guards, and pipes. These modules contribute to the backend logic and functionality shared among applications. Detailed information about each NestJS module can be found in the packages/nest-modules directory, where each module includes its own README file.
@@ -446,6 +477,30 @@ The DBBS Pre-Built Solutions is designed to be highly configurable to meet a var
 
 By properly configuring the DBBS Pre-Built Solutions, you can ensure that it aligns with your development objectives and works seamlessly across different environments.
 
+## Status Page Integration
+
+Our status page is available at the following link: [dbbs-status-apps.betteruptime.com](https://dbbs-status-apps.betteruptime.com).
+
+### Overview
+This status page is used to display the current availability of our applications. We use the Better Uptime service to monitor the uptime and performance of our applications.
+
+### How to Add a New Application for Monitoring
+
+1. **Creating a Monitor:**
+   - To add a new application for monitoring, you need to create a monitor in Better Uptime.
+   - During the creation process, provide the health check URL of your application. This will allow Better Uptime to automatically check its availability.
+
+2. **Setting Up Integrations:**
+   - You can configure various integrations to receive alerts if your application becomes unavailable. Notifications can be sent to your preferred channel, such as email, Slack, SMS, and more.
+
+3. **Adding the Monitor to the Status Page:**
+   - To display the availability of your application on the status page, add the created monitor to the status page.
+   - To do this, go to the "Status Pages" section, create a new status page or select an existing one.
+   - In the status page structure, add a new section and select the monitor for your application.
+   - This way, the current availability status of your application will be displayed on the status page.
+
+### Conclusion
+This way, we can monitor the availability of our applications and receive alerts if any of them become unavailable.
 
 ## Technology Stack
 

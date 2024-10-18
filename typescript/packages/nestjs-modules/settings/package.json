@@ -1,0 +1,32 @@
+{
+  "name": "@dbbs/nestjs-module-settings",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Nest JS settings module for dbbs project",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc --build tsconfig.json",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --forceExit --coverage --verbose --testTimeout=10000000 --detectOpenHandles",
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "docs:generate": "npx compodoc -p tsconfig.json",
+    "docs:serve": "yarn docs:generate -s"
+  },
+  "dependencies": {
+    "@dbbs/common": "*",
+    "@dbbs/nestjs-module-logger": "*",
+    "@nestjs/common": "10.4.1",
+    "nestjs-cls": "4.4.1"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

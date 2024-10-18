@@ -15,6 +15,12 @@ enum TypeRouter {
   appRouter = 'app-router'
 }
 
+enum DeploymentFrameworks {
+  NextServerless = 'Next Serverless',
+  Vercel = 'Vercel',
+  None = 'none'
+}
+
 const generateApp = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): PlopTypes.ActionType[] => {
   const appName = answers?.name
   const usePageRouter = answers?.typeRouter === TypeRouter.pageRouter
@@ -23,7 +29,8 @@ const generateApp = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): 
     cssFramework: answers?.cssFramework,
     isReduxToolkit: answers?.storeFramework === StoreFrameworks.ReduxToolkit,
     isJotaiStore: answers?.storeFramework === StoreFrameworks.Jotai,
-    useServerless: !!answers?.useServerless,
+    useServerless: answers?.deploymentFramework === DeploymentFrameworks.NextServerless,
+    useVercel: answers?.deploymentFramework === DeploymentFrameworks.Vercel,
     typeRouter: answers?.typeRouter,
     usePageRouter,
     useMui: answers?.cssFramework === StylingFrameworks.MUI
@@ -178,12 +185,20 @@ const generateApp = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0]): 
     }
     actions.push(...(baseActions satisfies PlopTypes.ActionType[]))
   }
-  if (answers?.useServerless) {
+  if (templateProps.useServerless) {
     actions.push({
       type: 'add',
       path: '{{ turbo.paths.root }}/apps/{{ name }}/next-serverless.config.js',
       templateFile: 'web-ssr/templates/serverlessDeployment/serverless-deployment-config.hbs',
       data: templateProps
+    })
+  }
+
+  if (templateProps.useVercel) {
+    actions.push({
+      type: 'add',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/vercel.json',
+      templateFile: 'web-ssr/templates/vercel-config.hbs'
     })
   }
 
@@ -252,9 +267,10 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         choices: [StylingFrameworks.MUI, StylingFrameworks.TAILWIND]
       },
       {
-        type: 'confirm',
-        name: 'useServerless',
-        message: 'Do you want to use @dbbs/next-serverless-deployment for deployments? (y/n)'
+        type: 'list',
+        name: 'deploymentFramework',
+        message: 'What do you want to use for deployment?',
+        choices: [DeploymentFrameworks.NextServerless, DeploymentFrameworks.Vercel, DeploymentFrameworks.None]
       },
       {
         type: 'list',

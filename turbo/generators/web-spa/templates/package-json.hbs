@@ -18,8 +18,6 @@
   }{{#if isAPP}},{{/if}}
   {{#if isAPP}}
   "dependencies": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
     {{#ifCond storeFramework '===' 'redux-toolkit'}}
     "@dbbs/web-redux-storage":"*",
     {{/ifCond}}
@@ -30,16 +28,21 @@
     "@dbbs/web-jotai-storage": "*",
     {{/ifCond}}
     {{#ifCond cssFramework '===' 'mui'}}
-    "@dbbs/mui-components": "*"
+    "@dbbs/mui-components": "*",
     {{/ifCond}}
     {{#ifCond cssFramework '===' 'tailwind'}}
-    "@dbbs/tailwind-components": "*"
+    "@dbbs/tailwind-components": "*",
     {{/ifCond}}
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     {{#if isTanstackRouterEnabled}} 
     "@tanstack/router-devtools": "1.43.6",
     "@tanstack/router-plugin": "1.43.5",
+    {{/if}}
+    {{#if useVercel}}
+    "vite-plugin-vercel": "9.0.1",
     {{/if}}
     "@dbbs/cypress": "*",
     "@dbbs/eslint-config": "*",

@@ -121,6 +121,24 @@ export const generateRN = (answers: Parameters<PlopTypes.DynamicActionsFunction>
       path: `{{ turbo.paths.root }}/apps/${appName}/src/sentry/init.ts`,
       templateFile: 'mobile-app/templates/src/sentry/init.hbs',
       data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/src/app/locale/en.json`,
+      templateFile: 'mobile-app/templates/src/app/locale/en.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/src/app/locale/de.json`,
+      templateFile: 'mobile-app/templates/src/app/locale/de.hbs',
+      data: templateProps
+    },
+    {
+      type: 'add',
+      path: `{{ turbo.paths.root }}/apps/${appName}/src/app/locale/index.ts`,
+      templateFile: 'mobile-app/templates/src/app/locale/index.hbs',
+      data: templateProps
     }
   ]
 
@@ -154,6 +172,11 @@ export const generateRN = (answers: Parameters<PlopTypes.DynamicActionsFunction>
           type: 'add',
           path: `{{ turbo.paths.root }}/apps/${appName}/__tests__/__mocks__/react-native-config.ts`,
           templateFile: 'mobile-app/templates/__tests__/__mocks__/react-native-config.hbs'
+        },
+        {
+          type: 'add',
+          path: `{{ turbo.paths.root }}/apps/${appName}/__tests__/__mocks__/react-native-localize.ts`,
+          templateFile: 'mobile-app/templates/__tests__/__mocks__/react-native-localize.hbs'
         },
         {
           type: 'add',

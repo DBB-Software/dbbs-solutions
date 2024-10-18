@@ -1,0 +1,19 @@
+import { MMKV } from 'react-native-mmkv'
+import { view } from './storybook.requires'
+
+const storage = new MMKV({ id: 'mobile-expo-app-storybook-storage' })
+
+const StorybookUIRoot = view.getStorybookUI({
+  storage: {
+    getItem: (key: string) => {
+      const value = storage.getString(key)
+      return Promise.resolve(value || null)
+    },
+    setItem: (key: string, value: string) => {
+      storage.set(key, value)
+      return Promise.resolve()
+    }
+  }
+})
+
+export default StorybookUIRoot

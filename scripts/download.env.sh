@@ -31,7 +31,7 @@ do
   echo "Processing folder: $FOLDER"
 
   SECRET_NAME="$SECRET_PREFIX/$STAGE/$FOLDER"
-  SECRET_VALUE=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --profile $AWS_PROFILE 2>/dev/null | jq -r '.SecretString')
+  SECRET_VALUE=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --profile $AWS_PROFILE --output json 2>/dev/null | jq -r '.SecretString')
 
   if [ $? -ne 0 ] || [ -z "$SECRET_VALUE" ]; then
     echo "Warning: Secret $SECRET_NAME not found or empty. Skipping..."

@@ -1,18 +1,16 @@
-
-team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-team_name = CredentialsManager::AppfileConfig.try_fetch_value(:team_name)
-app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
-package_name = CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
-json_key_file = CredentialsManager::AppfileConfig.try_fetch_value(:json_key_file)
-
-app_connect_key_id = ENV["APP_CONNECT_KEY_ID"]
-app_connect_issuer_id = ENV["APP_CONNECT_ISSUER_ID"]
-android_app_id = ENV["ANDROID_APP_ID"]
-ios_app_id = ENV["IOS_APP_ID"]
-application_version = ENV["APPLICATION_VERSION"]
-application_build_number = ENV["APPLICATION_BUILD_NUMBER"]
-fastlane_keychain_name = ENV["FASTLANE_KEYCHAIN_NAME"]
-keychain_password = ENV["FASTLANE_KEYCHAIN_PASSWORD"]
+team_id = ''
+team_name = ''
+app_identifier = ''
+package_name = ''
+json_key_file = ''
+app_connect_key_id = ''
+app_connect_issuer_id = ''
+android_app_id = ''
+ios_app_id = ''
+application_version = ''
+application_build_number = ''
+fastlane_keychain_name = ''
+keychain_password = ''
 
 build_folder = "fastlane/builds"
 xcodeproj_path = "ios/{{ appName }}.xcodeproj"
@@ -23,15 +21,26 @@ before_all do |lane, options|
   raise ArgumentError, "build variant is required!" unless options[:variant]
   # Define wich env file should be used
   env_file = options[:variant] == 'prod' ? '.env.production' : '.env.development'
-  UI.success("Using env file: #{env_file}")
-  Dotenv.load(env_file)
-  check_env
-end
 
-lane :check_env do
-  raise ArgumentError, "APPLICATION_VERSION ENV should be provided!" unless application_version
-  raise ArgumentError, "APPLICATION_BUILD_NUMBER ENV should be provided!" unless application_build_number
-  UI.success("APPLICATION_VERSION:#{application_version} and APPLICATION_BUILD_NUMBER:#{application_build_number} environments successfully loaded!")
+  # Load env file
+  Dotenv.load(env_file)
+
+  UI.success("Using env file for setup all variables: #{env_file}")
+  team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+  team_name = CredentialsManager::AppfileConfig.try_fetch_value(:team_name)
+  app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+  package_name = CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
+  json_key_file = CredentialsManager::AppfileConfig.try_fetch_value(:json_key_file)
+  app_connect_key_id = ENV["APP_CONNECT_KEY_ID"]
+  app_connect_issuer_id = ENV["APP_CONNECT_ISSUER_ID"]
+  android_app_id = ENV["ANDROID_APP_ID"]
+  ios_app_id = ENV["IOS_APP_ID"]
+  application_version = ENV["APPLICATION_VERSION"]
+  application_build_number = ENV["APPLICATION_BUILD_NUMBER"]
+  fastlane_keychain_name = ENV["FASTLANE_KEYCHAIN_NAME"]
+  keychain_password = ENV["FASTLANE_KEYCHAIN_PASSWORD"]
+
+  check_env()
 end
 
 platform :ios do
@@ -60,6 +69,7 @@ platform :ios do
     raise ArgumentError, "build type is required!" unless options[:type]
 
     type = options[:type]
+    save = options[:save]
 
     api_key = app_store_connect_api_key(
       key_id: app_connect_key_id,
@@ -75,19 +85,83 @@ platform :ios do
       timeout: 0
     )
 
-    match(
-      api_key: api_key,
-      app_identifier: app_identifier,
-      type: type == "appstore" ? "appstore" : "adhoc",
-      keychain_name: fastlane_keychain_name,
-      keychain_password: keychain_password
+    # Try to fetch the certificates and profiles in readonly mode
+    begin
+      match(
+        api_key: api_key,
+        app_identifier: app_identifier,
+        type: type == "appstore" ? "appstore" : "adhoc",
+        keychain_name: fastlane_keychain_name,
+        keychain_password: keychain_password,
+        readonly: true
+      )
+      UI.success("Certificates and provisioning profiles are valid!")
+    rescue
+      UI.important("Certificates and provisioning profiles are invalid or missing. Nuking...")
+      # Call the nuke lane if validation fails
+      nuke(type: type, save: save)
+      # After nuking, retry fetching the certificates and profiles
+      match(
+        api_key: api_key,
+        app_identifier: app_identifier,
+        type: type == "appstore" ? "appstore" : "adhoc",
+        keychain_name: fastlane_keychain_name,
+        keychain_password: keychain_password
+      )
+    end
+
+    # Additional check for the missing code signing identity
+    begin
+      get_provisioning_profile(
+        api_key: api_key,
+        team_id: team_id,
+        app_identifier: app_identifier,
+        adhoc: type == "appstore" ? false : true,
+      )
+    rescue
+      UI.important("Could not find a matching code signing identity. Attempting to generate a new certificate...")
+      # Nuke invalid certificates on s3 storage
+      nuke(type: type, save: save)
+      # Generate a new certificate using match
+      match(
+        api_key: api_key,
+        app_identifier: app_identifier,
+        type: type == "appstore" ? "appstore" : "adhoc",
+        keychain_name: fastlane_keychain_name,
+        keychain_password: keychain_password
+      )
+
+      # Retry getting the provisioning profile after generating the certificate
+      get_provisioning_profile(
+        api_key: api_key,
+        team_id: team_id,
+        app_identifier: app_identifier,
+        adhoc: type == "appstore" ? false : true,
+      )
+    end
+  end
+
+  desc "Nuke expired certificates and profiles"
+  lane :nuke do |options|
+    raise ArgumentError, "build type is required!" unless options[:type]
+
+    type = options[:type]
+    isSaveRemove = !!options[:save]
+
+    api_key = app_store_connect_api_key(
+      key_id: app_connect_key_id,
+      issuer_id: app_connect_issuer_id,
+      key_filepath: "fastlane/api_key.p8",
+      duration: 1200
     )
 
-    get_provisioning_profile(
+    match_nuke(
       api_key: api_key,
       team_id: team_id,
-      app_identifier: app_identifier,
-      adhoc: type == "appstore" ? false : true,
+      app_identifier: app_identifier,  
+      type: type == "appstore" ? "appstore" : "adhoc",
+      safe_remove_certs: isSaveRemove,
+      skip_confirmation: true,
     )
   end
 

@@ -16,6 +16,12 @@ enum StoreFrameworks {
   none = 'none'
 }
 
+enum DeploymentFrameworks {
+  NextServerless = 'Next Serverless',
+  Vercel = 'Vercel',
+  None = 'none'
+}
+
 const appBasePaths: Record<Applications, string> = {
   [Applications.SPA]: 'apps',
   [Applications.PACKAGE]: 'packages'
@@ -135,6 +141,7 @@ const generateSPAFiles = (answers: Parameters<PlopTypes.DynamicActionsFunction>[
     isMUI: answers?.cssFramework === StylingFrameworks.MUI,
     isTailwind: answers?.cssFramework === StylingFrameworks.TAILWIND,
     isTanstackRouterEnabled: answers?.isTanstackRouterEnabled,
+    useVercel: answers?.deploymentFramework === DeploymentFrameworks.Vercel,
     isReduxToolkit: answers?.storeFramework === StoreFrameworks.ReduxToolkit
   }
   const actions: PlopTypes.ActionType[] = [
@@ -226,6 +233,14 @@ const generateSPAFiles = (answers: Parameters<PlopTypes.DynamicActionsFunction>[
       ] satisfies PlopTypes.ActionType[])
     )
   }
+
+  if (templateProps.useVercel) {
+    actions.push({
+      type: 'add',
+      path: '{{ turbo.paths.root }}/apps/{{ name }}/vercel.json',
+      templateFile: 'web-spa/templates/configs/vercel-config.hbs'
+    })
+  }
   return actions
 }
 
@@ -257,6 +272,12 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         name: 'storeFramework',
         message: 'Choose the state management library what you want to use',
         choices: [StoreFrameworks.ReduxToolkit, StoreFrameworks.Jotai, StoreFrameworks.none]
+      },
+      {
+        type: 'list',
+        name: 'deploymentFramework',
+        message: 'What do you want to use for deployment?',
+        choices: [DeploymentFrameworks.NextServerless, DeploymentFrameworks.Vercel, DeploymentFrameworks.None]
       }
     ],
     actions: (answers) => [

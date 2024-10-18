@@ -11,7 +11,7 @@ runs:
   steps:
     - name: Extract yarn version from package.json
       run: |
-        YARN_VERSION=$(grep -oP '"packageManager": "yarn@\K[^"]+' package.json)
+        YARN_VERSION=$(grep '"packageManager": "yarn@' package.json | sed -E 's/.*"packageManager": "yarn@([^"]+)".*/\1/')
         echo "YARN_VERSION=$YARN_VERSION" >> $GITHUB_ENV
       shell: bash
 

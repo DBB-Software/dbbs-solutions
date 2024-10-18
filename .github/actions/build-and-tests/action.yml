@@ -81,7 +81,9 @@ runs:
       shell: bash
 
     - name: Override Coverage Source Path for Sonar
-      run: sed -i "s|<source>.*</source>|<source>/github/workspace/apps/django-server</source>|g" apps/django-server/coverage.xml
+      run: |
+        sed -i "s|<source>.*</source>|<source>/github/workspace/apps/django-server</source>|g" apps/django-server/coverage.xml
+        sed -i "s|<source>.*</source>|<source>/github/workspace/packages/django-modules/dbbs_django_logger</source>|g" packages/django-modules/dbbs_django_logger/coverage.xml
       shell: bash
 
     - name: Sonarcloud Scan

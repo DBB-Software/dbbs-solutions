@@ -1,0 +1,1 @@
+default: node server.js

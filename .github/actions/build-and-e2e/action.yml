@@ -70,9 +70,9 @@ runs:
 
     - name: Create secret files
       run: |
-        echo -n "${{ inputs.ENV_CONFIG }}" | base64 --decode > ./apps/${{ inputs.workspace }}/.env.production
-        echo -n "${{ inputs.KEYSTORE_B64 }}" | base64 --decode > ./apps/${{ inputs.workspace }}/android/app/dbbs.keystore
-        echo -n "${{ inputs.SIGNING_CREDENTIALS }}" | base64 --decode > ./apps/${{ inputs.workspace }}/credentials.json
+        echo -n "${{ inputs.ENV_CONFIG }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/.env.production
+        echo -n "${{ inputs.KEYSTORE_B64 }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/android/app/dbbs.keystore
+        echo -n "${{ inputs.SIGNING_CREDENTIALS }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/credentials.json
       shell: bash
 
     - name: Set environment variables for Android build
@@ -80,14 +80,14 @@ runs:
         echo "PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
         echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
         echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
-        echo "sdk.dir=$ANDROID_HOME" > ./apps/${{ inputs.workspace }}/android/local.properties
+        echo "sdk.dir=$ANDROID_HOME" > ./typescript/apps/${{ inputs.workspace }}/android/local.properties
       shell: bash
 
     - name: Cache Detox build
       id: cache-detox-build
       uses: actions/cache@v3
       with:
-        path: ./apps/${{ inputs.workspace }}/android/app/build
+        path: ./typescript/apps/${{ inputs.workspace }}/android/app/build
         key: ${{ runner.os }}-detox-build-mobile-app-e2e${{ hashFiles(inputs.restore_key) }}
         restore-keys: |
           ${{ runner.os }}-detox-build-app-e2e
@@ -96,7 +96,7 @@ runs:
       id: cache-detox-gradle
       uses: actions/cache@v3
       with:
-        path: ./apps/${{ inputs.workspace }}/android/.gradle
+        path: ./typescript/apps/${{ inputs.workspace }}/android/.gradle
         key: ${{ runner.os }}-detox-gradle-e2e${{ hashFiles(inputs.restore_key) }}
         restore-keys: |
           ${{ runner.os }}-detox-gradle-e2e
@@ -140,7 +140,7 @@ runs:
     - name: Swap memory from filesystem to RAM
       run: |
         sudo swapoff -a
-        sudo dd if=/dev/zero of=/swapfile bs=1G count=4
+        sudo dd if=/dev/zero of=/swapfile bs=1G count=3
         sudo mkswap /swapfile
         sudo swapon /swapfile
       shell: bash
@@ -156,7 +156,7 @@ runs:
         script: |
           df -h
           free -m
-          npx turbo run build --filter=./apps/${{ inputs.workspace }}
+          npx turbo run build --filter=./typescript/apps/${{ inputs.workspace }}
           yarn workspace @dbbs/${{ inputs.workspace }} prebuild
           yarn workspace @dbbs/${{ inputs.workspace }} e2e:ci
           df -h

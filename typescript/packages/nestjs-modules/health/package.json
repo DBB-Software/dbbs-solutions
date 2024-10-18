@@ -1,0 +1,31 @@
+{
+  "name": "@dbbs/nestjs-module-health",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Nest JS health modules for dbbs project",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc --build tsconfig.json",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "test": "npx jest --coverage --verbose",
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "docs:generate": "npx compodoc -p tsconfig.json",
+    "docs:serve": "yarn docs:generate -s"
+  },
+  "dependencies": {
+    "@nestjs/axios": "3.0.3",
+    "@nestjs/common": "10.4.1",
+    "@nestjs/terminus": "10.2.3"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

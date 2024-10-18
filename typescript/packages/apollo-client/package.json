@@ -1,0 +1,33 @@
+{
+  "name": "@dbbs/apollo-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Apollo client",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "npx tsc --build tsconfig.lib.json",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "test": "jest --coverage --verbose",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "generate:dev": "NODE_ENV=development ./scripts/define-app-root.sh tsx ./src/codegen.ts",
+    "generate:prod": "NODE_ENV=production ./scripts/define-app-root.sh tsx ./src/codegen.ts"
+  },
+  "dependencies": {
+    "@apollo/client": "3.11.8",
+    "apollo3-cache-persist": "0.15.0",
+    "graphql": "16.9.0"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*",
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/client-preset": "4.3.3",
+    "@graphql-codegen/named-operations-object": "3.1.0",
+    "@graphql-codegen/typescript-react-apollo": "4.3.2",
+    "graphql-config": "5.1.2",
+    "tsx": "4.19.1"
+  }
+}

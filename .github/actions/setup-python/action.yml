@@ -17,14 +17,6 @@ runs:
       with:
         python-version: ${{ steps.get_versions.outputs.python }}
 
-    - name: Cache Virtual Env
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pypoetry/virtualenvs
-        key: v1-venv-${{ hashFiles('poetry.lock') }}-${{ github.head_ref }}
-        restore-keys: |
-          v1-venv-${{ hashFiles('poetry.lock') }}-
-
     - name: Install poetry
       run: curl -sSL https://install.python-poetry.org | python3 - --version 1.7.1
       shell: bash

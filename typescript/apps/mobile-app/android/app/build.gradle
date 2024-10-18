@@ -1,0 +1,125 @@
+import java.nio.file.Paths
+
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+apply plugin: 'com.google.gms.google-services'
+apply from: 'signing.gradle'
+
+def configureDebugSigningConfig = { config ->
+    config.storeFile file('debug.keystore')
+    config.storePassword 'android'
+    config.keyAlias 'androiddebugkey'
+    config.keyPassword 'android'
+}
+
+project.ext.envConfigFiles = [
+    prod: ".env.production",
+    dev: ".env.development",
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
+react {
+    /* Folders */
+    //   The root of your project, i.e. where "package.json" lives. Default is '..'
+    // root = file("../../")
+    hermesCommand = "../../../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"
+    reactNativeDir = file("../../../../../node_modules/react-native")
+    // codegenDir = file("../../../../node_modules/@react-native/codegen")
+    // cliFile = file("../../../../node_modules/react-native/cli.js")
+
+    /* Autolinking */
+    autolinkLibrariesWithApp()
+}
+
+def enableProguardInReleaseBuilds = false
+
+def jscFlavor = 'org.webkit:android-jsc:+'
+
+android {
+    ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
+    flavorDimensions "default"
+    namespace "com.dbbs.mobile_app"
+    defaultConfig {
+        applicationId "com.dbbs.mobile_app"
+        resValue "string", "build_config_package", "com.dbbs.mobile_app"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0.0"
+        testBuildType System.getProperty('testBuildType', 'debug')
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    productFlavors {
+        prod {
+            resValue "string", "app_name", "DBBS Software"
+        }
+        dev {
+            resValue "string", "app_name", "DBBS Software"
+        }
+    }
+    signingConfigs {
+        debug {
+            configureDebugSigningConfig(delegate)
+        }
+        release {
+            if (keystoreFile?.exists()) {
+                storeFile keystoreFile
+                storePassword credentials.android.keystore.keystorePassword
+                keyAlias credentials.android.keystore.keyAlias
+                if (credentials.android.keystore.containsKey("keyPassword")) {
+                    keyPassword credentials.android.keystore.keyPassword
+                } else {
+                    keyPassword credentials.android.keystore.keystorePassword
+                }
+            } else {
+                configureDebugSigningConfig(delegate)
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            if (keystoreFile?.exists()) {
+                println "Selected release build type!"
+                signingConfig signingConfigs.release
+            } else {
+                println "Selected debug build type!"
+                signingConfig signingConfigs.debug
+            }
+
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFile "${rootProject.projectDir}/../../../../node_modules/detox/android/detox/proguard-rules-app.pro"
+        }
+    }
+}
+
+dependencies {
+    // The version of react-native is set by the React Native Gradle Plugin
+    implementation("com.facebook.react:react-android")
+    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-config')
+    androidTestImplementation('com.wix:detox:+')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+
+    if (hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android")
+    } else {
+        implementation jscFlavor
+    }
+}
+project.ext.vectoricons = [
+  iconFontsDir: "../../../../../node_modules/react-native-vector-icons/Fonts",
+]
+
+project.ext.sentryCli = [
+    logLevel: "debug"
+]
+
+apply from: file("../../../../../node_modules/react-native-vector-icons/fonts.gradle")
+apply from: "../../../../../node_modules/@sentry/react-native/sentry.gradle"

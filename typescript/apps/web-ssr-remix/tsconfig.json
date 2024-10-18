@@ -1,0 +1,14 @@
+{
+  "extends": "@dbbs/tsconfig/remixrun.json",
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./cypress/tsconfig.json"
+    }
+  ]
+}

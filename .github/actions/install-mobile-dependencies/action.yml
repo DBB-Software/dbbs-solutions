@@ -71,5 +71,5 @@ runs:
         SECRET_PREFIX: dbbs
       shell: bash
     - name: Build for application-related packages
-      run: npx turbo run build --filter=./apps/${{ inputs.app_name }}
+      run: npx turbo run build --filter=./typescript/apps/${{ inputs.app_name }}
       shell: bash

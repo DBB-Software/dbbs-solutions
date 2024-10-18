@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+      "allowJs": true,
+      "module": "esnext",
+      "types": ["node", "cypress"],
+      "target": "ES2019",
+      "sourceMap": false,
+      "outDir": "./",
+      "noEmit": true
+  },
+  "include": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.cy.ts",
+      "../cypress.config.ts"
+  ]
+}
