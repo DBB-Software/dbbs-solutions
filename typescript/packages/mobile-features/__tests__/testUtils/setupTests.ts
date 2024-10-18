@@ -18,13 +18,11 @@ jest.mock('@react-native-firebase/remote-config', () => ({
   })
 }))
 
-jest.mock('react-native-mmkv', () => {
-  return {
-    MMKV: jest.fn().mockImplementation(() => ({
-      getString: jest.fn()
-    }))
-  }
-})
+jest.mock('react-native-mmkv', () => ({
+  MMKV: jest.fn().mockImplementation(() => ({
+    getString: jest.fn()
+  }))
+}))
 
 jest.mock('react-native-localize', () => ({
   getLocales: jest.fn()
@@ -34,9 +32,7 @@ jest.mock('@dbbs/react-localization-provider', () => ({
   initLocaleService: jest.fn()
 }))
 
-jest.mock('react-native-auth0', () => {
-  return {
-    useAuth0: jest.fn(),
-    Auth0Provider: ({ children }: AuthGuardProps) => children
-  }
-})
+jest.mock('react-native-auth0', () => ({
+  useAuth0: jest.fn(),
+  Auth0Provider: ({ children }: AuthGuardProps) => children
+}))

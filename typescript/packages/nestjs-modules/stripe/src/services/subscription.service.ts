@@ -9,7 +9,8 @@ import {
   IGetSubscriptionByIdParams,
   ICreateSubscriptionParams,
   ICreateCheckoutSessionParams,
-  ICreateSessionParams, IUpdateSubscriptionQuantityParams
+  ICreateSessionParams,
+  IUpdateSubscriptionQuantityParams
 } from '../interfaces/index.js'
 import { STRIPE_SDK } from '../constants.js'
 import { PlanType } from '../enums/planType.js'

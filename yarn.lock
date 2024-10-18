@@ -8411,7 +8411,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dbbs/mui-components@npm:*, @dbbs/mui-components@workspace:typescript/packages/mui-components":
+"@dbbs/mui-components@workspace:typescript/packages/mui-components":
   version: 0.0.0-use.local
   resolution: "@dbbs/mui-components@workspace:typescript/packages/mui-components"
   dependencies:
@@ -8905,25 +8905,6 @@ __metadata:
     reflect-metadata: "npm:0.2.2"
     rxjs: "npm:7.8.1"
     source-map-support: "npm:0.5.21"
-  languageName: unknown
-  linkType: soft
-
-"@dbbs/strapi-payment-spa@workspace:typescript/apps/strapi-payment-spa":
-  version: 0.0.0-use.local
-  resolution: "@dbbs/strapi-payment-spa@workspace:typescript/apps/strapi-payment-spa"
-  dependencies:
-    "@dbbs/cypress": "npm:*"
-    "@dbbs/eslint-config": "npm:*"
-    "@dbbs/jest-config": "npm:*"
-    "@dbbs/mui-components": "npm:*"
-    "@dbbs/tsconfig": "npm:*"
-    "@tanstack/react-router": "npm:1.48.4"
-    "@tanstack/router-devtools": "npm:1.48.4"
-    "@tanstack/router-plugin": "npm:1.48.3"
-    "@types/js-cookie": "npm:3"
-    js-cookie: "npm:3.0.5"
-    react: "npm:18.3.1"
-    react-dom: "npm:18.3.1"
   languageName: unknown
   linkType: soft
 
@@ -24428,13 +24409,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/js-cookie@npm:3":
-  version: 3.0.6
-  resolution: "@types/js-cookie@npm:3.0.6"
-  checksum: 10c0/173afaf5ea9d86c22395b9d2a00b6adb0006dcfef165d6dcb0395cdc32f5a5dcf9c3c60f97194119963a15849b8f85121e1ae730b03e40bc0c29b84396ba22f9
-  languageName: node
-  linkType: hard
-
 "@types/js-yaml@npm:^4.0.0":
   version: 4.0.9
   resolution: "@types/js-yaml@npm:4.0.9"
@@ -27355,28 +27329,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk@npm:2.161.0":
-  version: 2.161.0
-  resolution: "aws-cdk@npm:2.161.0"
-  dependencies:
-    fsevents: "npm:2.3.2"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    cdk: bin/cdk
-  checksum: 10c0/bf6e3eef7edf6f59fcae675a83090c25244ea13e05483ae50a613fe2e52e774b6e759fe6a0527e186a903bf1ce74e66a2f298d4e2ae9f25caa05719703ce9d00
-  languageName: node
-  linkType: hard
-
-"aws-cdk@workspace:infra/aws-cdk":
-  version: 0.0.0-use.local
-  resolution: "aws-cdk@workspace:infra/aws-cdk"
-  dependencies:
-    cdk: "npm:2.161.0"
-  languageName: unknown
-  linkType: soft
-
 "aws-sdk@npm:2.1635.0":
   version: 2.1635.0
   resolution: "aws-sdk@npm:2.1635.0"
@@ -29423,17 +29375,6 @@ __metadata:
     cdk-assets: bin/cdk-assets
     docker-credential-cdk-assets: bin/docker-credential-cdk-assets
   checksum: 10c0/69250a7d79d4f2daa2ce762677943064a017b6e1d13ca25c33be6f9fdf56aedbc1d207b61de2493e35d81974f96a6079fdf62d9fb32b5a1be58672aefb5dd278
-  languageName: node
-  linkType: hard
-
-"cdk@npm:2.161.0":
-  version: 2.161.0
-  resolution: "cdk@npm:2.161.0"
-  dependencies:
-    aws-cdk: "npm:2.161.0"
-  bin:
-    cdk: bin/cdk
-  checksum: 10c0/fafd872eb8dfed6bff20746d1b1fc742c22e3c9219534d79de9c5cd756eb914d06f1ddee5cc17e2cecf5c216d48cbbac3cc34b1165c08a06b596d1e18f1e16c1
   languageName: node
   linkType: hard
 
@@ -40782,13 +40723,6 @@ __metadata:
   version: 2.2.1
   resolution: "js-cookie@npm:2.2.1"
   checksum: 10c0/ee67fc0f8495d0800b851910b5eb5bf49d3033adff6493d55b5c097ca6da46f7fe666b10e2ecb13cfcaf5b88d71c205ce00a7e646de791689bfd053bbb36a376
-  languageName: node
-  linkType: hard
-
-"js-cookie@npm:3.0.5":
-  version: 3.0.5
-  resolution: "js-cookie@npm:3.0.5"
-  checksum: 10c0/04a0e560407b4489daac3a63e231d35f4e86f78bff9d792011391b49c59f721b513411cd75714c418049c8dc9750b20fcddad1ca5a2ca616c3aca4874cce5b3a
   languageName: node
   linkType: hard
 
