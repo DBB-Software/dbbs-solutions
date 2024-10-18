@@ -1,0 +1,16 @@
+{
+    "name": "@dbbs/tsconfig",
+    "version": "0.0.0",
+    "private": true,
+    "files": [
+        "base.json",
+        "react-spa.json",
+        "react-native.json"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "clean": "npx rimraf .turbo node_modules dist bin coverage || exit 0"
+    }
+}

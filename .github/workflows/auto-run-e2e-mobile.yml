@@ -16,6 +16,7 @@ on:
 
 jobs:
   test-dev:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     environment: ${{ format('{0}_{1}', 'mobile-app', 'production') }}
@@ -34,4 +35,4 @@ jobs:
           device_api: 34
           device_profile: pixel
           device_target: default
-          restore_key: './apps/mobile-app/package.json'
+          restore_key: './typescript/apps/mobile-app/package.json'

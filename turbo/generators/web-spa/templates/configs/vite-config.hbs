@@ -3,9 +3,12 @@ import react from '@vitejs/plugin-react'
 {{#if isTanstackRouterEnabled}}
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 {{/if}}
+{{#if useVercel}}
+import vercel from 'vite-plugin-vercel'
+{{/if}}
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [{{#if isTanstackRouterEnabled}}TanStackRouterVite(), {{/if}}react()],
+  plugins: [{{#if isTanstackRouterEnabled}}TanStackRouterVite(), {{/if}}{{#if useVercel}}vercel(), {{/if}}react()],
   envPrefix: '{{ appName }}'
 })

@@ -1,0 +1,12 @@
+{
+  "name": "@dbbs/django-logger",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Django logger module for dbbs project",
+  "type": "module",
+  "scripts": {
+    "build": "poetry build",
+    "lint": "poetry run ruff check .",
+    "test": "echo 'skip'"
+  }
+}

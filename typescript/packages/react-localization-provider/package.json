@@ -1,0 +1,22 @@
+{
+  "name": "@dbbs/react-localization-provider",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Localization service",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "clean": "npx rimraf .turbo node_modules dist bin",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "test": "jest --coverage --verbose"
+  },
+  "dependencies": {
+    "i18next": "23.14.0",
+    "react-i18next": "15.0.1"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

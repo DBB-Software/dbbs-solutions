@@ -1,0 +1,54 @@
+name: python-test
+
+on:
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
+
+      runs_on:
+        required: false
+        description: 'Platform to execute on. Default ["ubuntu-22.04"]'
+        type: string
+        default: '["ubuntu-22.04"]'
+
+      timeout:
+        required: false
+        description: "Timeout in minutes for the job execution. Defaults 15."
+        type: number
+        default: 15
+
+jobs:
+  build:
+    name: Test ${{ inputs.app_name }}
+    runs-on: ${{ fromJSON(inputs.runs_on) }}
+    timeout-minutes: ${{ inputs.timeout }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+
+      - name: Install Python Dependencies and Run Test
+        run: |
+          if [[ "${{ inputs.app_name }}" == "django-server" ]]; then
+            cd python/apps/django-server
+            poetry install
+            poetry run ruff check .
+            poetry run coverage run manage.py test --settings=core.settings.test && poetry run coverage xml
+          elif [[ "${{ inputs.app_name }}" == "fast-api-server" ]]; then
+            cd python/apps/fast-api-server
+            poetry install
+            poetry run ruff check .
+            poetry run coverage run -m pytest && poetry run coverage xml
+          elif [[ "${{ inputs.app_name }}" == "django-logger" ]]; then
+            cd python/packages/django-modules/dbbs_django_logger
+            poetry install
+            poetry run ruff check .
+            poetry run coverage run -m pytest && poetry run coverage xml
+          else
+            echo "Unknown app_name: ${{ inputs.app_name }}"
+            exit 1
+          fi

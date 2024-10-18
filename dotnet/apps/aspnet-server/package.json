@@ -1,0 +1,18 @@
+{
+  "name": "@dbbs/aspnet-server",
+  "version": "1.0.0",
+  "description": "ASP.NET Server",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "watch": "cross-env ASPNETCORE_ENVIRONMENT=Development dotnet watch --project DBBS.AspnetServer/DBBS.AspnetServer.csproj",
+    "start": "dotnet run -c Release --project DBBS.AspnetServer/DBBS.AspnetServer.csproj",
+    "start:dev": "cross-env ASPNETCORE_ENVIRONMENT=Development dotnet run --project DBBS.AspnetServer/DBBS.AspnetServer.csproj",
+    "start:prod": "dotnet run -c Release --project DBBS.AspnetServer/DBBS.AspnetServer.csproj",
+    "test": "dotnet test",
+    "test:cov": "dotnet test /p:CollectCoverage=true"
+  },
+  "devDependencies": {
+    "cross-env": "7.0.3"
+  }
+}

@@ -71,11 +71,6 @@ jobs:
           echo "${{ inputs.aws_config }}" > ~/.aws/config
         shell: bash
 
-      # TODO: Add new workflow for python tests
-      - name: Setup Python
-        if: inputs.app_name == 'django-server'
-        uses: ./.github/actions/setup-python
-
       - name: Test
         run: |
           yarn download:env

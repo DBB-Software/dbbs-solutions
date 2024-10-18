@@ -30,3 +30,34 @@ jest.mock('@react-native-firebase/remote-config', () => ({
     })
   })
 }))
+
+{{#if isExpo}}
+jest.mock('react-native-localize', () => ({
+  getLocales: jest.fn().mockReturnValue([{ languageCode: 'en' }])
+}))
+{{/if}}
+
+jest.mock('react-native-mmkv', () => {
+  return {
+    MMKV: jest.fn().mockImplementation(() => ({
+      getString: jest.fn()
+    }))
+  }
+})
+
+jest.mock('@dbbs/localization-service', () => ({
+  initLocaleService: jest.fn(),
+  // this mock makes sure any components using the translate hook can use it without a warning being shown
+  useTranslation: () => {
+    return {
+      t: (str: string) => str,
+      i18n: {
+        changeLanguage: () => new Promise(() => {})
+      }
+    }
+  },
+  initReactI18next: {
+    type: '3rdParty',
+    init: () => {}
+  }
+}))

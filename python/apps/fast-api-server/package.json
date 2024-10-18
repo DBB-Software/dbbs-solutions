@@ -1,0 +1,13 @@
+{
+  "name": "@dbbs/fast-api-server",
+  "version": "1.0.0",
+  "description": "DBBs FastAPI Server",
+  "type": "module",
+  "main": "../fast-api-server/src/main.py",
+  "private": true,
+  "scripts": {
+    "dev": "poetry run python -m src",
+    "lint": "poetry run ruff check .",
+    "test": "echo 'skip'"
+  }
+}

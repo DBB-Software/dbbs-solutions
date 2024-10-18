@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "fast-api-server"
+version = "0.1.0"
+description = "Simple FastAPI application"
+authors = [
+    "Hryhoriy Bilenko <hryhoriy.bilenko@dbbsoftware.com>"
+]
+
+readme = "README.md"
+
+[tool.ruff]
+extend = "../../packages/common/pyproject.toml"
+
+[tool.poetry.dependencies]
+python = "3.11.6"
+fastapi = "^0.111.0"
+uvicorn = { version = "^0.30.1", extras = ["standard"] }
+gunicorn = "^22.0.0"
+pydantic = "^2"
+pydantic-settings = "^2"
+yarl = "^1"
+ujson = "^5.10.0"
+httptools = "^0.6.1"
+loguru = "^0"
+common = {path = "../../packages/common"}
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+omit = ["*/__init__.py"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

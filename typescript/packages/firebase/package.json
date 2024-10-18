@@ -1,0 +1,31 @@
+{
+  "name": "@dbbs/firebase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "React based integrations",
+  "exports": {
+    "./app": {
+      "import": "./dist/src/app/index.js",
+      "types": "./dist/src/app/index.d.ts"
+    },
+    "./admin": {
+      "import": "./dist/src/admin/index.js",
+      "types": "./dist/src/admin/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "npx tsc --build tsconfig.lib.json",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "test": "npx jest --coverage --verbose"
+  },
+  "dependencies": {
+    "firebase": "10.14.1",
+    "firebase-admin": "12.6.0"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}
