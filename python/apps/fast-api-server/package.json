@@ -8,6 +8,6 @@
   "scripts": {
     "dev": "poetry run python -m src",
     "lint": "poetry run ruff check .",
-    "test": "echo 'skip'"
+    "test": "poetry run coverage run -m pytest && poetry run coverage xml"
   }
 }
