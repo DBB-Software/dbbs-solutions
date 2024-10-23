@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBBS.AspnetServer", "DBBS.AspnetServer/DBBS.AspnetServer.csproj", "{8422450E-3F25-4495-8882-8361E07C1ED5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBBS.AspnetServer.Tests", "DBBS.AspnetServer.Tests\DBBS.AspnetServer.Tests.csproj", "{4169C417-7838-4809-9B90-5ABDB03C2D64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8422450E-3F25-4495-8882-8361E07C1ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8422450E-3F25-4495-8882-8361E07C1ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8422450E-3F25-4495-8882-8361E07C1ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8422450E-3F25-4495-8882-8361E07C1ED5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4169C417-7838-4809-9B90-5ABDB03C2D64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4169C417-7838-4809-9B90-5ABDB03C2D64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4169C417-7838-4809-9B90-5ABDB03C2D64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4169C417-7838-4809-9B90-5ABDB03C2D64}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

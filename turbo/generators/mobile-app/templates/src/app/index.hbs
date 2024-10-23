@@ -16,7 +16,12 @@ import { store } from '@dbbs/mobile-jotai-storage'
 {{/ifCond}}
 import { initSentry } from '../sentry'
 
+import * as resources from './locale'
+import '@dbbs/react-localization-provider'
+
 initSentry()
+
+detectAppLanguage(resources)
 
 export const App = () => {
   const paperTheme = useDefinedTheme()

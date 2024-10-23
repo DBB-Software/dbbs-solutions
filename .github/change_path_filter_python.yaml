@@ -1,0 +1,15 @@
+django-server:
+  - 'python/apps/django-server/**'
+  - 'package.json'
+  - 'yarn.lock'
+
+fast-api-server:
+  - 'python/apps/fast-api-server/**'
+  - 'package.json'
+  - 'yarn.lock'
+
+#django-modules:
+django-logger:
+  - 'python/packages/django-modules/dbbs_django_logger/**'
+  - 'package.json'
+  - 'yarn.lock'

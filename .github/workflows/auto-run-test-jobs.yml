@@ -1,4 +1,4 @@
-name: Run tests
+name: Run tests based on changes
 
 run-name: Test ${{ github.head_ref || github.ref }}
 
@@ -16,10 +16,9 @@ on:
       - reopened
       - ready_for_review
     paths:
-      - 'apps/**'
-      - 'package.json'
+      - 'python/**'
+      - 'typescript/**'
       - 'packages/**'
-      - 'yarn.lock'
 
 jobs:
   prepare-cache:
@@ -27,30 +26,55 @@ jobs:
     if: github.event.pull_request.draft == false
 
   changes:
+    name: Changes for ${{ matrix.app_type }}
     if: github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       pull-requests: read
+    strategy:
+      matrix:
+        app_type: [python, nodejs]
     outputs:
-      apps: ${{ steps.filter.outputs.changes }}
+      python_apps: ${{ matrix.app_type == 'python' && steps.filter.outputs.changes || '[]' }}
+      nodejs_apps: ${{ matrix.app_type == 'nodejs' && steps.filter.outputs.changes || '[]' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: .github/change_path_filter.yaml
 
-  test-changed-apps:
+      - name: Filter changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: ${{ matrix.app_type == 'python' && '.github/change_path_filter_python.yaml' || matrix.app_type == 'nodejs' && '.github/change_path_filter_nodejs.yaml' }}
+
+  test-nodejs-apps:
     needs:
       - prepare-cache
       - changes
-    if: github.event.pull_request.draft == false
+    if: needs.changes.outputs.nodejs_apps != '[]' && github.event.pull_request.draft == false
     strategy:
       fail-fast: false
       max-parallel: 5
       matrix:
-        app: ${{fromJson(needs.changes.outputs.apps)}}
+        app: ${{ fromJson(needs.changes.outputs.nodejs_apps) }}
     uses: ./.github/workflows/nodejs-test.yaml
     with:
       app_name: ${{ matrix.app }}
+      runs_on: '["ubuntu-24.04"]'
+      timeout: 45
+
+  test-python-apps:
+    needs:
+      - prepare-cache
+      - changes
+    if: needs.changes.outputs.python_apps != '[]' && github.event.pull_request.draft == false
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        app: ${{ fromJson(needs.changes.outputs.python_apps) }}
+    uses: ./.github/workflows/python-test.yaml
+    with:
+      app_name: ${{ matrix.app }}
+      runs_on: '["ubuntu-24.04"]'
+      timeout: 45

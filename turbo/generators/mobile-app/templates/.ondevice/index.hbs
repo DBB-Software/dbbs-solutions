@@ -1,10 +1,16 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MMKV } from "react-native-mmkv";
 import { view } from "./storybook.requires";
 
 const StorybookUIRoot = view.getStorybookUI({
   storage: {
-    getItem: AsyncStorage.getItem,
-    setItem: AsyncStorage.setItem,
+    getItem: (key: string) => {
+      const value = storage.getString(key)
+      return Promise.resolve(value || null)
+    },
+    setItem: (key: string, value: string) => {
+      storage.set(key, value)
+      return Promise.resolve()
+    }
   },
 });
 

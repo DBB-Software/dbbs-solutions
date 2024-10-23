@@ -1,0 +1,16 @@
+{
+    "extends": "@dbbs/tsconfig/react-library.json",
+    "compilerOptions": {
+      "outDir": "./dist"
+    },
+    "files": [],
+    "references": [
+      {
+        "path": "./tsconfig.spec.json"
+      },
+      {
+        "path": "./tsconfig.lib.json"
+      }
+    ]
+  }
+  

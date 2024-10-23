@@ -1,0 +1,17 @@
+{
+    "name": "@dbbs/jest-config",
+    "version": "0.0.0",
+    "private": true,
+    "exports": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "clean": "npx rimraf .turbo node_modules dist bin coverage || exit 0",
+        "build": "npx tsc --build tsconfig.json"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

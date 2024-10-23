@@ -1,0 +1,19 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "types": ["jest", "node"]
+    },
+    "include": [
+        "./jest.config.ts",
+        "./__tests__/testUtils/**/*",
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/*.test.tsx",
+        "**/*.spec.tsx",
+        "**/*.ts",
+        "**/*.tsx"
+    ]
+}

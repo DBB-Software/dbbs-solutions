@@ -84,7 +84,6 @@ typings/
 # Nuxt.js build / generate output
 .nuxt
 dist
-lib
 
 # Gatsby files
 .cache/
@@ -117,11 +116,10 @@ node_modules
 !.env.example
 *.env
 *.db
-lib
 dist
 coverage
 layer
-bin
+
 
 storybook-static
 
@@ -221,14 +219,11 @@ infra/aws-cdk/**/*.d.ts
 .pnp.loader.mjs
 
 #SQLite DB
-apps/django-server/*.sqlite3
-
-#Django static
-/apps/django-server/static/
+*.sqlite3
 
 #Django tests
-/apps/django-server/.coverage
-/apps/django-server/coverage.xml
+.coverage
+coverage.xml
 
 # Android - iOS
 credentials.*
@@ -238,3 +233,16 @@ credentials.*
 .expo/
 *.apk
 build-*.tar.gz
+
+# Storybook generated
+**/.ondevice/storybook.requires.ts
+
+packages/**/lib
+typescript/packages/**/lib
+/dotnet/**/bin/
+/dotnet/**/obj/
+/dotnet/**/*.user
+/dotnet/apps/aspnet-server/DBBS.AspnetServer.Tests/coverage.json
+/dotnet/apps/aspnet-server/package-lock.json
+/dotnet/apps/aspnet-server/DBBS.AspnetServer/weather.sqlite
+/dotnet/apps/aspnet-server/DBBS.AspnetServer/weather.sqlite*
