@@ -9,6 +9,14 @@ concurrency:
 on:
   workflow_dispatch:
     inputs:
+      platform:
+        description: Platform of mobile application
+        required: true
+        type: choice
+        default: ios
+        options:
+          - ios
+          - android
       workspace:
         description: A folder of mobile application
         required: true
@@ -17,21 +25,18 @@ on:
         options:
           - mobile-app
           - mobile-expo-app
+      # Android-specific inputs
       device_api:
         description: Version of API for android, which will be used for creating android emulator.
-        required: true
+        required: false
         type: choice
         default: 34
         options:
-          - 29
-          - 30
-          - 31
-          - 32
-          - 33
           - 34
+          - 35
       device_profile:
         description: Profile of device, which will be used for creating android emulator.
-        required: true
+        required: false
         type: choice
         default: pixel
         options:
@@ -39,7 +44,7 @@ on:
           # For up-to-date device lists, run the command: avdmanager list device 
       device_target:
         description: Target of the system image, which will be used for creating android emulator.
-        required: true
+        required: false
         type: choice
         default: default
         options:
@@ -50,15 +55,26 @@ on:
           - android-wear-cn
 jobs:
   test-dev:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.platform == 'ios' && 'self-hosted' || 'ubuntu-24.04' }}
     timeout-minutes: 60
-    environment: ${{ format('{0}_{1}', inputs.workspace, 'production') }}
+    environment: ${{ format('{0}_{1}', inputs.workspace, 'development') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run build, and e2e
-        uses: ./.github/actions/build-and-e2e
+      - name: Run build, and e2e for ios platform
+        if: ${{ inputs.platform == 'ios' }}
+        uses: ./.github/actions/build-and-e2e-ios
+        with:
+          ref: ${{ github.ref }}
+          ENV_CONFIG: ${{ secrets.ENV_CONFIG }}
+          workspace: ${{ inputs.workspace }}
+          restore_key: './typescript/apps/${{ inputs.workspace }}/package.json'
+          pods_restore_key: './typescript/apps/${{ inputs.workspace }}/ios/Podfile.lock'
+
+      - name: Run build, and e2e for android platform
+        if: ${{ inputs.platform == 'android' }}
+        uses: ./.github/actions/build-and-e2e-android
         with:
           ref: ${{ github.ref }}
           ENV_CONFIG: ${{ secrets.ENV_CONFIG }}

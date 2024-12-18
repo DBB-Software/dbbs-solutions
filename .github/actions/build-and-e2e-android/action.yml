@@ -33,9 +33,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Use Setup Yarn action
-      uses: ./.github/actions/setup-yarn
-
     - name: Checkout
       uses: actions/checkout@v4
       with:
@@ -46,6 +43,9 @@ runs:
       with:
         node-version-file: '.tool-versions'
         cache: 'yarn'
+
+    - name: Use Setup Yarn action
+      uses: ./.github/actions/setup-yarn
 
     - name: Cache node_modules
       if: ${{ github.event.pull_request.draft == true }}
@@ -70,7 +70,7 @@ runs:
 
     - name: Create secret files
       run: |
-        echo -n "${{ inputs.ENV_CONFIG }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/.env.production
+        echo -n "${{ inputs.ENV_CONFIG }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/.env.development
         echo -n "${{ inputs.KEYSTORE_B64 }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/android/app/dbbs.keystore
         echo -n "${{ inputs.SIGNING_CREDENTIALS }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/credentials.json
       shell: bash
@@ -158,6 +158,6 @@ runs:
           free -m
           npx turbo run build --filter=./typescript/apps/${{ inputs.workspace }}
           yarn workspace @dbbs/${{ inputs.workspace }} prebuild
-          yarn workspace @dbbs/${{ inputs.workspace }} e2e:ci
+          yarn workspace @dbbs/${{ inputs.workspace }} e2e:android-ci
           df -h
           free -m

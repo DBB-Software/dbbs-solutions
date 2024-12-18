@@ -7,32 +7,24 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    paths:
-      - 'yarn.lock'
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   test-dev:
-    if: github.event.pull_request.draft == false
-    runs-on: ubuntu-24.04
+    if: ${{ github.ref || 'refs/heads/main' }}
+    runs-on: self-hosted
     timeout-minutes: 60
-    environment: ${{ format('{0}_{1}', 'mobile-app', 'production') }}
+    environment: ${{ format('{0}_{1}', 'mobile-app', 'development') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Run build, and e2e
-        uses: ./.github/actions/build-and-e2e
+        uses: ./.github/actions/build-and-e2e-ios
         with:
           ref: ${{ github.ref }}
           ENV_CONFIG: ${{ secrets.ENV_CONFIG }}
-          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
-          SIGNING_CREDENTIALS: ${{ secrets.SIGNING_CREDENTIALS }}
           workspace: mobile-app
-          device_api: 34
-          device_profile: pixel
-          device_target: default
           restore_key: './typescript/apps/mobile-app/package.json'
+          pods_restore_key: './typescript/apps/mobile-app/ios/Podfile.lock'

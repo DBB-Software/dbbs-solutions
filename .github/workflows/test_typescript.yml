@@ -1,0 +1,100 @@
+name: Test Typescript
+
+run-name: Test Typescript ${{ github.head_ref || github.ref }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    paths:
+      - typescript/**
+      - package.json
+      - yarn.lock
+      - turbo.json
+      - yarnrc.yml
+      - .eslintrc.json
+      - .prettierrc.json
+      - tsconfig.json
+  push:
+    branches:
+      - main
+
+jobs:
+  test-and-build:
+    runs-on: [self-hosted]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Fetch main branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          git fetch origin main:main
+
+      - name: Cache turbo setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Use Setup Yarn action
+        uses: ./.github/actions/setup-yarn
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.tool-versions'
+          cache: 'yarn'
+      
+      - name: Build dependencies
+        run: |
+          yarn install --immutable
+
+      - name: List affected projects
+        run: |
+          npx turbo ls --affected --output=json > affected.json
+          echo "Full projects list: $(cat affected.json)"
+
+      - name: Configure AWS Credentials
+        run: |
+          mkdir -p ~/.aws/
+          echo "${{ inputs.aws_credentials }}" > ~/.aws/credentials
+          echo "${{ inputs.aws_config }}" > ~/.aws/config
+        shell: bash
+
+      - name: Download env
+        run: |
+          yarn download:env
+        env:
+          STAGE: development
+          AWS_PROFILE: dbbs-pre-built-solutions-development
+          SECRET_PREFIX: dbbs-pre-built-solutions
+
+      - name: Test
+        run: |
+          npx turbo run test --affected
+
+      - name: Alert on main fail
+        uses: slackapi/slack-github-action@v2.0.0
+        if: failure() && github.ref == 'refs/heads/main'
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          payload: |
+            channel: ${{ vars.SLACK_ALERTS_CHANNEL_ID }}
+            text: ":this-is-fine-fire: *GitHub Action Job auto-run-test-jobs.yml Failed*\n
+            *Job*: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n
+            *Author*: https://github.com/${{ github.actor }}"
