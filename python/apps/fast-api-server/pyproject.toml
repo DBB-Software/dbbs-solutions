@@ -13,16 +13,17 @@ extend = "../../packages/common/pyproject.toml"
 
 [tool.poetry.dependencies]
 python = "3.11.6"
-fastapi = "^0.111.0"
-uvicorn = { version = "^0.30.1", extras = ["standard"] }
-gunicorn = "^22.0.0"
-pydantic = "^2"
-pydantic-settings = "^2"
-yarl = "^1"
-ujson = "^5.10.0"
-httptools = "^0.6.1"
-loguru = "^0"
+fastapi = "0.115.0"
+uvicorn = { version = "0.30.1", extras = ["standard"] }
+gunicorn = "22.0.0"
+pydantic-settings = "2.6.1"
+yarl = "1"
+ujson = "5.10.0"
+httptools = "0.6.1"
 common = {path = "../../packages/common"}
+pydantic = "2.9.2"
+httpx = "0.27.2"
+fastapi-authz = {path = "../../packages/fast-api-modules/authz"}
 
 [tool.coverage.run]
 branch = true

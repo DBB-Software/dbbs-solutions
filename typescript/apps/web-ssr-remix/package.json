@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "dev": "remix vite:dev",
     "cypress:open": "npx cypress open",

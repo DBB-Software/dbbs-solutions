@@ -20,11 +20,11 @@ djangorestframework-simplejwt = "5.3.1"
 gunicorn = "22.0.0"
 django-debug-toolbar = "4.4.6"
 django-extensions = "3.2.3"
-psycopg2 = "2.9.9"
 whitenoise = "6.7.0"
 django-health-check = "3.18.3"
 common = {path = "../../packages/common"}
 dbbs-django-logger = {path = "../../packages/django-modules/dbbs_django_logger"}
+psycopg2-binary = "2.9.10"
 
 [tool.coverage.run]
 branch = true

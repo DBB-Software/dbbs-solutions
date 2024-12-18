@@ -4,32 +4,29 @@
   "display": "RemixRun",
   "files": [],
   "compilerOptions": {
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ES2022"
-    ],
-    "types": [
-      "@remix-run/node",
-      "vite/client"
-    ],
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "moduleResolution": "Bundler",
-    "target": "ES2022",
-    "allowJs": true,
-    "paths": {
-      "~/*": [
-        "./app/*"
+      "lib": ["DOM", "DOM.Iterable", "ES2022"],
+      "types": ["@remix-run/node", "vite/client"],
+      "isolatedModules": true,
+      "esModuleInterop": true,
+      "jsx": "react-jsx",
+      "moduleResolution": "Bundler",
+      "resolveJsonModule": true,
+      "target": "ES2022",
+      "strict": true,
+      "allowJs": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "noEmit": true,
+      "plugins": [
+          { "name": "remixrun" }
       ]
-    },
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/.server/**/*.ts",
-    "**/.server/**/*.tsx",
-    "**/.client/**/*.ts",
-    "**/.client/**/*.tsx"
+      "**/*.ts",
+      "**/*.tsx",
+      "**/.server/**/*.ts",
+      "**/.server/**/*.tsx",
+      "**/.client/**/*.ts",
+      "**/.client/**/*.tsx"
   ],
 }

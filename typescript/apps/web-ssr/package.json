@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "clean": "npx rimraf .turbo node_modules .next bin coverage \"*.tsbuildinfo\" || exit 0",
+    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0",
     "deploy": "npx next-serverless-deployment deploy --stage $STAGE --siteName $APP",
     "build": "npx next build",
     "cypress:open": "npx cypress open",
@@ -11,12 +11,14 @@
     "dev": "npx next dev",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "start": "npx next start",
-    "test": "npx jest --coverage --verbose"
+    "test": "npx jest --coverage --verbose",
+    "analyze": "ANALYZE=true yarn build"
   },
   "dependencies": {
     "@dbbs/next-serverless-deployment": "1.0.0",
     "@dbbs/tailwind-components": "*",
     "@dbbs/web-features": "*",
+    "@next/bundle-analyzer": "15.0.1",
     "next": "14.2.5",
     "react": "18.3.1"
   },

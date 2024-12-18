@@ -3,7 +3,7 @@
 app_name=$(basename "$PWD")
 
 # Move to the root of the monorepo
-cd ../..
+cd ../../..
 
 # Run yarn build for required packages in the root of the monorepo
 echo "Running yarn build in the root of the monorepo"
@@ -17,6 +17,6 @@ yarn workspace @dbbs/mobile-jotai-storage build
 {{/ifCond}}
 
 # Move back to the app directory
-cd "apps/$app_name"
+cd "typescript/apps/$app_name"
 
 echo "Returned to the app directory: apps/$app_name"

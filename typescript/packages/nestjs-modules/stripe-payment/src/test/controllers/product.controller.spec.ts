@@ -16,7 +16,6 @@ describe('ProductController', () => {
       imports: [LoggerModule.forRoot({})],
       controllers: [ProductController],
       providers: [
-
         {
           provide: ProductService,
           useValue: {
@@ -24,10 +23,10 @@ describe('ProductController', () => {
             getProductById: jest.fn(),
             createProduct: jest.fn(),
             updateProduct: jest.fn(),
-            deleteProduct: jest.fn(),
-          },
-        },
-      ],
+            deleteProduct: jest.fn()
+          }
+        }
+      ]
     }).compile()
 
     controller = module.get<ProductController>(ProductController)
@@ -68,7 +67,7 @@ describe('ProductController', () => {
         name: 'should throw an error if failed to fetch products',
         controllerMethodArgs: { page: 1, perPage: 10 },
         expectedError: new Error('Something went wrong'),
-        expectedParams: { page: 1, perPage: 10 },
+        expectedParams: { page: 1, perPage: 10 }
       }
     ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
       if (setupMocks) {
@@ -201,7 +200,7 @@ describe('ProductController', () => {
         setupMocks: () => {
           productService.updateProduct.mockRejectedValue(new Error('Something went wrong'))
         }
-      },
+      }
     ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
       setupMocks()
 

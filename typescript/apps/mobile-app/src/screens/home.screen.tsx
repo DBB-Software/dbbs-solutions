@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Config from 'react-native-config'
 import { Screen, Text } from '@dbbs/mobile-components'
-import { useRemoteConfig } from '@dbbs/mobile-features'
+import { useRemoteConfig } from '@dbbs/mobile-firebase'
 import { useTranslation } from '@dbbs/react-localization-provider'
+import { RemoteConfigValues } from '../app/remote/remote-config-values'
 
 const fetchData = (url?: string) => fetch(`${url}/settings`).then((r) => r.json())
 
 export const HomeComponent = () => {
   const [serverlessTenants, setServerlessTenants] = useState<string[]>([])
   const [strapiTenants, setStrapiTenants] = useState<string[]>([])
-  const { test, testNumber, testObject } = useRemoteConfig()
+  const { test, testNumber, testObject } = useRemoteConfig<RemoteConfigValues>()
   const { t } = useTranslation()
 
   const renderTenantContent = useCallback((tenant: string) => <Text key={tenant}>{tenant}</Text>, [])
@@ -38,7 +39,7 @@ export const HomeComponent = () => {
         {testNumber?.value} - {test?.source}
       </Text>
       <Text>
-        {testObject?.value.test} - {test?.source}
+        {testObject?.value?.test} - {test?.source}
       </Text>
     </Screen>
   )

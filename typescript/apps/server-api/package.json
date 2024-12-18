@@ -7,7 +7,7 @@
   "types": "./dist/main.d.ts",
   "scripts": {
     "build": "npx nest build",
-    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
+    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0",
     "dev": "npx nest start --watch",
     "format": "npx prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
@@ -59,6 +59,7 @@
   "devDependencies": {
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "jest-mock-extended": "3.0.4"
   }
 }

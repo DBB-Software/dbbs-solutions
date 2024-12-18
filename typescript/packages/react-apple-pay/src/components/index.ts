@@ -1,0 +1,1 @@
+export { ApplePayButton } from './ApplePayButton'

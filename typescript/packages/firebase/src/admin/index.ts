@@ -9,7 +9,5 @@ export const customInitializeApp = (options: AppOptions, name?: string) => {
 }
 
 export * from 'firebase-admin/app'
-export * from 'firebase-admin/auth'
-export * from 'firebase-admin/firestore'
 
 export { customInitializeApp as initializeApp }

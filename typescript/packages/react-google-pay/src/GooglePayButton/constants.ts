@@ -1,0 +1,2 @@
+export const DEFAULT_API_VERSION = 2
+export const DEFAULT_API_VERSION_MINOR = 0

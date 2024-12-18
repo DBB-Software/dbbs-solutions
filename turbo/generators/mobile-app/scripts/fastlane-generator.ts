@@ -10,71 +10,27 @@ export const generateFastlane = (answers: Parameters<PlopTypes.DynamicActionsFun
   return [
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/Fastfile`,
-      templateFile: 'mobile-app/templates/fastlane/Fastfile.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/fastlane/Fastfile`,
+      templateFile: 'mobile-app/templates/shared/fastlane/Fastfile.hbs',
       data: templateProps
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/Appfile`,
-      templateFile: 'mobile-app/templates/fastlane/Appfile.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/fastlane/Appfile`,
+      templateFile: 'mobile-app/templates/shared/fastlane/Appfile.hbs',
       data: templateProps
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/Matchfile`,
-      templateFile: 'mobile-app/templates/fastlane/Matchfile.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/fastlane/Matchfile`,
+      templateFile: 'mobile-app/templates/shared/fastlane/Matchfile.hbs',
       data: templateProps
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/Pluginfile`,
-      templateFile: 'mobile-app/templates/fastlane/Pluginfile.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/fastlane/Pluginfile`,
+      templateFile: 'mobile-app/templates/shared/fastlane/Pluginfile.hbs',
       data: templateProps
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/primary_category.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/secondary_category.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/description.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/keywords.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/marketing_url.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/name.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/privacy_url.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/promotional_text.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/subtitle.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/support_url.txt`
-    },
-    {
-      type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/fastlane/metadata/ios/default/changelogs/default.txt`
     }
   ]
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Button } from 'react-native'
-import { useDefinedTheme } from '@dbbs/mobile-components'
+import { useAppTheme } from '@dbbs/mobile-components'
 
 export const StoriesButton = () => {
-  const { colors } = useDefinedTheme()
+  const { colors } = useAppTheme()
   return <Button color={colors.primary} title="Stories Button" />
 }

@@ -94,12 +94,6 @@ export const createSessionParamsMock = (params: {
 
   const sessionParams: ICreateSessionParams = {
     success_url: 'https://example.com/success',
-    metadata: {
-      organizationName: 'Org Name',
-      quantity: 1,
-      userId: 1,
-      planId: 1
-    },
     line_items: [
       {
         price: 'price_1',
@@ -182,6 +176,8 @@ type StripeResources = {
   subscriptions: Stripe.SubscriptionsResource
   products: Stripe.ProductsResource
   prices: Stripe.PricesResource
+  invoices: Stripe.InvoicesResource
+  paymentIntents: Stripe.PaymentIntentsResource
 }
 export type ResourceName = keyof StripeResources
 export type ResourceMethods<T extends ResourceName> = keyof StripeResources[T]
@@ -196,4 +192,22 @@ export const getMockedMethod = <T extends ResourceName>(
       ? stripeMock.checkout.sessions
       : stripeMock[resourceName as Exclude<T, 'checkoutSessions'>]
   return resource[methodName as keyof typeof resource]
+}
+
+// Invoice
+
+export const defaultInvoice = {
+  id: 'inv_1',
+  lastResponse: { headers: {}, requestId: 'req_empty', statusCode: 200 }
+} as Stripe.Invoice & {
+  lastResponse: { headers: Record<string, string>; requestId: string; statusCode: number }
+}
+
+// Payment intent
+
+export const defaultPaymentIntent = {
+  id: 'pi_1',
+  lastResponse: { headers: {}, requestId: 'req_empty', statusCode: 200 }
+} as Stripe.PaymentIntent & {
+  lastResponse: { headers: Record<string, string>; requestId: string; statusCode: number }
 }

@@ -19,15 +19,9 @@ const generateStorage = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0
         {
           type: 'modify',
           path: `${basePath}/src/app/index.tsx`,
-          pattern: /import React from 'react'/,
-          template: "import React from 'react'\nimport { Provider } from 'react-redux'"
-        },
-        {
-          type: 'modify',
-          path: `${basePath}/src/app/index.tsx`,
           pattern: /import \{ RemoteConfigProvider \} from '@dbbs\/mobile-features'?/,
           template:
-            "import { RemoteConfigProvider } from '@dbbs/mobile-features'\nimport { store } from '@dbbs/mobile-redux-storage'"
+            "import { RemoteConfigProvider } from '@dbbs/mobile-features'\nimport { Provider, store } from '@dbbs/mobile-redux-storage'"
         },
         {
           type: 'modify',
@@ -51,14 +45,8 @@ const generateStorage = (answers: Parameters<PlopTypes.DynamicActionsFunction>[0
           type: 'modify',
           path: `${basePath}/src/app/index.tsx`,
           pattern: /import React from 'react'/,
-          template: "import React from 'react'\nimport { Provider } from 'jotai'"
-        },
-        {
-          type: 'modify',
-          path: `${basePath}/src/app/index.tsx`,
-          pattern: /import React from 'react'/,
           template:
-            "import React from 'react'\nimport { Provider } from 'jotai'\nimport { store } from '@dbbs/mobile-jotai-storage'"
+            "import React from 'react'\nimport { Provider } from 'jotai'\nimport { Provider, createStore } from '@dbbs/mobile-jotai-storage'\nconst store = createStore()"
         },
         {
           type: 'modify',

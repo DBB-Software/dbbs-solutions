@@ -6,19 +6,19 @@ module.exports = {
       config: './detox.config.ts'
     },
     jest: {
-      setupTimeout: 50000
+      setupTimeout: 200000
     }
   },
   apps: {
     'ios.dev': {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/mobile_app.app',
-      build: 'xcodebuild -workspace ios/MobileApp.xcworkspace -scheme "MobileApp Dev" -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build'
+      build: 'xcodebuild -workspace ios/MobileApp.xcworkspace -scheme "MobileApp Dev" -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet'
     },
     'ios.prod': {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/mobile_app.app',
-      build: 'xcodebuild -workspace ios/MobileApp.xcworkspace -scheme "MobileApp Prod" -configuration Release -sdk iphonesimulator -derivedDataPath ios/build'
+      build: 'xcodebuild -workspace ios/MobileApp.xcworkspace -scheme "MobileApp Prod" -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet'
     },
     'android.dev': {
       type: 'android.apk',
@@ -38,7 +38,7 @@ module.exports = {
     simulator: {
       type: 'ios.simulator',
       device: {
-        type: 'iPhone 15'
+        type: 'iPhone 16'
       }
     },
     attached: {

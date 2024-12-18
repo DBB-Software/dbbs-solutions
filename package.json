@@ -5,11 +5,14 @@
     "packages": [
       "typescript/apps/*",
       "typescript/packages/*",
+      "typescript/modules/*",
       "typescript/packages/strapi-plugins/*",
       "typescript/packages/nestjs-modules/*",
       "typescript/packages/mobile-storages/*",
+      "typescript/packages/mobile-features/*",
       "typescript/packages/web-storages/*",
       "python/packages/django-modules/*",
+      "python/packages/fast-api-modules/*",
       "python/packages/*",
       "python/apps/*",
       "infra/aws-cdk"
@@ -48,9 +51,9 @@
     "@nestjs/cli": "10.4.4",
     "@nestjs/schematics": "10.1.4",
     "@nestjs/testing": "10.4.1",
-    "@react-native/babel-preset": "0.75.3",
-    "@react-native/eslint-config": "0.75.3",
-    "@react-native/metro-config": "0.75.3",
+    "@react-native/babel-preset": "0.75.4",
+    "@react-native/eslint-config": "0.75.4",
+    "@react-native/metro-config": "0.75.4",
     "@testing-library/jest-dom": "6.4.5",
     "@testing-library/react": "15.0.7",
     "@testing-library/react-hooks": "8.0.1",
@@ -101,7 +104,6 @@
     "jest-fetch-mock": "3.0.3",
     "jest-mock": "29.7.0",
     "lint-staged": "15.2.9",
-    "metro-config": "0.80.12",
     "prettier": "3.3.3",
     "react-test-renderer": "18.3.1",
     "rimraf": "5.0.10",
@@ -118,7 +120,7 @@
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
     "tslib": "2.6.3",
-    "turbo": "2.0.6",
+    "turbo": "2.3.3",
     "typescript": "5.5.4",
     "vite": "5.4.1",
     "webpack": "5.93.0"
@@ -126,12 +128,17 @@
   "resolutions": {
     "@babel/core": "7.24.5",
     "@babel/preset-env": "7.24.5",
-    "@babel/runtime": "7.24.5"
+    "@babel/runtime": "7.24.5",
+    "metro": "0.81.0"
   },
   "packageManager": "yarn@4.2.2",
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix"
     ]
+  },
+  "dependencies": {
+    "@actions/core": "1.11.1",
+    "@actions/github": "6.0.0"
   }
 }

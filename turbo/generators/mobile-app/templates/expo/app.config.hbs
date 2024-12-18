@@ -1,12 +1,19 @@
 import { ExpoConfig, ConfigContext } from 'expo/config'
 import { withSentry } from '@sentry/react-native/expo'
 
-const IS_DEV = process.env.EXPO_PUBLIC_APP_VARIANT === 'dev'
+export type ExtendedExpoConfig = ExpoConfig & {
+  appNameProd: string
+  appNameDev?: string
+}
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const updatedConfig: ExpoConfig = {
+  const updatedConfig: ExtendedExpoConfig = {
     ...config,
-    name: IS_DEV ? '{{ appName }} (Dev)' : '{{ appName }}',
+    // Expo prebuild always overrides workspace name when name property is setting
+    name: '{{ appName }}',
+    // The application name will be used as the name of the built application
+    appNameProd: '{{ appName }}',
+    appNameDev: '{{ appName }} (Dev)',
     slug: 'mobile-expo-app',
     version: '1.0.0',
     orientation: 'portrait',

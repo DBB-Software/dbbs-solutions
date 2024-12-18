@@ -1,0 +1,9 @@
+{
+  "root": true,
+  "extends": ["@dbbs/eslint-config/react"],
+  "globals": {
+    "React": "readonly",
+    "ApplePayJS": "readonly",
+    "ApplePaySession": "readonly"
+  }
+}

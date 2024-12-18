@@ -2,6 +2,7 @@ import knex from 'knex'
 import { createUsersTable } from '../factories/database.js'
 import { dbUsersList } from '../mocks/index.js'
 import { UserRepository } from '../../repositories/user.repository.js'
+import { TEST_DB_PATH } from '../../constants.js'
 
 describe('UserRepository', () => {
   let userRepository: UserRepository
@@ -15,8 +16,8 @@ describe('UserRepository', () => {
       client: 'sqlite3',
       useNullAsDefault: true,
       connection: {
-        filename: './test_data.db',
-      },
+        filename: TEST_DB_PATH
+      }
     })
 
     userRepository = new UserRepository(db)
@@ -29,13 +30,13 @@ describe('UserRepository', () => {
       {
         description: 'should return true if the user exists',
         id: getId(1),
-        expectedResult: true,
+        expectedResult: true
       },
       {
         description: 'should return false if the user does not exist',
         id: getId(999),
-        expectedResult: false,
-      },
+        expectedResult: false
+      }
     ]
 
     it.each(testCases)('$description', async ({ id, expectedResult }) => {

@@ -1,0 +1,30 @@
+{
+  "name": "@dbbs/nestjs-module-sentry",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Nest JS Sentry logger module",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc --build tsconfig.json",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "lint": "npx eslint \"src/**/*.ts*\" --fix",
+    "test": "echo \"Error: no test specified\"",
+    "watch": "npx tsc -w --preserveWatchOutput"
+  },
+  "dependencies": {
+    "@dbbs/nestjs-module-logger": "*",
+    "@nestjs/common": "10.3.8",
+    "@sentry/nestjs": "8.34.0",
+    "@sentry/profiling-node": "8.17.0"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

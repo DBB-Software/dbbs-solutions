@@ -1,0 +1,13 @@
+{
+  "name": "@dbbs/fastapi-authz",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FastAPI authz modules for dbbs project",
+  "type": "module",
+  "scripts": {
+    "build": "poetry build",
+    "lint": "poetry run ruff check .",
+    "test": "poetry run coverage run -m pytest && poetry run coverage xml",
+    "preinstall": "poetry install"
+  }
+}

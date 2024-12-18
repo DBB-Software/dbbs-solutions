@@ -3,6 +3,7 @@ import { SubscriptionEntity } from '../../entites/index.js'
 import { BillingPeriod, PlanType, SubscriptionStatus } from '../../enums/index.js'
 import { defaultRecurringPlan } from './plan.mock.js'
 import { defaultDate, defaultDateISOString } from './date.mock.js'
+import { defaultOrganization, defaultOrganizationEntity } from './organization.mock.js'
 
 export const defaultSubscription: SubscriptionEntity = {
   id: 1,
@@ -20,7 +21,7 @@ export const extendedSubscription: SubscriptionEntity = {
   stripeId: 'sub_1',
   plan: defaultRecurringPlan,
   status: SubscriptionStatus.ACTIVE,
-  organization: { id: 1, name: 'Organization 1', quantity: 10, stripeCustomerId: 'org_1' },
+  organization: defaultOrganization,
   quantity: 5,
   createdAt: defaultDate,
   updatedAt: defaultDate
@@ -40,7 +41,7 @@ export const dbSubscriptionsList = (baseId: number) =>
 
 export const resubscribedDbSubscription = (baseId: number) => ({
   id: baseId + 1,
-  stripeId: `stripe_id`,
+  stripeId: 'stripe_id',
   planId: baseId + 1,
   statusId: 3,
   organizationId: baseId + 1,
@@ -81,12 +82,7 @@ export const populatedSubscriptionEntity = (baseId: number): SubscriptionEntity 
     updatedAt: defaultDate
   },
   status: SubscriptionStatus.TRIALING,
-  organization: {
-    id: baseId + 1,
-    name: `Organization ${baseId + 1}`,
-    quantity: 10,
-    stripeCustomerId: `org_${baseId + 1}`
-  },
+  organization: defaultOrganizationEntity(baseId),
   quantity: 5,
   createdAt: defaultDate,
   updatedAt: defaultDate

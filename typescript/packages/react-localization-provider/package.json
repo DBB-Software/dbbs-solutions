@@ -11,7 +11,7 @@
     "test": "jest --coverage --verbose"
   },
   "dependencies": {
-    "i18next": "23.14.0",
+    "i18next": "23.16.4",
     "react-i18next": "15.0.1"
   },
   "devDependencies": {

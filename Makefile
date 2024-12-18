@@ -122,6 +122,39 @@ install-docker: check-brew
 		echo "Docker Compose installed successfully"; \
 	}
 
+# Define variables
+#SECRETS := $(shell find apps -mindepth 1 -maxdepth 1 -type d)
+AWS_REGION := eu-central-1
+STAGE := development
+SECRET_PREFIX := dbbs-pre-built-solutions
+AWS_PROFILE := $(SECRET_PREFIX)-$(STAGE)
+
+setup-aws-credentials:
+	@if ! test -f ~/.aws/config; then mkdir -p ~/.aws && touch ~/.aws/config; fi; \
+	if ! grep "$(AWS_PROFILE)" ~/.aws/config; then cat infra/aws_configs/config >> ~/.aws/config; fi; \
+	if ! aws sts get-caller-identity --profile $(AWS_PROFILE) >/dev/null 2>&1; then \
+		aws sso login --profile $(AWS_PROFILE); \
+	fi; \
+	echo "AWS credentials setup completed.";
+
+aws-login: setup-aws-credentials
+	@if ! aws sts get-caller-identity --profile $(AWS_PROFILE) >/dev/null 2>&1; then \
+		echo "Not logged in. Redirecting to SSO."; \
+		aws sso login --profile $(AWS_PROFILE); \
+	else \
+		echo "Already logged in."; \
+	fi;
+
+download-env:
+	@read -p "If you want to download the environment variables, you need to provide access to the AWS account. Proceed with AWS login? (yes/no): " response; \
+	if [ "$$response" = "yes" ]; then \
+		make aws-login; \
+		echo "Downloading environment variables"; \
+		STAGE=$(STAGE) SECRET_PREFIX=$(SECRET_PREFIX) AWS_PROFILE=$(AWS_PROFILE) yarn download:env; \
+	else \
+		echo "Skipping download-env as requested."; \
+	fi;
+
 # Build pre-built solutions
 .PHONY: run-build
 
@@ -132,28 +165,6 @@ run-build:
 # Pattern rule to run `yarn build` in the specified subdirectory
 run-build-%:
 	target=$* yarn build
-
-# Define variables
-#SECRETS := $(shell find apps -mindepth 1 -maxdepth 1 -type d)
-AWS_REGION := eu-central-1
-STAGE := development
-SECRET_PREFIX := dbbs-pre-built-solutions
-AWS_PROFILE := $(SECRET_PREFIX)-$(STAGE)
-
-setup-aws-credentials:
-	if ! test -f ~/.aws/config; then mkdir -p ~/.aws && touch ~/.aws/config; fi
-	if ! grep "$(AWS_PROFILE)" ~/.aws/config; then cat infra/aws_configs/config >> ~/.aws/config; fi
-	if ! aws sts get-caller-identity --profile $(AWS_PROFILE); then aws sso login --profile $(AWS_PROFILE); fi
-
-aws-login:
-	@if ! (aws sts get-caller-identity --profile $(AWS_PROFILE) >/dev/null 2>&1); then \
-		echo "Not logged in. Redirecting to SSO."; \
-		aws sso login --profile $(AWS_PROFILE) && echo "Logged in."; fi;
-
-# Download environment variables
-download-env: aws-login
-	@echo "Downloading environment variables"
-	STAGE=$(STAGE) SECRET_PREFIX=$(SECRET_PREFIX) AWS_PROFILE=$(AWS_PROFILE) yarn download:env
 
 .PHONY: run-dev
 

@@ -2,12 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { ProductService } from '../services/product.service.js'
 import { STRIPE_SDK } from '../constants.js'
 import { Stripe } from 'stripe'
-import {
-  productListMock,
-  defaultProduct,
-  deletedProduct,
-  getMockedMethod
-} from '../mocks/index.js'
+import { productListMock, defaultProduct, deletedProduct, getMockedMethod } from '../mocks/index.js'
 
 describe('ProductService', () => {
   let service: ProductService
@@ -59,7 +54,7 @@ describe('ProductService', () => {
         setupMocks: () => {
           jest.spyOn(stripeMock.products, 'create').mockRejectedValue(new Error('Failed to create a product'))
         }
-      },
+      }
     ])('$name', async ({ serviceMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
       setupMocks()
 

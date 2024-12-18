@@ -1,7 +1,5 @@
-import { createStore } from 'jotai'
-import { createJSONStorage } from 'jotai/utils'
-import { jotaiStorage } from './utils/storageWrapper'
+export * from 'jotai'
 
-export const persistor = createJSONStorage(() => jotaiStorage)
+export * from 'jotai/utils'
 
-export const store = createStore()
+export * from './utils/storageWrapper'

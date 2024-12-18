@@ -1,0 +1,19 @@
+{
+  "name": "@dbbs/react-apple-pay",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0",
+    "test": "jest --coverage --verbose",
+    "build": "npx tsc --build tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/applepayjs": "14.0.9"
+  }
+}

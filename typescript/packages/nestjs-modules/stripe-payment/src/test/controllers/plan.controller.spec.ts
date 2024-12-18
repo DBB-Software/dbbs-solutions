@@ -21,16 +21,15 @@ describe('PlanController', () => {
       imports: [LoggerModule.forRoot({})],
       controllers: [PlanController],
       providers: [
-
         {
           provide: PlanService,
           useValue: {
             getPlanById: jest.fn(),
             createPlan: jest.fn(),
             deletePlan: jest.fn()
-          },
-        },
-      ],
+          }
+        }
+      ]
     }).compile()
 
     controller = module.get<PlanController>(PlanController)
@@ -59,8 +58,8 @@ describe('PlanController', () => {
         expectedParams: 999,
         setupMocks: () => {
           planService.getPlanById.mockResolvedValue(null)
-        },
-      },
+        }
+      }
     ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
       setupMocks()
 
@@ -138,7 +137,7 @@ describe('PlanController', () => {
         expectedParams: { id: 1 },
         setupMocks: () => {
           planService.deletePlan.mockResolvedValue(true)
-        },
+        }
       },
       {
         name: 'should throw an error if failed to delete a plan',
@@ -147,8 +146,8 @@ describe('PlanController', () => {
         expectedParams: { id: 1 },
         setupMocks: () => {
           planService.deletePlan.mockRejectedValue(new Error('Something went wrong'))
-        },
-      },
+        }
+      }
     ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
       setupMocks()
 

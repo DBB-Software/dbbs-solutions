@@ -1,24 +1,16 @@
-import { PlanType } from '../enums/planType.js'
 import { SessionMode } from '../enums/sessionMode.js'
+import { PlanType } from '../enums/planType.js'
 
 export interface ICreateCheckoutSessionParams {
   successUrl: string
-  userId: number
   customerId?: string
-  plan: { id: string; dbId: number; type: PlanType }
+  plan: { id: string; type: PlanType }
   quantity: number
-  organizationName: string
 }
 
 export interface ICreateSessionParams {
   success_url: string
   customer?: string
-  metadata: {
-    organizationName: string
-    quantity: number
-    userId: number
-    planId: number
-  }
   line_items: [
     {
       price: string

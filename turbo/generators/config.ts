@@ -11,6 +11,7 @@ import mobileStorybookGenerators from './mobile-storybook/generators'
 import mobileStorageGenerators from './mobile-storages/generators'
 import djangoServerGenerators from './django-server/generators'
 import expoPrebuildGenerator from './prebuild/generator'
+import mobileIapGenerator from './mobile-iap/generator'
 import helpers from './hbsHelpers'
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
@@ -26,5 +27,6 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
   mobileStorageGenerators(plop)
   djangoServerGenerators(plop)
   expoPrebuildGenerator(plop)
+  mobileIapGenerator(plop)
   helpers(plop)
 }

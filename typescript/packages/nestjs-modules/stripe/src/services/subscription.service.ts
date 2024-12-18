@@ -22,7 +22,7 @@ export class SubscriptionService {
   constructor(@Inject(STRIPE_SDK) private readonly stripe: Stripe) {}
 
   async createCheckoutSession(params: ICreateCheckoutSessionParams) {
-    const { userId, organizationName, plan, quantity, successUrl, customerId } = params
+    const { plan, quantity, successUrl, customerId } = params
 
     if (customerId) {
       await this.stripe.customers.retrieve(customerId)
@@ -32,12 +32,6 @@ export class SubscriptionService {
 
     const sessionParams: ICreateSessionParams = {
       success_url: successUrl,
-      metadata: {
-        organizationName,
-        quantity,
-        userId,
-        planId: plan.dbId
-      },
       line_items: [
         {
           price: plan.id,
@@ -45,7 +39,7 @@ export class SubscriptionService {
         }
       ],
       mode: SessionMode.PAYMENT,
-      customer: customerId || undefined
+      ...(customerId && { customer: customerId })
     }
 
     if (plan.type === PlanType.RECURRING) {

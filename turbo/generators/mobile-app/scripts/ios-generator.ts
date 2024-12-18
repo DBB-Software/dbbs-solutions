@@ -16,20 +16,20 @@ export const generateIos = (answers: Parameters<PlopTypes.DynamicActionsFunction
   return [
     {
       type: 'modify',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
       pattern: pathToReactNativeScripts,
       template: '../../../node_modules/react-native/scripts/'
     },
     {
       type: 'modify',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
       pattern: bundleReactNativeCodeImages,
       template:
         '00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,\n\t\t\t\t0086D6742C59660A00DEDCE0 /* Upload Debug Symbols to Sentry */'
     },
     {
       type: 'modify',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
       pattern: pbxShellScriptBuildPhaseSection,
       template: `/* Begin PBXShellScriptBuildPhase section */
 		0086D6742C59660A00DEDCE0 /* Upload Debug Symbols to Sentry */ = {
@@ -48,12 +48,12 @@ export const generateIos = (answers: Parameters<PlopTypes.DynamicActionsFunction
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\\n/bin/sh ../../../node_modules/@sentry/react-native/scripts/sentry-xcode-debug-files.sh\\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\\n/bin/sh ../../../../node_modules/@sentry/react-native/scripts/sentry-xcode-debug-files.sh\\n";
 		};`
     },
     {
       type: 'modify',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}.xcodeproj/project.pbxproj`,
       pattern: shellScriptToChange,
       template: `00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -69,41 +69,41 @@ export const generateIos = (answers: Parameters<PlopTypes.DynamicActionsFunction
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\\n\\nWITH_ENVIRONMENT=\\"../../../node_modules/react-native/scripts/xcode/with-environment.sh\\"\\nREACT_NATIVE_XCODE=\\"../../../node_modules/react-native/scripts/react-native-xcode.sh\\"\\nSENTRY_XCODE=\\"../../../node_modules/@sentry/react-native/scripts/sentry-xcode.sh\\"\\nBUNDLE_REACT_NATIVE=\\"/bin/sh $SENTRY_XCODE $REACT_NATIVE_XCODE\\"\\n\\n/bin/sh -c \\"$WITH_ENVIRONMENT \\\\\\"$BUNDLE_REACT_NATIVE\\"\\n";\n    };`
+			shellScript = "set -e\\n\\nWITH_ENVIRONMENT=\\"../../../../node_modules/react-native/scripts/xcode/with-environment.sh\\"\\nREACT_NATIVE_XCODE=\\"../../../../node_modules/react-native/scripts/react-native-xcode.sh\\"\\nSENTRY_XCODE=\\"../../../../node_modules/@sentry/react-native/scripts/sentry-xcode.sh\\"\\nBUNDLE_REACT_NATIVE=\\"/bin/sh $SENTRY_XCODE $REACT_NATIVE_XCODE\\"\\n\\n/bin/sh -c \\"$WITH_ENVIRONMENT \\\\\\"$BUNDLE_REACT_NATIVE\\"\\n";\n    };`
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/Info.plist`,
-      templateFile: 'mobile-app/templates/ios/Info-plist.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}/Info.plist`,
+      templateFile: 'mobile-app/templates/react-native-cli/ios/Info-plist.hbs',
       data: templateProps
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/${appName}.entitlements`,
-      templateFile: 'mobile-app/templates/ios/Entitlements.hbs'
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}/${appName}.entitlements`,
+      templateFile: 'mobile-app/templates/react-native-cli/ios/Entitlements.hbs'
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Prod.xcscheme`,
-      templateFile: 'mobile-app/templates/ios/MobileApp Prod.xcscheme.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Prod.xcscheme`,
+      templateFile: 'mobile-app/templates/react-native-cli/ios/MobileApp Prod.xcscheme.hbs',
       data: templateProps
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Dev.xcscheme`,
-      templateFile: 'mobile-app/templates/ios/MobileApp Dev.xcscheme.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}.xcodeproj/xcshareddata/xcschemes/${appName} Dev.xcscheme`,
+      templateFile: 'mobile-app/templates/react-native-cli/ios/MobileApp Dev.xcscheme.hbs',
       data: templateProps
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/${appName}/AppDelegate.mm`,
-      templateFile: 'mobile-app/templates/ios/AppDelegate.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/${appName}/AppDelegate.mm`,
+      templateFile: 'mobile-app/templates/react-native-cli/ios/AppDelegate.hbs',
       data: templateProps
     },
     {
       type: 'add',
-      path: `{{ turbo.paths.root }}/apps/${appName}/ios/Podfile`,
-      templateFile: 'mobile-app/templates/ios/Podfile.hbs',
+      path: `{{ turbo.paths.root }}/typescript/apps/${appName}/ios/Podfile`,
+      templateFile: 'mobile-app/templates/react-native-cli/ios/Podfile.hbs',
       data: templateProps
     }
   ]

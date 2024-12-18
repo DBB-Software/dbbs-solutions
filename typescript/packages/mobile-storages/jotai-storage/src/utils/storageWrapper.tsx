@@ -1,3 +1,4 @@
+import { createJSONStorage } from 'jotai/utils'
 import { MMKV } from 'react-native-mmkv'
 
 const storage = new MMKV({ id: 'jotai-mobile-storage' })
@@ -19,9 +20,11 @@ const clearAll = (): void => {
   storage.clearAll()
 }
 
-export const jotaiStorage = {
+const jotaiStorage = {
   getItem,
   setItem,
   removeItem,
   clearAll
 }
+
+export const persistor = createJSONStorage(() => jotaiStorage)

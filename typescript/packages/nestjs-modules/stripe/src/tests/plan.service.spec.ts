@@ -2,12 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { PlanService } from '../services/plan.service.js'
 import { STRIPE_SDK } from '../constants.js'
 import Stripe from 'stripe'
-import {
-  defaultPlan,
-  deletedPlan,
-  getMockedMethod,
-  planListMock
-} from '../mocks/index.js'
+import { defaultPlan, deletedPlan, getMockedMethod, planListMock } from '../mocks/index.js'
 import { BillingPeriod, PlanType } from '../enums/planType.js'
 
 describe('PlanService', () => {
@@ -91,7 +86,7 @@ describe('PlanService', () => {
           type: PlanType.RECURRING,
           currency: 'usd'
         },
-        expectedError: new Error('Interval must be provided for recurring plan'),
+        expectedError: new Error('Interval must be provided for recurring plan')
       },
       {
         name: 'should throw an error if failed to create a plan',
@@ -117,7 +112,14 @@ describe('PlanService', () => {
       }
     ])(
       '$name',
-      async ({ serviceMethodArgs, expectedResult, expectedError, stripeServiceMethodName, stripeServiceMethodArgs, setupMocks }) => {
+      async ({
+        serviceMethodArgs,
+        expectedResult,
+        expectedError,
+        stripeServiceMethodName,
+        stripeServiceMethodArgs,
+        setupMocks
+      }) => {
         if (setupMocks) {
           setupMocks()
         }
@@ -126,7 +128,11 @@ describe('PlanService', () => {
         if (expectedResult) {
           await expect(pendingResult).resolves.toEqual(expectedResult)
 
-          const createPlanMock = getMockedMethod(stripeMock, 'prices', stripeServiceMethodName as keyof Stripe['prices'])
+          const createPlanMock = getMockedMethod(
+            stripeMock,
+            'prices',
+            stripeServiceMethodName as keyof Stripe['prices']
+          )
           expect(createPlanMock).toHaveBeenCalledWith(...stripeServiceMethodArgs!)
         } else {
           await expect(pendingResult).rejects.toMatchObject(expectedError)

@@ -22,7 +22,7 @@
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "react-native-builder-bob": "0.23.2",
+    "react-native-builder-bob": "0.30.3",
     "typescript": "5.5.4"
   },
   "react-native-builder-bob": {

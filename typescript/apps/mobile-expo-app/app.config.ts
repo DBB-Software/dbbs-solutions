@@ -36,7 +36,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       googleServicesFile: './firebase/GoogleService-Info.plist',
       supportsTablet: true,
-      bundleIdentifier: 'com.dbbs.expo'
+      bundleIdentifier: 'com.dbbs.expo',
+      entitlements: {
+        'aps-environment': 'production'
+      }
     },
     android: {
       googleServicesFile: './firebase/google-services.json',

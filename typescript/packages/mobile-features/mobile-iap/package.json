@@ -1,0 +1,45 @@
+{
+  "name": "@dbbs/mobile-iap",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Mobile features for in app purchase",
+  "main": "lib/commonjs/index.js",
+  "types": "lib/typescript/src/index.d.ts",
+  "scripts": {
+    "build": "bob build",
+    "clean": "npx rimraf .turbo node_modules dist bin",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "test": "echo \"no test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@dbbs/mobile-common": "*",
+    "react-native-logs": "5.3.0"
+  },
+  "peerDependencies": {
+    "@sentry/react-native": "5.33.2",
+    "react-native": "0.75.3",
+    "react-native-iap": "12.15.7"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/react-localization-provider": "*",
+    "@dbbs/tsconfig": "*",
+    "@testing-library/jest-native": "5.4.3",
+    "react-native-builder-bob": "0.30.3",
+    "typescript": "5.5.4"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      [
+        "typescript",
+        {
+          "project": "./tsconfig.lib.json"
+        }
+      ]
+    ]
+  }
+}

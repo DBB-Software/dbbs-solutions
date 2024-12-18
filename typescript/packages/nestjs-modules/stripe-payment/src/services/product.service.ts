@@ -64,7 +64,12 @@ export class ProductService {
       name
     })
 
-    return this.productRepository.updateProduct({ id, name }) as Promise<IProduct>
+    const updatedProduct = await this.productRepository.updateProduct({ id, name })
+
+    if (!updatedProduct) {
+      throw new Error(`Failed to update a product with ID ${id}: the database update was unsuccessful`)
+    }
+    return updatedProduct
   }
 
   async deleteProduct(params: IDeleteProductParams): Promise<boolean> {

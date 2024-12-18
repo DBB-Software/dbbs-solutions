@@ -9,6 +9,7 @@ fi
 
 # Load the necessary environment variables from the corresponding .env file
 if [ -f "$ENV_FILE" ]; then
+    echo "ENV_FILE: $ENV_FILE found."
     export $(grep -E 'SENTRY_AUTH_TOKEN|SENTRY_ORG_NAME|SENTRY_ORG_PROJECT' "$ENV_FILE" | xargs)
 else
     echo "$ENV_FILE not found."

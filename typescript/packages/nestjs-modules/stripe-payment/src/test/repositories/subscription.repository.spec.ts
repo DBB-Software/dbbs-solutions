@@ -18,6 +18,7 @@ import {
   resubscribedDbSubscription
 } from '../mocks/index.js'
 import { SubscriptionStatusId } from '../../enums/index.js'
+import { TEST_DB_PATH } from '../../constants.js'
 
 describe('SubscriptionRepository', () => {
   let subscriptionRepository: SubscriptionRepository
@@ -31,8 +32,8 @@ describe('SubscriptionRepository', () => {
       client: 'sqlite3',
       useNullAsDefault: true,
       connection: {
-        filename: './test_data.db',
-      },
+        filename: TEST_DB_PATH
+      }
     })
 
     subscriptionRepository = new SubscriptionRepository(db)
@@ -78,18 +79,18 @@ describe('SubscriptionRepository', () => {
       {
         description: 'should return the correct subscription by ID with populated fields',
         repositoryMethodArgs: { id: getId(1), populate: true },
-        expected: populatedSubscriptionEntity(baseId),
+        expected: populatedSubscriptionEntity(baseId)
       },
       {
         description: 'should return the correct subscription by ID without populated fields',
         repositoryMethodArgs: { id: getId(1), populate: false },
-        expected: defaultSubscriptionEntity(baseId),
+        expected: defaultSubscriptionEntity(baseId)
       },
       {
         description: 'should return null if subscription does not exist',
         repositoryMethodArgs: { id: getId(999), populate: true },
-        expected: null,
-      },
+        expected: null
+      }
     ]
 
     it.each(testCases)('$description', async ({ repositoryMethodArgs, expected }) => {
@@ -101,10 +102,31 @@ describe('SubscriptionRepository', () => {
     })
   })
 
+  describe('getStatusIdByOrganizationId', () => {
+    const testCases = [
+      {
+        description: 'should return the status of the subscription by organization ID',
+        repositoryMethodArgs: getId(1),
+        expectedResult: SubscriptionStatusId.TRIALING
+      },
+      {
+        description: 'should return null if subscription with organization ID does not exist',
+        repositoryMethodArgs: getId(999),
+        expectedResult: undefined
+      }
+    ]
+
+    it.each(testCases)('$description', async ({ repositoryMethodArgs, expectedResult }) => {
+      const result = await subscriptionRepository.getStatusIdByOrganizationId(repositoryMethodArgs)
+
+      expect(result).toEqual(expectedResult)
+    })
+  })
+
   describe('updateSubscriptionStatus', () => {
     const testCases = [
       {
-        description: 'should change subscription\'s status',
+        description: "should change subscription's status",
         repositoryMethodArgs: { id: getId(1), statusId: SubscriptionStatusId.ACTIVE },
         expectedResult: { ...defaultSubscriptionEntity(baseId), status: SubscriptionStatusId.ACTIVE }
       },
@@ -126,9 +148,9 @@ describe('SubscriptionRepository', () => {
   describe('updateSubscriptionQuantity', () => {
     const testCases = [
       {
-        description: 'should update subscription\'s quantity',
+        description: "should update subscription's quantity",
         repositoryMethodArgs: { id: getId(2), quantity: 6 },
-        expectedResult: { ...secondSubscriptionEntity(baseId), quantity: 6 },
+        expectedResult: { ...secondSubscriptionEntity(baseId), quantity: 6 }
       },
       {
         description: 'should return null if subscription does not exist',
@@ -187,13 +209,13 @@ describe('SubscriptionRepository', () => {
       {
         description: 'should delete the subscription and return the number of deleted rows',
         id: getId(1),
-        expectedResult: 1,
+        expectedResult: 1
       },
       {
         description: 'should return 0 if subscription does not exist',
         id: getId(999),
-        expectedResult: 0,
-      },
+        expectedResult: 0
+      }
     ]
 
     it.each(testCases)('$description', async ({ id, expectedResult }) => {

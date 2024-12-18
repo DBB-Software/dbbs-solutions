@@ -12,14 +12,14 @@
     "test": "jest --coverage --verbose"
   },
   "dependencies": {
-    "jotai": "2.9.2",
+    "jotai": "2.10.1",
     "react-native-mmkv": "2.12.2"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "react-native-builder-bob": "0.23.2",
+    "react-native-builder-bob": "0.30.3",
     "typescript": "5.5.4"
   },
   "react-native-builder-bob": {
