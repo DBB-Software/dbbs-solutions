@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks'
 import { useColorScheme } from 'react-native'
+import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
 import { useDefinedTheme } from '../../src/hooks'
-import { darkTheme, lightTheme } from '../../src/core'
 
 const mockUseColorScheme = useColorScheme as jest.Mock
 
@@ -10,8 +10,8 @@ jest.mock('react-native', () => ({
 }))
 jest.mock('react-native-paper', () => ({
   useTheme: jest.fn(),
-  MD3LightTheme: { colors: {}, fonts: {} },
-  MD3DarkTheme: { colors: {}, fonts: {} },
+  MD3LightTheme: { colors: { primary: '#fff' }, fonts: {} },
+  MD3DarkTheme: { colors: { primary: '#000' }, fonts: {} },
   MD3Theme: { colors: {}, fonts: {} }
 }))
 
@@ -26,20 +26,30 @@ describe('useDefinedTheme', () => {
   test.each([
     {
       colorScheme: 'dark',
-      theme: darkTheme
+      theme: MD3DarkTheme
     },
     {
       colorScheme: 'light',
-      theme: lightTheme
+      theme: MD3LightTheme
+    },
+    {
+      colorScheme: 'light',
+      theme: MD3LightTheme,
+      lightTheme: MD3LightTheme
+    },
+    {
+      colorScheme: 'dark',
+      theme: MD3DarkTheme,
+      darkTheme: MD3DarkTheme
     },
     {
       colorScheme: 'light',
       isDark: true,
-      theme: darkTheme
+      theme: MD3DarkTheme
     }
-  ])('Should return correct theme for: %s', ({ colorScheme, isDark, theme }) => {
+  ])('Should return correct theme for: %s', ({ colorScheme, isDark, theme, lightTheme, darkTheme }) => {
     mockUseColorScheme.mockReturnValueOnce(colorScheme)
-    const { result } = renderHook(() => useDefinedTheme(isDark))
+    const { result } = renderHook(() => useDefinedTheme({ isDark, lightTheme, darkTheme }))
     expect(result.current).toEqual(theme)
   })
 })

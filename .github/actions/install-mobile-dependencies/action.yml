@@ -67,8 +67,8 @@ runs:
         yarn download:env
       env:
         STAGE: ${{ inputs.stage }}
-        AWS_PROFILE: dbbs-development
-        SECRET_PREFIX: dbbs
+        AWS_PROFILE: dbbs-pre-built-solutions-${{ inputs.stage }}
+        SECRET_PREFIX: dbbs-pre-built-solutions
       shell: bash
     - name: Build for application-related packages
       run: npx turbo run build --filter=./typescript/apps/${{ inputs.app_name }}

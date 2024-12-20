@@ -58,9 +58,7 @@ describe('SubscriptionService', () => {
       {
         name: 'should create a checkout session for a recurring plan',
         serviceMethodArgs: {
-          userId: 1,
-          organizationName: 'Org Name',
-          plan: { dbId: 1, id: 'price_1', type: PlanType.RECURRING },
+          plan: { id: 'price_1', type: PlanType.RECURRING },
           quantity: 1,
           successUrl: 'https://example.com/success',
           customerId: 'customer_1'
@@ -82,9 +80,7 @@ describe('SubscriptionService', () => {
       {
         name: 'should create a checkout session for a one time plan',
         serviceMethodArgs: {
-          userId: 1,
-          organizationName: 'Org Name',
-          plan: { dbId: 1, id: 'price_1', type: PlanType.ONE_TIME },
+          plan: { id: 'price_1', type: PlanType.ONE_TIME },
           quantity: 1,
           successUrl: 'https://example.com/success',
           customerId: 'customer_1'
@@ -106,9 +102,7 @@ describe('SubscriptionService', () => {
       {
         name: 'should create a checkout session with no customer provided',
         serviceMethodArgs: {
-          userId: 1,
-          organizationName: 'Org Name',
-          plan: { dbId: 1, id: 'price_1', type: PlanType.RECURRING },
+          plan: { id: 'price_1', type: PlanType.RECURRING },
           quantity: 1,
           successUrl: 'https://example.com/success'
         },
@@ -139,9 +133,7 @@ describe('SubscriptionService', () => {
     {
       name: 'should throw an error if something went wrong getting a customer',
       serviceMethodArgs: {
-        userId: 1,
-        organizationName: 'Org Name',
-        plan: { dbId: 1, id: 'price_1', type: PlanType.ONE_TIME },
+        plan: { id: 'price_1', type: PlanType.ONE_TIME },
         quantity: 1,
         successUrl: 'https://example.com/success',
         customerId: 'customer_1'
@@ -153,7 +145,7 @@ describe('SubscriptionService', () => {
       setupMocks: () => {
         jest.spyOn(stripeMock.customers, 'retrieve').mockRejectedValue(new Error('Something went wrong'))
       }
-    },
+    }
   ])('$name', async ({ serviceMethodArgs, expectedError, expectedParams, setupMocks }) => {
     setupMocks()
 
@@ -167,9 +159,7 @@ describe('SubscriptionService', () => {
     {
       name: 'should throw an error if something went wrong getting a plan',
       serviceMethodArgs: {
-        userId: 1,
-        organizationName: 'Org Name',
-        plan: { dbId: 1, id: 'price_999', type: PlanType.ONE_TIME },
+        plan: { id: 'price_999', type: PlanType.ONE_TIME },
         quantity: 1,
         successUrl: 'https://example.com/success',
         customerId: 'customer_1'
@@ -604,7 +594,7 @@ describe('SubscriptionService', () => {
   describe('Update Subscription quantity', () => {
     it.each([
       {
-        name: 'should update a subscription\'s quantity',
+        name: "should update a subscription's quantity",
         serviceMethodArgs: { id: 'sub_1', quantity: 2 },
         expectedResult: defaultSubscription,
         expectedParams: {

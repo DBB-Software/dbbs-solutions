@@ -76,7 +76,7 @@ runs:
         yarn test
       env:
         STAGE: development
-        AWS_PROFILE: dbbs-development
+        AWS_PROFILE: dbbs-pre-built-solutions-development
         SECRET_PREFIX: dbbs-pre-built-solutions
       shell: bash
 

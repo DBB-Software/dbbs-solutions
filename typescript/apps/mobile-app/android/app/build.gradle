@@ -43,6 +43,7 @@ android {
     flavorDimensions "default"
     namespace "com.dbbs.mobile_app"
     defaultConfig {
+        missingDimensionStrategy "store", "play"
         applicationId "com.dbbs.mobile_app"
         resValue "string", "build_config_package", "com.dbbs.mobile_app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -55,9 +56,25 @@ android {
     productFlavors {
         prod {
             resValue "string", "app_name", "DBBS Software"
+            manifestPlaceholders = [
+                branchTestMode: "false",
+                branchURLScheme: project.env.get("BRANCH_URL_SCHEME", ""),
+                branchMainLink: project.env.get("BRANCH_MAIN_LINK", ""),
+                branchAlternateLink: project.env.get("BRANCH_ALTERNATE_LINK", ""),
+                branchKeyLive: project.env.get("BRANCH_KEY", ""),
+                branchKeyTest: project.env.get("BRANCH_KEY", "")
+            ]
         }
         dev {
             resValue "string", "app_name", "DBBS Software"
+            manifestPlaceholders = [
+                branchTestMode: "true",
+                branchURLScheme: project.env.get("BRANCH_URL_SCHEME", ""),
+                branchMainLink: project.env.get("BRANCH_MAIN_LINK", ""),
+                branchAlternateLink: project.env.get("BRANCH_ALTERNATE_LINK", ""),
+                branchKeyLive: project.env.get("BRANCH_KEY", ""),
+                branchKeyTest: project.env.get("BRANCH_KEY", "")
+            ]
         }
     }
     signingConfigs {
@@ -101,11 +118,15 @@ android {
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
-    implementation("com.facebook.react:react-android")
+    implementation('io.branch.sdk.android:library:5.13.0')
+    implementation ('com.google.android.gms:play-services-ads-identifier:18.0.1')
+    // Alternatively, use the following lib for getting the AAID:
+    // implementation ('com.google.android.gms:play-services-ads:17.2.0')
+    implementation('com.facebook.react:react-android')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-config')
     androidTestImplementation('com.wix:detox:+')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation ('androidx.appcompat:appcompat:1.1.0')
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

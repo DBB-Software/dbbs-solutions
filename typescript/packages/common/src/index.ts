@@ -1,12 +1,14 @@
 export * from './domain/setting-service-client.js'
 
 export * from './aws/s3.js'
+export * from './aws/secretManager.js'
 export * from './aws/sqs.js'
 export * from './aws/sns.js'
 export * from './aws/ses.js'
 export * from './aws/eventBridge.js'
 export * from './aws/dynamodb.js'
 export * from './aws/lambda.js'
+export * from './aws/types/s3.js'
 
 export * from './serverless/loggerMiddleware.js'
 export * from './serverless/types/loggerMiddleware.js'

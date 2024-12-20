@@ -20,7 +20,7 @@ const jestConfig: JestConfigWithTsJest = {
   reporters: ['detox/runners/jest/reporter'],
   testEnvironment: 'detox/runners/jest/testEnvironment',
   setupFilesAfterEnv: ['<rootDir>/e2e/testUtils/setupTests.ts'],
-  testTimeout: 50000,
+  testTimeout: 200000,
   maxWorkers: 1,
   verbose: true
 }

@@ -76,7 +76,6 @@ describe('PlanService', () => {
     })
   })
 
-
   describe('createPlan', () => {
     it.each([
       {
@@ -180,7 +179,6 @@ describe('PlanService', () => {
         expect(result).toEqual(expectedResult)
         expect(stripePriceService.create).toHaveBeenCalledWith(expectedParams!.stripePriceServiceCreate)
         expect(planRepository.createPlan).toHaveBeenCalledWith(expectedParams!.planRepositoryCreate)
-
       } catch (error) {
         expect(error).toEqual(expectedError)
       }
@@ -190,7 +188,6 @@ describe('PlanService', () => {
       }
     })
   })
-
 
   describe('deletePlan', () => {
     it.each([
@@ -212,7 +209,7 @@ describe('PlanService', () => {
         serviceMethodArgs: { id: 999 },
         expectedResult: true,
         expectedParams: {
-          planRepositoryGetById: 999,
+          planRepositoryGetById: 999
         },
         setupMocks: () => {
           planRepository.getPlanById.mockResolvedValue(null)

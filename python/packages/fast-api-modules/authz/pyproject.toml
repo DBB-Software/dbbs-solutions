@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "fastapi-authz"
+version = "0.1.0"
+description = "FastAPI authz modules"
+authors = ["Hryhoriy Bilenko <hryhoriy.bilenko@dbbsoftware.com>"]
+readme = "README.md"
+
+[tool.ruff]
+extend = "../../common/pyproject.toml"
+
+[tool.poetry.dependencies]
+python = "3.11.6"
+fastapi = "0.115.0"
+pyjwt = "2.9.0"
+common = {path = "../../common"}
+pytest-asyncio = "0.24.0"
+cryptography = "43.0.1"
+pydantic-settings = "2.6.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

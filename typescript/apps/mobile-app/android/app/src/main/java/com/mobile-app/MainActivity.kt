@@ -6,6 +6,8 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import android.os.Bundle
 import com.zoontek.rnbootsplash.RNBootSplash
+import io.branch.rnbranch.*
+import android.content.Intent
 
 class MainActivity : ReactActivity() {
 
@@ -22,7 +24,16 @@ class MainActivity : ReactActivity() {
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
 
+  override fun onStart() {
+      super.onStart()
+      RNBranchModule.initSession(getIntent().getData(), this)
+  }
 
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    setIntent(intent)
+    RNBranchModule.reInitSession(this)
+  }
   override fun onCreate(savedInstanceState: Bundle?) {
     RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
     super.onCreate(savedInstanceState) // super.onCreate(null) with react-native-screens

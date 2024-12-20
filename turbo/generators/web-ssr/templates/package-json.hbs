@@ -13,7 +13,8 @@
     "lint": "npx next lint",
     "test": "npx jest --coverage --verbose",
     "cypress:open": "npx cypress open",
-    "cypress:run": "npx cypress run"
+    "cypress:run": "npx cypress run",
+    "analyze": "ANALYZE=true yarn build"
   },
   "dependencies": {
     {{#if isReduxToolkit}}
@@ -34,6 +35,7 @@
     {{#if useServerless}}
     "@dbbs/next-serverless-deployment": "1.0.0",
     {{/if}}
+    "@next/bundle-analyzer": "15.0.1",
     "next": "14.2.3",
     "react": "18.3.1",
     "react-dom": "18.2.0"

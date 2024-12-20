@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 #import <Firebase.h>
+#import <RNBranch/RNBranch.h>
 
 #import <React/RCTBundleURLProvider.h>
 
@@ -13,8 +14,20 @@
   self.initialProps = @{};
 
   [FIRApp configure];
+  [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES];
+  NSURL *jsCodeLocation;
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  [RNBranch application:app openURL:url options:options];
+  return YES;
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
+  [RNBranch continueUserActivity:userActivity];
+  return YES;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

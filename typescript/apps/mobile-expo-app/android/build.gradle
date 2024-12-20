@@ -2,6 +2,8 @@
 
 buildscript {
     ext {
+        androidXAnnotation = "1.1.0"
+        androidXBrowser = "1.0.0"
         buildToolsVersion = findProperty('android.buildToolsVersion') ?: '34.0.0'
         minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '23')
         compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '34')

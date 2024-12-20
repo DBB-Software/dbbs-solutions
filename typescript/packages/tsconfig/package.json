@@ -4,8 +4,12 @@
     "private": true,
     "files": [
         "base.json",
+        "nextjs.json",
+        "nestjs.json",
         "react-spa.json",
-        "react-native.json"
+        "react-native.json",
+        "react-library.json",
+        "remixrun.json"
     ],
     "publishConfig": {
         "access": "public"

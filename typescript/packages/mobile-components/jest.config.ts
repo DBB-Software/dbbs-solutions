@@ -7,7 +7,7 @@ const jestConfig: JestConfigWithTsJest = {
   ...tsjPreset,
   displayName: 'mobile-components',
   preset: 'react-native',
-  transformIgnorePatterns: ['../../node_modules'],
+  transformIgnorePatterns: ['../../../node_modules'],
   testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
   setupFilesAfterEnv: [
     './__tests__/testUtils/setupTests.ts',

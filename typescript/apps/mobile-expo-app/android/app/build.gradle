@@ -114,6 +114,7 @@ android {
 
     namespace 'com.dbbs.expo'
     defaultConfig {
+        missingDimensionStrategy "store", "play"
         // detox-plugin-default-config
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -134,9 +135,25 @@ android {
     productFlavors {
         prod {
             resValue "string", "app_name", "DBBS Expo"
+            manifestPlaceholders = [
+                branchTestMode: "false",
+                branchURLScheme: System.getenv("BRANCH_URL_SCHEME"),
+                branchMainLink: System.getenv("BRANCH_MAIN_LINK"),
+                branchAlternateLink: System.getenv("BRANCH_ALTERNATE_LINK"),
+                branchKeyLive: System.getenv("BRANCH_KEY"),
+                branchKeyTest: System.getenv("BRANCH_KEY")
+            ]
         }
         dev {
             resValue "string", "app_name", "DBBS Expo (Dev)"
+            manifestPlaceholders = [
+                branchTestMode: "true",
+                branchURLScheme: System.getenv("BRANCH_URL_SCHEME"),
+                branchMainLink: System.getenv("BRANCH_MAIN_LINK"),
+                branchAlternateLink: System.getenv("BRANCH_ALTERNATE_LINK"),
+                branchKeyLive: System.getenv("BRANCH_KEY"),
+                branchKeyTest: System.getenv("BRANCH_KEY")
+            ]
         }
     }
     buildTypes {
@@ -187,7 +204,11 @@ android {
 dependencies {
     androidTestImplementation('com.wix:detox:+')
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    // The version of react-native is set by the React Native Gradle Plugin
+    implementation('io.branch.sdk.android:library:5.13.0')
+    implementation ('com.google.android.gms:play-services-ads-identifier:18.0.1')
+    // Alternatively, use the following lib for getting the AAID:
+    // implementation ('com.google.android.gms:play-services-ads:17.2.0')
+    implementation('com.facebook.react:react-android')
     implementation("com.facebook.react:react-android")
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";

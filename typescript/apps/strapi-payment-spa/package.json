@@ -1,0 +1,31 @@
+{
+  "name": "@dbbs/strapi-payment-spa",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0",
+    "dev": "npx vite",
+    "build": "npx tsc && vite build",
+    "test": "npx jest --coverage --verbose",
+    "cypress:open": "npx cypress open",
+    "cypress:run": "npx cypress run"
+  },
+  "dependencies": {
+    "@dbbs/mui-components": "*",
+    "@tanstack/react-router": "1.48.4",
+    "js-cookie": "3.0.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@dbbs/cypress": "*",
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*",
+    "@tanstack/router-devtools": "1.48.4",
+    "@tanstack/router-plugin": "1.48.3",
+    "@types/js-cookie": "3"
+  }
+}

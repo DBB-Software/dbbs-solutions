@@ -8,9 +8,41 @@
       "import": "./dist/src/app/index.js",
       "types": "./dist/src/app/index.d.ts"
     },
+    "./app-analytics": {
+      "import": "./dist/src/app/analytics.js",
+      "types": "./dist/src/app/analytics.d.ts"
+    },
+    "./app-auth": {
+      "import": "./dist/src/app/auth.js",
+      "types": "./dist/src/app/auth.d.ts"
+    },
+    "./app-database": {
+      "import": "./dist/src/app/database.js",
+      "types": "./dist/src/app/database.d.ts"
+    },
+    "./app-firestore": {
+      "import": "./dist/src/app/firestore.js",
+      "types": "./dist/src/app/firestore.d.ts"
+    },
+    "./app-messaging": {
+      "import": "./dist/src/app/messaging.js",
+      "types": "./dist/src/app/messaging.d.ts"
+    },
     "./admin": {
       "import": "./dist/src/admin/index.js",
       "types": "./dist/src/admin/index.d.ts"
+    },
+    "./admin-auth": {
+      "import": "./dist/src/admin/auth.js",
+      "types": "./dist/src/admin/auth.d.ts"
+    },
+    "./admin-database": {
+      "import": "./dist/src/admin/database.js",
+      "types": "./dist/src/admin/database.d.ts"
+    },
+    "./admin-firestore": {
+      "import": "./dist/src/admin/firestore.js",
+      "types": "./dist/src/admin/firestore.d.ts"
     }
   },
   "scripts": {

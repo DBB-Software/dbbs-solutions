@@ -1,0 +1,112 @@
+service: rds-backup
+useDotenv: true
+variablesResolutionMode: 20210219
+
+plugins:
+  - serverless-offline
+  - serverless-deployment-bucket
+  - serverless-esm-layer
+  - serverless-plugin-aws-alerts
+  - serverless-plugin-monorepo
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  architecture: x86_64
+  stage: ${opt:stage}
+  region: ${env:REGION}
+  versionFunctions: false
+  memorySize: 5128
+  timeout: 600
+  tracing:
+    lambda: true
+  logRetentionInDays: 14
+  lambdaHashingVersion: 20201221
+  environment:
+    STAGE: ${opt:stage}
+    REGION: ${env:REGION}
+    NODE_ENV: ${env:NODE_ENV}
+    DEPLOYMENT_BUCKET: ${env:DEPLOYMENT_BUCKET}
+    S3_BACKUP_BUCKET: ${env:S3_BACKUP_BUCKET}
+    RDS_SECRET: ${env:RDS_SECRET}
+    LD_LIBRARY_PATH: './postgres-16.3/libpq.so.5'
+  deploymentBucket:
+    name: ${env:DEPLOYMENT_BUCKET}
+  vpc:
+    securityGroupIds:
+      - ${env:SECURITY_GROUP_ID}
+    subnetIds:
+      - ${env:SUBNET_ID}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: arn:aws:logs:*:*:*
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+          Resource:
+            - arn:aws:s3:::${env:S3_BACKUP_BUCKET}
+            - arn:aws:s3:::${env:S3_BACKUP_BUCKET}/*
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+            - xray:PutTelemetryRecords
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource: '*'
+
+package:
+  excludeDevDependencies: true
+  patterns:
+    - package.json
+    - dist/**
+    - postgres-16.3/**
+    - backup.sh
+    - '!.*'
+    - '!node_modules'
+    - '!__tests__/**'
+    - '!src/**'
+    - '!static/**'
+    - '!*config*'
+    - '!coverage'
+    - '!package-lock.json'
+    - '.build'
+
+custom:
+  alerts:
+    stages: # Optionally - select which stages to deploy alarms to
+      - production
+    dashboards: true
+    nameTemplate: $[functionName]-$[metricName]-Alarm # Optionally - naming template for alarms, can be overwritten in definitions
+    prefixTemplate: $[stackName] # Optionally - override the alarm name prefix
+    topics:
+      alarm: arn:aws:sns:${aws:region}:${aws:accountId}:Default_CloudWatch_Alarms_Topic
+    alarms:
+      - functionThrottles
+      - functionErrors
+      - functionInvocations
+      - functionDuration
+
+layers:
+  RdsBackupNodeModules:
+    path: ../../../serverless-layer
+    compatibleRuntimes:
+      - nodejs20.x
+
+functions:
+  getService:
+    handler: dist/handler.uploadBackupRequest
+    layers:
+      - { Ref: RdsBackupNodeModulesLambdaLayer }
+    events:
+      - schedule:
+          rate: rate(24 hours)
+          enabled: true

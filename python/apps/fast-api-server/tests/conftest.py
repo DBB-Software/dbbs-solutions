@@ -1,4 +1,5 @@
 from typing import Any, AsyncGenerator
+from unittest.mock import AsyncMock
 
 import pytest
 from fastapi import FastAPI
@@ -41,3 +42,11 @@ async def client(
     """
     async with AsyncClient(app=fastapi_app, base_url="http://test", timeout=2.0) as ac:
         yield ac
+
+
+@pytest.fixture
+async def patch_verify(fastapi_app: FastAPI) -> None:
+    from src.api.router import auth
+    fastapi_app.dependency_overrides[auth.verify] = lambda: AsyncMock(return_value=True)
+    yield
+    fastapi_app.dependency_overrides = {}

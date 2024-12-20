@@ -9,8 +9,8 @@ jest.mock('@dbbs/common', () => {
   return {
     SettingServiceClient: jest.fn().mockImplementation(() => ({
       getAllTenantSettings: jest.fn(),
-      getTenantSettings: jest.fn(),
-    })),
+      getTenantSettings: jest.fn()
+    }))
   }
 })
 
@@ -23,16 +23,16 @@ describe('SettingsService', () => {
     region: 'us-east-1',
     endpoint: 'http://localhost:3000',
     serviceName: 'TestService',
-    enableXRay: false,
+    enableXRay: false
   }
 
   const mockSettingsResponse: ISettingsResponse = {
     tenants: [
       {
         id: 'tenant1',
-        settings: { key: 'value' },
-      },
-    ],
+        settings: { key: 'value' }
+      }
+    ]
   }
 
   beforeEach(async () => {
@@ -41,17 +41,17 @@ describe('SettingsService', () => {
         SettingsService,
         {
           provide: 'SETTINGS_SERVICE_OPTIONS',
-          useValue: mockSettingsServiceOptions,
+          useValue: mockSettingsServiceOptions
         },
         {
           provide: 'NestLogger:SettingsService',
           useValue: {
             info: jest.fn(),
             error: jest.fn(),
-            debug: jest.fn(),
-          },
-        },
-      ],
+            debug: jest.fn()
+          }
+        }
+      ]
     }).compile()
 
     service = module.get<SettingsService>(SettingsService)

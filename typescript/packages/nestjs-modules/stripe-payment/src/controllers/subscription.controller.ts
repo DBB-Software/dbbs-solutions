@@ -1,8 +1,9 @@
-import { Controller, Get, Body, Param, ParseIntPipe, Patch, Query, Delete } from '@nestjs/common'
+import { Controller, Get, Body, Param, ParseIntPipe, Patch, Query, Delete, Post } from '@nestjs/common'
 import { InjectLogger, Logger } from '@dbbs/nestjs-module-logger'
 import { NotFoundError } from '@dbbs/common'
 import { SubscriptionService } from '../services/subscription.service.js'
 import {
+  CreateCheckoutSessionDto,
   PaginatedResponseDto,
   PaginationOptionsDto,
   SubscriptionDto,
@@ -29,7 +30,7 @@ export class SubscriptionController {
   }
 
   @Get(':id')
-  async getSubscriptionById(@Param('id') id: number) {
+  async getSubscriptionById(@Param('id') id: number): Promise<SubscriptionDto> {
     try {
       const subscription = await this.subscriptionService.getSubscriptionById(id)
 
@@ -45,7 +46,7 @@ export class SubscriptionController {
   }
 
   @Patch(':id/cancel')
-  async cancelSubscription(@Param('id', ParseIntPipe) id: number) {
+  async cancelSubscription(@Param('id', ParseIntPipe) id: number): Promise<SubscriptionDto> {
     try {
       return await this.subscriptionService.cancelSubscription(id)
     } catch (error) {
@@ -55,7 +56,7 @@ export class SubscriptionController {
   }
 
   @Patch(':id/pause')
-  async pauseSubscription(@Param('id', ParseIntPipe) id: number) {
+  async pauseSubscription(@Param('id', ParseIntPipe) id: number): Promise<SubscriptionDto> {
     try {
       return await this.subscriptionService.pauseSubscription(id)
     } catch (error) {
@@ -65,7 +66,7 @@ export class SubscriptionController {
   }
 
   @Patch('/:id/resume')
-  async resumeSubscription(@Param('id', ParseIntPipe) id: number) {
+  async resumeSubscription(@Param('id', ParseIntPipe) id: number): Promise<SubscriptionDto> {
     try {
       return await this.subscriptionService.resumeSubscription(id)
     } catch (error) {
@@ -78,7 +79,7 @@ export class SubscriptionController {
   async updateSubscriptionQuantity(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateSubscriptionQuantityDto: UpdateSubscriptionQuantityDto
-  ) {
+  ): Promise<SubscriptionDto> {
     try {
       return await this.subscriptionService.updateSubscriptionQuantity(id, updateSubscriptionQuantityDto.quantity)
     } catch (error) {
@@ -88,7 +89,7 @@ export class SubscriptionController {
   }
 
   @Patch(':id/resubscribe')
-  async resubscribe(@Param('id', ParseIntPipe) id: number) {
+  async resubscribe(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     try {
       return await this.subscriptionService.resubscribe(id)
     } catch (error) {
@@ -97,9 +98,19 @@ export class SubscriptionController {
     }
   }
 
+  @Post('/checkout-session')
+  async createCheckoutSession(@Body() createCheckoutSessionDto: CreateCheckoutSessionDto): Promise<string> {
+    try {
+      return await this.subscriptionService.createCheckoutSession(createCheckoutSessionDto)
+    } catch (error) {
+      this.logger.error((error as Error).message)
+      throw error
+    }
+  }
+
   // FIXME: use ID of an authenticated user's subscription instead
   @Delete(':id')
-  async deleteSubscription(@Param('id', ParseIntPipe) id: number) {
+  async deleteSubscription(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     try {
       return await this.subscriptionService.deleteSubscription(id)
     } catch (error) {

@@ -16,10 +16,25 @@ import { SubscriptionService } from './services/subscription.service.js'
 import { SubscriptionRepository } from './repositories/subscription.repository.js'
 import { OrganizationRepository } from './repositories/organization.repository.js'
 import { UserRepository } from './repositories/user.repository.js'
+import { CheckoutSessionMetadataRepository } from './repositories/checkoutSessionMetadata.repository.js'
+import { OrganizationService } from './services/organization.service.js'
+import { OrganizationController } from './controllers/organization.controller.js'
+import { PurchaseRepository } from './repositories/purchase.repository.js'
+import { PurchaseService } from './services/purchase.service.js'
+import { UserController } from './controllers/user.controller.js'
+import { TransactionService } from './services/transaction.service.js'
+import { TransactionRepository } from './repositories/transaction.repository.js'
 
 @Module({
   imports: [ConfigModule.forRoot(), StripeModule.forRootAsync({ apiKey: process.env.STRIPE_SECRET_KEY }), LoggerModule],
-  controllers: [ProductController, PlanController, WebhookController, SubscriptionController],
+  controllers: [
+    ProductController,
+    PlanController,
+    WebhookController,
+    SubscriptionController,
+    OrganizationController,
+    UserController
+  ],
   providers: [
     ProductRepository,
     ProductService,
@@ -28,7 +43,13 @@ import { UserRepository } from './repositories/user.repository.js'
     SubscriptionService,
     SubscriptionRepository,
     OrganizationRepository,
+    OrganizationService,
     UserRepository,
+    CheckoutSessionMetadataRepository,
+    PurchaseRepository,
+    PurchaseService,
+    TransactionRepository,
+    TransactionService,
     WebhookService,
     StripeWebhookGuard
   ]

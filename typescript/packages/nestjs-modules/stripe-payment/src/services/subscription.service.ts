@@ -2,17 +2,115 @@ import { Injectable } from '@nestjs/common'
 import { SubscriptionService as StripeSubscriptionService } from '@dbbs/nestjs-module-stripe'
 import { ArgumentError, NotFoundError } from '@dbbs/common'
 import { SubscriptionRepository } from '../repositories/subscription.repository.js'
-import { IPaginatedResponse, IPaginationOptions, ISubscription } from '../interfaces/index.js'
-import { SubscriptionStatus, SubscriptionStatusId } from '../enums/index.js'
+import {
+  ICreateCheckoutSessionParams,
+  IPaginatedResponse,
+  IPaginationOptions,
+  IPlan,
+  ISubscription
+} from '../interfaces/index.js'
+import { PlanType, SubscriptionStatus, SubscriptionStatusId } from '../enums/index.js'
 import { OrganizationRepository } from '../repositories/organization.repository.js'
+import { PlanRepository } from '../repositories/plan.repository.js'
+import { CheckoutSessionMetadataRepository } from '../repositories/checkoutSessionMetadata.repository.js'
 
 @Injectable()
 export class SubscriptionService {
   constructor(
     private readonly subscriptionRepository: SubscriptionRepository,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
-    private readonly organizationRepository: OrganizationRepository
+    private readonly organizationRepository: OrganizationRepository,
+    private readonly planRepository: PlanRepository,
+    private readonly checkoutSessionMetadataRepository: CheckoutSessionMetadataRepository
   ) {}
+
+  private async retrieveAndValidateSubscription(id: number, populateRelations: boolean = true): Promise<ISubscription> {
+    const subscription = await this.subscriptionRepository.getSubscriptionById(id, populateRelations)
+
+    if (!subscription) {
+      // TODO (#1395): Create NestJS package with custom errors
+      throw new NotFoundError(`Subscription with ID ${id} was not found`)
+    }
+
+    return subscription
+  }
+
+  private async resolveOrganizationIdentifiers(
+    organizationName?: string,
+    organizationId?: number
+  ): Promise<{ name: string; stripeCustomerId?: string }> {
+    if (!organizationName && !organizationId) {
+      throw new ArgumentError('Either organizationName or organizationId must be provided')
+    }
+
+    if (organizationName) {
+      const organizationExists = await this.organizationRepository.organizationExistsByName(organizationName)
+      if (organizationExists) {
+        throw new Error(`Organization '${organizationName}' already exists`)
+      }
+      return { name: organizationName }
+    }
+
+    const organization = await this.organizationRepository.getOrganizationById(organizationId!)
+    if (!organization) {
+      throw new NotFoundError(`Organization with ID ${organizationId} was not found`)
+    }
+
+    const subscriptionStatusId = await this.subscriptionRepository.getStatusIdByOrganizationId(organizationId!)
+    if (subscriptionStatusId !== SubscriptionStatusId.CANCELED) {
+      throw new Error(
+        `Cannot create a checkout session for organization with ID ${organizationId} as it has a non-canceled subscription`
+      )
+    }
+
+    return {
+      name: organization.name,
+      stripeCustomerId: organization.stripeCustomerId
+    }
+  }
+
+  private async getValidPlanById(planId: number): Promise<IPlan> {
+    const plan = await this.planRepository.getPlanById(planId)
+    if (!plan) {
+      throw new NotFoundError(`Plan with ID ${planId} was not found`)
+    }
+    if (plan.type === PlanType.ONE_TIME) {
+      throw new Error('Creating a checkout session for a one-time plan is not allowed')
+    }
+    return plan
+  }
+
+  async createCheckoutSession(params: ICreateCheckoutSessionParams): Promise<string> {
+    const { userId, planId, quantity, successUrl, organizationName, organizationId } = params
+
+    const { name, stripeCustomerId } = await this.resolveOrganizationIdentifiers(organizationName, organizationId)
+
+    const plan = await this.getValidPlanById(planId)
+
+    const session = await this.stripeSubscriptionService.createCheckoutSession({
+      successUrl,
+      plan: {
+        id: plan.stripeId,
+        type: plan.type
+      },
+      quantity,
+      ...(stripeCustomerId && { customerId: stripeCustomerId })
+    })
+
+    if (!session.url) {
+      throw new Error('Checkout session was created, but no URL was returned')
+    }
+
+    await this.checkoutSessionMetadataRepository.saveMetadata({
+      checkoutSessionStripeId: session.id,
+      organizationName: name,
+      planId: plan.id,
+      userId,
+      quantity
+    })
+
+    return session.url
+  }
 
   async getSubscriptions(
     paginationOptions: IPaginationOptions = { page: 1, perPage: 10 }
@@ -36,13 +134,8 @@ export class SubscriptionService {
     return this.subscriptionRepository.getSubscriptionById(id)
   }
 
-  async cancelSubscription(id: number): Promise<ISubscription | null> {
-    const subscription = await this.subscriptionRepository.getSubscriptionById(id, false)
-
-    // TODO (#1395): Create NestJS package with custom errors
-    if (!subscription) {
-      throw new NotFoundError(`Cannot cancel non-existing subscription with ID ${id}`)
-    }
+  async cancelSubscription(id: number): Promise<ISubscription> {
+    const subscription = await this.retrieveAndValidateSubscription(id, false)
 
     // TODO (#1395): Create NestJS package with custom errors
     if (subscription.status === SubscriptionStatusId.CANCELED) {
@@ -51,16 +144,19 @@ export class SubscriptionService {
 
     // TODO (#1233): Nestjs Stripe-payment: wrap create, update and delete operations with transaction
     await this.stripeSubscriptionService.cancelSubscription({ id: subscription.stripeId })
-    return this.subscriptionRepository.updateSubscriptionStatus(id, SubscriptionStatusId.CANCELED)
+    const canceledSubscription = await this.subscriptionRepository.updateSubscriptionStatus(
+      id,
+      SubscriptionStatusId.CANCELED
+    )
+
+    if (!canceledSubscription) {
+      throw new Error(`Subscription cancellation failed for ID ${id}: status update was unsuccessful`)
+    }
+    return canceledSubscription
   }
 
-  async pauseSubscription(id: number): Promise<ISubscription | null> {
-    const subscription = await this.subscriptionRepository.getSubscriptionById(id, false)
-
-    // TODO (#1395): Create NestJS package with custom errors
-    if (!subscription) {
-      throw new NotFoundError(`Cannot pause non-existing subscription with ID ${id}`)
-    }
+  async pauseSubscription(id: number): Promise<ISubscription> {
+    const subscription = await this.retrieveAndValidateSubscription(id, false)
 
     // TODO (#1395): Create NestJS package with custom errors
     if (subscription.status !== SubscriptionStatusId.ACTIVE) {
@@ -69,16 +165,19 @@ export class SubscriptionService {
 
     // TODO (#1233): Nestjs Stripe-payment: wrap create, update and delete operations with transaction
     await this.stripeSubscriptionService.pauseSubscription({ id: subscription.stripeId })
-    return this.subscriptionRepository.updateSubscriptionStatus(id, SubscriptionStatusId.PAUSED)
+    const pausedSubscription = await this.subscriptionRepository.updateSubscriptionStatus(
+      id,
+      SubscriptionStatusId.PAUSED
+    )
+
+    if (!pausedSubscription) {
+      throw new Error(`Subscription pause failed for ID ${id}: status update was unsuccessful`)
+    }
+    return pausedSubscription
   }
 
-  async resumeSubscription(id: number): Promise<ISubscription | null> {
-    const subscription = await this.subscriptionRepository.getSubscriptionById(id, false)
-
-    // TODO (#1395): Create NestJS package with custom errors
-    if (!subscription) {
-      throw new NotFoundError(`Cannot resume non-existing subscription with ID ${id}`)
-    }
+  async resumeSubscription(id: number): Promise<ISubscription> {
+    const subscription = await this.retrieveAndValidateSubscription(id, false)
 
     // TODO (#1395): Create NestJS package with custom errors
     if (subscription.status !== SubscriptionStatusId.PAUSED) {
@@ -87,19 +186,32 @@ export class SubscriptionService {
 
     // TODO (#1233): Nestjs Stripe-payment: wrap create, update and delete operations with transaction
     await this.stripeSubscriptionService.resumeSubscription({ id: subscription.stripeId })
-    return this.subscriptionRepository.updateSubscriptionStatus(id, SubscriptionStatusId.ACTIVE)
+    const resumedSubscription = await this.subscriptionRepository.updateSubscriptionStatus(
+      id,
+      SubscriptionStatusId.ACTIVE
+    )
+
+    if (!resumedSubscription) {
+      throw new Error(`Subscription resume failed for ID ${id}: status update was unsuccessful`)
+    }
+    return resumedSubscription
   }
 
   // TODO (#1484): NestJS Stipe-payment package: implement update subscription plan
-  async updateSubscriptionQuantity(id: number, quantity: number) {
-    const subscription = await this.subscriptionRepository.getSubscriptionById(id, false)
-    if (!subscription) {
-      throw new NotFoundError(`Cannot update non-existing subscription with ID ${id}`)
+  async updateSubscriptionQuantity(id: number, quantity: number): Promise<ISubscription> {
+    const subscription = await this.retrieveAndValidateSubscription(id, false)
+
+    const { organization } = subscription
+    if (typeof organization !== 'number') {
+      throw new Error('Subscription data is invalid. Organization must not be populated')
     }
 
-    const organizationId = subscription.organization as number
-    const organizationUsersCount = await this.organizationRepository.countUsers(organizationId)
-    const numberOfAvailableSeats = (await this.organizationRepository.getQuantity(organizationId)) as number
+    const organizationUsersCount = await this.organizationRepository.countUsers(organization)
+    const numberOfAvailableSeats = await this.organizationRepository.getQuantity(organization)
+
+    if (numberOfAvailableSeats === undefined) {
+      throw new Error('Failed to get number of available seats for the subscription')
+    }
 
     if (quantity < organizationUsersCount) {
       throw new ArgumentError('Invalid quantity')
@@ -113,14 +225,16 @@ export class SubscriptionService {
 
     // TODO (#1233): Nestjs Stripe-payment: wrap create, update and delete operations with transaction
     await this.stripeSubscriptionService.updateQuantity({ id: subscription.stripeId, quantity })
-    return this.subscriptionRepository.updateSubscriptionQuantity(id, quantity)
+    const updatedSubscription = await this.subscriptionRepository.updateSubscriptionQuantity(id, quantity)
+
+    if (!updatedSubscription) {
+      throw new Error(`Failed to update the quantity for subscription ID ${id}: the database update was unsuccessful`)
+    }
+    return updatedSubscription
   }
 
   async resubscribe(id: number): Promise<boolean> {
-    const subscription = await this.subscriptionRepository.getSubscriptionById(id)
-    if (!subscription) {
-      throw new NotFoundError(`Subscription with ID ${id} was not found`)
-    }
+    const subscription = await this.retrieveAndValidateSubscription(id)
 
     const { organization, plan, status } = subscription
     if (typeof organization === 'number' || typeof plan === 'number' || typeof status === 'number') {

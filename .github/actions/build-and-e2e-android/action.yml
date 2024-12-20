@@ -1,0 +1,163 @@
+name: 'Build and run e2e test for all or specific workspace'
+description: 'Execute common steps necessary for checking applications build and e2e tests'
+
+inputs:
+  ref:
+    description: Ref for checkout. Use the github.ref
+    required: true
+  workspace:
+    description: Workspace for mobile application, which should run e2e test.
+    required: true
+  device_api:
+    description: Version of API for android, which will be used for creating android emulator.
+    required: true
+  device_profile:
+    description: Profile of device, which will be used for creating android emulator.
+    required: true
+  device_target:
+    description: Target of the system image, which will be used for creating android emulator.
+    required: true
+  restore_key:
+    description: Restore key for gradle and android builds cache, based on workspace.
+    required: true
+  ENV_CONFIG:
+    description: Env file for the react-native-config. Should be the github secret ENV_CONFIG
+    required: true
+  KEYSTORE_B64:
+    description: Is required value for android build. Should be the github secret KEYSTORE_B64
+    required: true
+  SIGNING_CREDENTIALS:
+    description: Is required value for android build. Should be the github secret SIGNING_CREDENTIALS
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref }}
+
+    - name: Set up NodeJs
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.tool-versions'
+        cache: 'yarn'
+
+    - name: Use Setup Yarn action
+      uses: ./.github/actions/setup-yarn
+
+    - name: Cache node_modules
+      if: ${{ github.event.pull_request.draft == true }}
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-e2e-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-e2e
+
+    - name: Install project dependencies
+      run: |
+        node -v
+        npm -v
+        yarn --immutable
+      shell: bash
+
+    - name: Download Detox and RN CLI
+      run: |
+        yarn dlx detox-cli react-native-cli
+      shell: bash
+
+    - name: Create secret files
+      run: |
+        echo -n "${{ inputs.ENV_CONFIG }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/.env.development
+        echo -n "${{ inputs.KEYSTORE_B64 }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/android/app/dbbs.keystore
+        echo -n "${{ inputs.SIGNING_CREDENTIALS }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/credentials.json
+      shell: bash
+
+    - name: Set environment variables for Android build
+      run: |
+        echo "PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "sdk.dir=$ANDROID_HOME" > ./typescript/apps/${{ inputs.workspace }}/android/local.properties
+      shell: bash
+
+    - name: Cache Detox build
+      id: cache-detox-build
+      uses: actions/cache@v3
+      with:
+        path: ./typescript/apps/${{ inputs.workspace }}/android/app/build
+        key: ${{ runner.os }}-detox-build-mobile-app-e2e${{ hashFiles(inputs.restore_key) }}
+        restore-keys: |
+          ${{ runner.os }}-detox-build-app-e2e
+
+    - name: Cache Detox gradle
+      id: cache-detox-gradle
+      uses: actions/cache@v3
+      with:
+        path: ./typescript/apps/${{ inputs.workspace }}/android/.gradle
+        key: ${{ runner.os }}-detox-gradle-e2e${{ hashFiles(inputs.restore_key) }}
+        restore-keys: |
+          ${{ runner.os }}-detox-gradle-e2e
+
+    - name: Free disk space
+      run: |
+        sudo swapoff -a
+        sudo rm -f /swapfile
+        sudo apt clean
+        sudo rm -rf $ANDROID_HOME/ndk/24.0.*
+        sudo rm -rf $ANDROID_HOME/ndk/25.2.*
+        rm -rf $ANDROID_HOME/platforms/{*,.*}
+        df -h
+      shell: bash
+
+    - name: Enable KVM group perms
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+      shell: bash
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        cmdline-tools-version: 8512546
+
+    - name: Install Android SDK Tools
+      run: sdkmanager "platform-tools" "emulator" "platforms;android-${{ inputs.device_api }}"
+      shell: bash
+
+    - name: Download Android Emulator Image
+      run: |
+          echo "y" | sdkmanager "$PACKAGE"
+          echo "no" | avdmanager create avd -n DETOX_DEVICE --abi "${{ inputs.device_target }}/x86_64" -k "$PACKAGE" -d "${{ inputs.device_profile }}"
+          emulator -avd -list-avds
+      env:
+        PACKAGE: 'system-images;android-${{ inputs.device_api }};${{ inputs.device_target }};x86_64'
+      shell: bash
+
+    - name: Swap memory from filesystem to RAM
+      run: |
+        sudo swapoff -a
+        sudo dd if=/dev/zero of=/swapfile bs=1G count=3
+        sudo mkswap /swapfile
+        sudo swapon /swapfile
+      shell: bash
+
+    - name: Configure emulator and run e2e tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ inputs.device_api }}
+        target: ${{ inputs.device_target }}
+        profile: ${{ inputs.device_profile }}
+        arch: x86_64
+        avd-name: DETOX_DEVICE
+        script: |
+          df -h
+          free -m
+          npx turbo run build --filter=./typescript/apps/${{ inputs.workspace }}
+          yarn workspace @dbbs/${{ inputs.workspace }} prebuild
+          yarn workspace @dbbs/${{ inputs.workspace }} e2e:android-ci
+          df -h
+          free -m

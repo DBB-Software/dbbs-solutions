@@ -12,6 +12,7 @@ import {
   updatedPriceFieldPlanEntity
 } from '../mocks/index.js'
 import { BillingPeriod, PlanType } from '../../enums/index.js'
+import { TEST_DB_PATH } from '../../constants.js'
 
 describe('PlanRepository', () => {
   let planRepository: PlanRepository
@@ -25,7 +26,7 @@ describe('PlanRepository', () => {
       client: 'sqlite3',
       useNullAsDefault: true,
       connection: {
-        filename: './test_data.db'
+        filename: TEST_DB_PATH
       }
     })
 

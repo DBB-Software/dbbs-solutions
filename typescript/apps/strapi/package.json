@@ -14,7 +14,7 @@
     "docs:serve": "yarn docs:generate -s",
     "config:export": "config-sync export",
     "config:import": "config-sync import",
-    "clean": "npx rimraf .turbo node_modules dist \"*.tsbuildinfo\" || exit 0"
+    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0"
   },
   "dependencies": {
     "@ckeditor/strapi-plugin-ckeditor": "0.0.13",

@@ -1,4 +1,5 @@
 import { S3Client } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
 import AWSXRayCore from 'aws-xray-sdk-core'
 import { PassThrough } from 'stream'
 import { CustomS3Handler } from '../../src/aws/s3.js'
@@ -15,6 +16,13 @@ jest.mock('stream', () => ({
   PassThrough: jest.fn()
 }))
 
+jest.mock('@aws-sdk/lib-storage', () => ({
+  ...jest.requireActual('@aws-sdk/lib-storage'),
+  Upload: jest.fn().mockImplementation(({}) => ({
+    done: jest.fn().mockResolvedValue({ ETag: 'mocked-etag' })
+  }))
+}))
+
 jest.mock('aws-xray-sdk-core', () => ({
   captureAWSv3Client: jest.fn()
 }))
@@ -26,6 +34,7 @@ describe('CustomS3Handler', () => {
   const mockedData: object = { key: 'value' }
   const mockedPrefix: string = 'test-prefix'
   const mockedContentType: string = 'application/json'
+  const mockedDefaultContentType: string = 'application/octet-stream'
   const mockedAcl = undefined
   const mockedCacheControl: string = 'no-cache'
 
@@ -176,7 +185,7 @@ describe('CustomS3Handler', () => {
           Bucket: mockedBucket,
           Key: mockedBucketKey,
           ContentType: mockedContentType,
-          Acl: mockedAcl,
+          ACL: mockedAcl,
           CacheControl: mockedCacheControl,
           Body: {}
         }
@@ -192,8 +201,8 @@ describe('CustomS3Handler', () => {
         expectedCallInput: {
           Bucket: mockedBucket,
           Key: mockedBucketKey,
-          ContentType: mockedContentType,
-          Acl: mockedAcl,
+          ContentType: mockedDefaultContentType,
+          ACL: mockedAcl,
           CacheControl: mockedCacheControl,
           Body: {}
         }
@@ -209,7 +218,7 @@ describe('CustomS3Handler', () => {
         expectedCallInput: {
           Bucket: null,
           Key: null,
-          ContentType: mockedContentType,
+          ContentType: mockedDefaultContentType,
           ACL: null,
           CacheControl: null,
           Body: {}
@@ -217,11 +226,15 @@ describe('CustomS3Handler', () => {
       }
     ])('$description', async ({ input, expectedCallInput }) => {
       const s3Handler = new CustomS3Handler(mockedRegion)
-      await s3Handler.uploadFileStream(input)
+      const result = await s3Handler.uploadFileStream(input)
 
-      expect(PassThrough).toHaveBeenCalledWith()
-      expect(s3Handler.client.send).toHaveBeenCalled()
-      expect(s3Handler.client.send).toHaveBeenCalledWith(expect.objectContaining({ input: expectedCallInput }))
+      expect(PassThrough).toHaveBeenCalled()
+      expect(Upload).toHaveBeenCalledWith({
+        client: s3Handler.client,
+        params: expect.objectContaining(expectedCallInput)
+      })
+      await expect(result.promise).resolves.toEqual({ ETag: 'mocked-etag' })
+      expect(result.writeStream).toBeInstanceOf(PassThrough)
     })
   })
 })

@@ -7,7 +7,7 @@
   "types": "./dist/handler.d.ts",
   "scripts": {
     "build": "npx tsc --build tsconfig.json",
-    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
+    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0",
     "dev": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "start": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032",

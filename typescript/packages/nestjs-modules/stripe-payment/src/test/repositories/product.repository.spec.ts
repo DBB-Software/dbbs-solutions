@@ -10,6 +10,7 @@ import {
   createdProduct
 } from '../mocks/index.js'
 import { createProductsTable, createPlansTable } from '../factories/database.js'
+import { TEST_DB_PATH } from '../../constants.js'
 
 describe('ProductRepository', () => {
   let productRepository: ProductRepository
@@ -23,7 +24,7 @@ describe('ProductRepository', () => {
       client: 'sqlite3',
       useNullAsDefault: true,
       connection: {
-        filename: './test_data.db'
+        filename: TEST_DB_PATH
       }
     })
 
@@ -131,7 +132,7 @@ describe('ProductRepository', () => {
       {
         description: 'should return null if product with this Stripe ID does not exist',
         stripeId: 'non_existent_stripe_id',
-        expected: null,
+        expected: null
       }
     ]
 
@@ -147,12 +148,12 @@ describe('ProductRepository', () => {
       {
         description: 'should return true if product exists by Stripe ID',
         stripeId: `prod_${getId(1)}`,
-        expected: true,
+        expected: true
       },
       {
         description: 'should return false if product does not exist by Stripe ID',
         stripeId: 'non_existent_stripe_id',
-        expected: false,
+        expected: false
       }
     ]
 
@@ -187,13 +188,13 @@ describe('ProductRepository', () => {
       {
         description: 'should update an existing product and return it',
         repositoryMethodArgs: { id: getId(1), name: 'Updated Product 1' },
-        expected: { ...defaultProductEntity(baseId), name: 'Updated Product 1' },
+        expected: { ...defaultProductEntity(baseId), name: 'Updated Product 1' }
       },
       {
         description: 'should return null if product does not exist',
         repositoryMethodArgs: { id: getId(999), name: 'Non-Existent Product' },
-        expected: null,
-      },
+        expected: null
+      }
     ]
 
     it.each(testCases)('$description', async ({ repositoryMethodArgs, expected }) => {
@@ -214,13 +215,13 @@ describe('ProductRepository', () => {
       {
         description: 'should delete the product and return the number of deleted rows',
         id: getId(1),
-        expected: 1,
+        expected: 1
       },
       {
         description: 'should return 0 if product does not exist',
         id: getId(999),
-        expected: 0,
-      },
+        expected: 0
+      }
     ]
 
     it.each(testCases)('$description', async ({ id, expected }) => {

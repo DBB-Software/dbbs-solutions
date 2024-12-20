@@ -7,7 +7,7 @@ from starlette import status
 
 
 @pytest.mark.anyio
-async def test_get_example_success(client: AsyncClient, fastapi_app: FastAPI) -> None:
+async def test_get_example_success(client: AsyncClient, fastapi_app: FastAPI, patch_verify) -> None:
     """
     Checks the health endpoint.
 
@@ -23,7 +23,7 @@ async def test_get_example_success(client: AsyncClient, fastapi_app: FastAPI) ->
 
 
 @pytest.mark.anyio
-async def test_get_example_incorrect_id(client: AsyncClient, fastapi_app: FastAPI) -> None:
+async def test_get_example_incorrect_id(client: AsyncClient, fastapi_app: FastAPI, patch_verify) -> None:
     """
     Checks the health endpoint.
 

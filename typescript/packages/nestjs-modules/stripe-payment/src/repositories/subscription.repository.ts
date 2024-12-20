@@ -5,6 +5,7 @@ import { SubscriptionEntity } from '../entites/index.js'
 import { PaginationOptions, ResubscribePayload, SubscriptionDbRecord } from '../types/index.js'
 import { PlanRepository } from './plan.repository.js'
 import { SubscriptionStatusId } from '../enums/index.js'
+import { OrganizationRepository } from './organization.repository.js'
 
 @Injectable()
 export class SubscriptionRepository {
@@ -18,7 +19,7 @@ export class SubscriptionRepository {
       stripeId,
       // FIXME: change to `string` in case uuid is used for plan id in the database
       plan: typeof plan === 'number' ? plan : PlanRepository.toJSON(plan),
-      organization,
+      organization: typeof organization === 'number' ? organization : OrganizationRepository.toJSON(organization),
       status,
       quantity,
       createdAt: new Date(createdAt),
@@ -82,7 +83,12 @@ export class SubscriptionRepository {
                 'id', \`organizations\`.\`id\`,
                 'name', \`organizations\`.\`name\`,
                 'quantity', \`organizations\`.\`quantity\`,
-                'stripeCustomerId', \`organizations\`.\`stripeCustomerId\`
+                'stripeCustomerId', \`organizations\`.\`stripeCustomerId\`,
+                'ownerId', \`organizations\`.\`ownerId\`,
+                'paymentMethodId', \`organizations\`.\`paymentMethodId\`,
+                'subscription', \`organizations\`.\`subscription\`,
+                'createdAt', \`organizations\`.\`createdAt\`,
+                'updatedAt', \`organizations\`.\`updatedAt\`
               ) as organization
             `
           ),
@@ -140,6 +146,12 @@ export class SubscriptionRepository {
           organization: JSON.parse(subscription.organization)
         })
       : null
+  }
+
+  async getStatusIdByOrganizationId(organizationId: number): Promise<number | undefined> {
+    const subscription = await this.knexConnection('subscriptions').select('statusId').where({ organizationId }).first()
+
+    return subscription?.statusId
   }
 
   async updateSubscriptionStatus(id: number, statusId: SubscriptionStatusId): Promise<SubscriptionEntity | null> {

@@ -13,6 +13,11 @@ export interface ISubscription {
   updatedAt: Date
 }
 
-export interface IDeleteSubscriptionParams {
-  id: number
+export interface ICreateCheckoutSessionParams {
+  quantity: number
+  planId: number
+  userId: number
+  successUrl: string
+  organizationName?: string
+  organizationId?: number
 }

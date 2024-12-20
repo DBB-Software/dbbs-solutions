@@ -4,8 +4,8 @@ import { WebhookController } from '../../webhook/webhook.controller.js'
 import { WebhookService } from '../../webhook/webhook.service.js'
 import { StripeWebhookGuard } from '../../webhook/webhook.guard.js'
 import {
-  nonExistingStripeEvent, 
-  priceCreatedStripeEvent, 
+  nonExistingStripeEvent,
+  priceCreatedStripeEvent,
   priceDeletedStripeEvent,
   priceUpdatedStripeEvent,
   productCreatedStripeEvent,
@@ -31,13 +31,13 @@ describe('WebhookController', () => {
             handlePriceCreated: jest.fn(),
             handlePriceDeleted: jest.fn(),
             handlePriceUpdated: jest.fn()
-          },
-        },
-      ],
+          }
+        }
+      ]
     })
       .overrideGuard(StripeWebhookGuard)
       .useValue({
-        canActivate: jest.fn(_ => true)
+        canActivate: jest.fn((_) => true)
       })
       .compile()
 
@@ -86,14 +86,13 @@ describe('WebhookController', () => {
       {
         name: 'should not handle other Stripe events',
         controllerMethodArgs: nonExistingStripeEvent
-      },
-    ])('$name', async ({ controllerMethodArgs, serviceMethod, serviceMethodArgs }) => {
-        await controller.handleEvent(controllerMethodArgs as StripeEvent)
-
-        if (serviceMethod) {
-          expect(webhookService[serviceMethod as keyof WebhookService]).toHaveBeenCalledWith(serviceMethodArgs)
-        }
       }
-    )
+    ])('$name', async ({ controllerMethodArgs, serviceMethod, serviceMethodArgs }) => {
+      await controller.handleEvent(controllerMethodArgs as StripeEvent)
+
+      if (serviceMethod) {
+        expect(webhookService[serviceMethod as keyof WebhookService]).toHaveBeenCalledWith(serviceMethodArgs)
+      }
+    })
   })
 })

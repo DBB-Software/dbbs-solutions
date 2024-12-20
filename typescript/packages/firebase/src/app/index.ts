@@ -9,7 +9,5 @@ export const customInitializeApp = (options: FirebaseOptions, name?: string) => 
 }
 
 export * from 'firebase/app'
-export * from 'firebase/analytics'
-export * from 'firebase/auth'
 
 export { customInitializeApp as initializeApp }

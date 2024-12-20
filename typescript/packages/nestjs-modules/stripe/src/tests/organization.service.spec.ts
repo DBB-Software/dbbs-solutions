@@ -2,11 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { OrganizationService } from '../services/organization.service.js'
 import { STRIPE_SDK } from '../constants.js'
 import Stripe from 'stripe'
-import {
-  defaultOrganization,
-  deletedOrganization,
-  getMockedMethod
-} from '../mocks/index.js'
+import { defaultOrganization, deletedOrganization, getMockedMethod } from '../mocks/index.js'
 
 describe('OrganizationService', () => {
   let service: OrganizationService

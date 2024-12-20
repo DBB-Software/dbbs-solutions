@@ -1,0 +1,38 @@
+{
+  "name": "@dbbs/mobile-auth0",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Mobile features for Auth0",
+  "main": "lib/commonjs/index.js",
+  "types": "lib/typescript/src/index.d.ts",
+  "scripts": {
+    "build": "bob build",
+    "clean": "npx rimraf .turbo node_modules dist bin",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "test": "jest --coverage --verbose"
+  },
+  "dependencies": {
+    "react-native-auth0": "3.2.1"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*",
+    "@testing-library/jest-native": "5.4.3",
+    "react-native-builder-bob": "0.30.3",
+    "typescript": "5.5.4"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      [
+        "typescript",
+        {
+          "project": "./tsconfig.lib.json"
+        }
+      ]
+    ]
+  }
+}

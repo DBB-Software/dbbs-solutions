@@ -1,0 +1,32 @@
+{
+  "name": "@dbbs/nestjs-modules",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Nest JS modules for dbbs project",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc --build tsconfig.json",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "test": "echo \"no test specified\" && exit 0",
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "docs:generate": "npx compodoc -p tsconfig.json",
+    "docs:serve": "yarn docs:generate -s"
+  },
+  "dependencies": {
+    "@nestjs-modules/ioredis": "2.0.2",
+    "@nestjs/common": "10.4.1",
+    "@nestjs/config": "3.2.3",
+    "@nestjs/mongoose": "10.1.0"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

@@ -7,6 +7,8 @@ import { SubscriptionService } from './services/subscription.service.js'
 import { PlanService } from './services/plan.service.js'
 import { OrganizationService } from './services/organization.service.js'
 import { StripeService } from './stripe.service.js'
+import { InvoiceService } from './services/invoice.service.js'
+import { PaymentIntentService } from './services/payment-intent.service.js'
 
 interface StripeModuleOptions {
   apiKey?: string
@@ -30,13 +32,24 @@ export class StripeModule {
         SubscriptionService,
         PlanService,
         OrganizationService,
+        InvoiceService,
+        PaymentIntentService,
         {
           provide: STRIPE_SDK,
           useValue: new Stripe(apiKey)
         },
         StripeService
       ],
-      exports: [STRIPE_SDK, ProductService, SubscriptionService, PlanService, OrganizationService, StripeService]
+      exports: [
+        STRIPE_SDK,
+        ProductService,
+        SubscriptionService,
+        PlanService,
+        OrganizationService,
+        InvoiceService,
+        PaymentIntentService,
+        StripeService
+      ]
     }
   }
 }

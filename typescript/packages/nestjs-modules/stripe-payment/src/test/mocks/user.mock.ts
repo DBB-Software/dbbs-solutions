@@ -45,3 +45,9 @@ export const dbUsersList = (baseId: number): UserDbRecord[] => [
     updatedAt: defaultDateISOString
   }
 ]
+
+export const dbOrganizationsUsersLinksList = (baseId: number) =>
+  Array.from({ length: 15 }, (_, index) => ({
+    organizationId: baseId + index + 1,
+    userId: baseId + index + 1
+  }))

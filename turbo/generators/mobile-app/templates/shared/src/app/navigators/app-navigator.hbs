@@ -1,0 +1,38 @@
+import React from 'react'
+import { createMaterialBottomTabNavigator } from '@dbbs/mobile-components'
+import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native'
+import { HomeComponent } from '@screens/home.screen'
+{{#if isReactNative}}
+import { useRNPushNotificationNavigation } from '@dbbs/mobile-react-native-notifications'
+{{/if}}
+{{#if isExpo}}
+import { useExpoPushNotificationNavigation } from '@dbbs/mobile-expo-notifications'
+{{/if}}
+import { useDeepLinking, useCommonNavigation } from '@dbbs/mobile-common'
+
+const { Navigator, Screen } = createMaterialBottomTabNavigator()
+
+export const navigationRef = createNavigationContainerRef()
+
+export const AppNavigator = () => {
+  const commonNavigation = useCommonNavigation(navigationRef)
+
+  {{#if isReactNative}}
+  useRNPushNotificationNavigation({ navigateToContent: (metadata) => commonNavigation(metadata?.screen ?? 'Home') })
+  {{/if}}
+  {{#if isExpo}}
+  useExpoPushNotificationNavigation({ navigateToContent: (metadata) => commonNavigation(metadata?.screen ?? 'Home') })
+  {{/if}}
+
+  useDeepLinking({
+    navigateToContent: (params) => commonNavigation(JSON.stringify(params.$canonical_identifier))
+  })
+
+  return (
+    <NavigationContainer ref={navigationRef}>
+      <Navigator>
+        <Screen name="Home" component={HomeComponent} />
+      </Navigator>
+    </NavigationContainer>
+  )
+}

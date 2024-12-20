@@ -3,7 +3,7 @@ import { SubscriptionController } from '../../controllers/subscription.controlle
 import { SubscriptionService } from '../../services/subscription.service.js'
 import { LoggerModule } from '@dbbs/nestjs-module-logger'
 import { Test, TestingModule } from '@nestjs/testing'
-import { defaultSubscription, extendedSubscription } from '../mocks/index.js'
+import { CHECKOUT_SESSION_URL, defaultSubscription, extendedSubscription, SUCCESS_URL } from '../mocks/index.js'
 import { NotFoundError } from '@dbbs/common'
 import { SubscriptionStatus } from '../../enums/index.js'
 
@@ -26,10 +26,11 @@ describe('SubscriptionController', () => {
             resumeSubscription: jest.fn(),
             updateSubscriptionQuantity: jest.fn(),
             resubscribe: jest.fn(),
-            deleteSubscription: jest.fn()
-          },
-        },
-      ],
+            deleteSubscription: jest.fn(),
+            createCheckoutSession: jest.fn()
+          }
+        }
+      ]
     }).compile()
 
     controller = module.get<SubscriptionController>(SubscriptionController)
@@ -48,7 +49,12 @@ describe('SubscriptionController', () => {
         expectedResult: { items: [extendedSubscription], total: 1, page: 1, perPage: 10 },
         expectedParams: { page: 1, perPage: 10 },
         setupMocks: () => {
-          subscriptionService.getSubscriptions.mockResolvedValue({ items: [extendedSubscription], total: 1, page: 1, perPage: 10 })
+          subscriptionService.getSubscriptions.mockResolvedValue({
+            items: [extendedSubscription],
+            total: 1,
+            page: 1,
+            perPage: 10
+          })
         }
       },
       {
@@ -70,7 +76,7 @@ describe('SubscriptionController', () => {
         name: 'should throw an error if failed to fetch products',
         controllerMethodArgs: { page: 1, perPage: 10 },
         expectedError: new Error('Something went wrong'),
-        expectedParams: { page: 1, perPage: 10 },
+        expectedParams: { page: 1, perPage: 10 }
       }
     ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
       if (setupMocks) {
@@ -98,49 +104,44 @@ describe('SubscriptionController', () => {
         controllerMethodArgs: 1,
         expectedResult: extendedSubscription,
         expectedParams: {
-          subscriptionRetrieveById: 1,
+          subscriptionRetrieveById: 1
         },
         setupMocks: () => {
           subscriptionService.getSubscriptionById.mockResolvedValue(extendedSubscription)
-        },
+        }
       },
       {
         name: 'should throw an error if failed to fetch subscription',
         controllerMethodArgs: 1,
         expectedError: new Error('Something went wrong'),
         expectedParams: {
-          subscriptionRetrieveById: 1,
+          subscriptionRetrieveById: 1
         },
         setupMocks: () => {
           subscriptionService.getSubscriptionById.mockRejectedValue(new Error('Something went wrong'))
-        },
+        }
       },
       {
         name: 'should throw NotFoundError if subscription does not exist',
         controllerMethodArgs: 999,
         expectedError: new NotFoundError('Subscription with ID 999 was not found'),
         expectedParams: {
-          subscriptionRetrieveById: 999,
+          subscriptionRetrieveById: 999
         },
         setupMocks: () => {
           subscriptionService.getSubscriptionById.mockResolvedValue(null)
-        },
-      },
-    ])(
-      '$name',
-      async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
-        setupMocks()
-        try {
-          const result = await controller.getSubscriptionById(controllerMethodArgs)
-          expect(result).toEqual(expectedResult)
-        } catch (error) {
-          expect(error).toEqual(expectedError)
         }
-        expect(subscriptionService.getSubscriptionById).toHaveBeenCalledWith(
-          expectedParams.subscriptionRetrieveById,
-        )
       }
-    )
+    ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
+      setupMocks()
+      try {
+        const result = await controller.getSubscriptionById(controllerMethodArgs)
+        expect(result).toEqual(expectedResult)
+      } catch (error) {
+        expect(error).toEqual(expectedError)
+      }
+      expect(subscriptionService.getSubscriptionById).toHaveBeenCalledWith(expectedParams.subscriptionRetrieveById)
+    })
   })
 
   describe('cancelSubscription', () => {
@@ -170,23 +171,18 @@ describe('SubscriptionController', () => {
           subscriptionService.cancelSubscription.mockRejectedValue(new Error('Failed to cancel a subscription'))
         }
       }
-    ])(
-      '$name',
-      async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
-        setupMocks()
+    ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
+      setupMocks()
 
-        const pendingResult = controller.cancelSubscription(controllerMethodArgs)
-        if (expectedResult) {
-          await expect(pendingResult).resolves.toEqual(expectedResult)
-        } else {
-          await expect(pendingResult).rejects.toMatchObject(expectedError)
-        }
-
-        expect(subscriptionService.cancelSubscription).toHaveBeenCalledWith(
-          expectedParams.subscriptionCancel
-        )
+      const pendingResult = controller.cancelSubscription(controllerMethodArgs)
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toMatchObject(expectedError)
       }
-    )
+
+      expect(subscriptionService.cancelSubscription).toHaveBeenCalledWith(expectedParams.subscriptionCancel)
+    })
   })
 
   describe('pauseSubscription', () => {
@@ -213,23 +209,18 @@ describe('SubscriptionController', () => {
           subscriptionService.pauseSubscription.mockRejectedValue(new Error('Failed to pause a subscription'))
         }
       }
-    ])(
-      '$name',
-      async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
-        setupMocks()
+    ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
+      setupMocks()
 
-        const pendingResult = controller.pauseSubscription(controllerMethodArgs)
-        if (expectedResult) {
-          await expect(pendingResult).resolves.toEqual(expectedResult)
-        } else {
-          await expect(pendingResult).rejects.toMatchObject(expectedError)
-        }
-
-        expect(subscriptionService.pauseSubscription).toHaveBeenCalledWith(
-          expectedParams.subscriptionPause
-        )
+      const pendingResult = controller.pauseSubscription(controllerMethodArgs)
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toMatchObject(expectedError)
       }
-    )
+
+      expect(subscriptionService.pauseSubscription).toHaveBeenCalledWith(expectedParams.subscriptionPause)
+    })
   })
 
   describe('resumeSubscription', () => {
@@ -256,23 +247,18 @@ describe('SubscriptionController', () => {
           subscriptionService.resumeSubscription.mockRejectedValue(new Error('Failed to resume a subscription'))
         }
       }
-    ])(
-      '$name',
-      async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
-        setupMocks()
+    ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
+      setupMocks()
 
-        const pendingResult = controller.resumeSubscription(controllerMethodArgs)
-        if (expectedResult) {
-          await expect(pendingResult).resolves.toEqual(expectedResult)
-        } else {
-          await expect(pendingResult).rejects.toMatchObject(expectedError)
-        }
-
-        expect(subscriptionService.resumeSubscription).toHaveBeenCalledWith(
-          expectedParams.subscriptionResume
-        )
+      const pendingResult = controller.resumeSubscription(controllerMethodArgs)
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toMatchObject(expectedError)
       }
-    )
+
+      expect(subscriptionService.resumeSubscription).toHaveBeenCalledWith(expectedParams.subscriptionResume)
+    })
   })
 
   describe('updateSubscriptionQuantity', () => {
@@ -287,7 +273,7 @@ describe('SubscriptionController', () => {
         expectedParams: { id: 1, quantity: 2 },
         setupMocks: () => {
           subscriptionService.updateSubscriptionQuantity.mockResolvedValue(defaultSubscription)
-        },
+        }
       },
       {
         name: 'should throw an error if update fails',
@@ -299,23 +285,20 @@ describe('SubscriptionController', () => {
         expectedParams: { id: 1, quantity: 2 },
         setupMocks: () => {
           subscriptionService.updateSubscriptionQuantity.mockRejectedValue(new Error('Update failed'))
-        },
-      }
-    ])(
-      '$name',
-      async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
-        setupMocks()
-        try {
-          const result = await controller.updateSubscriptionQuantity(controllerMethodArgs.id, controllerMethodArgs.dto)
-          expect(result).toEqual(expectedResult)
-        } catch (error) {
-          expect(error).toEqual(expectedError)
         }
-
-        const { id, quantity } = expectedParams
-        expect(subscriptionService.updateSubscriptionQuantity).toHaveBeenCalledWith(id, quantity)
       }
-    )
+    ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
+      setupMocks()
+      try {
+        const result = await controller.updateSubscriptionQuantity(controllerMethodArgs.id, controllerMethodArgs.dto)
+        expect(result).toEqual(expectedResult)
+      } catch (error) {
+        expect(error).toEqual(expectedError)
+      }
+
+      const { id, quantity } = expectedParams
+      expect(subscriptionService.updateSubscriptionQuantity).toHaveBeenCalledWith(id, quantity)
+    })
   })
 
   describe('resubscribe', () => {
@@ -327,7 +310,7 @@ describe('SubscriptionController', () => {
         expectedParams: 1,
         setupMocks: () => {
           subscriptionService.resubscribe.mockResolvedValue(true)
-        },
+        }
       },
       {
         name: 'should throw an error if resubscribe fails',
@@ -336,23 +319,78 @@ describe('SubscriptionController', () => {
         expectedParams: 1,
         setupMocks: () => {
           subscriptionService.resubscribe.mockRejectedValue(new Error('Resubscribe failed'))
-        },
-      }
-    ])(
-      '$name',
-      async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
-        setupMocks()
-
-        const pendingResult = controller.resubscribe(controllerMethodArgs)
-        if (expectedResult !== undefined) {
-          await expect(pendingResult).resolves.toEqual(expectedResult)
-        } else {
-          await expect(pendingResult).rejects.toMatchObject(expectedError)
         }
-
-        expect(subscriptionService.resubscribe).toHaveBeenCalledWith(expectedParams)
       }
-    )
+    ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
+      setupMocks()
+
+      const pendingResult = controller.resubscribe(controllerMethodArgs)
+      if (expectedResult !== undefined) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toMatchObject(expectedError)
+      }
+
+      expect(subscriptionService.resubscribe).toHaveBeenCalledWith(expectedParams)
+    })
+  })
+
+  describe('createCheckoutSession', () => {
+    it.each([
+      {
+        name: 'should successfully create a checkout session',
+        controllerMethodArgs: {
+          quantity: 5,
+          planId: 1,
+          userId: 1,
+          successUrl: SUCCESS_URL,
+          organizationName: 'new name'
+        },
+        expectedParams: {
+          quantity: 5,
+          planId: 1,
+          userId: 1,
+          successUrl: SUCCESS_URL,
+          organizationName: 'new name'
+        },
+        expectedResult: CHECKOUT_SESSION_URL,
+        setupMocks: () => {
+          subscriptionService.createCheckoutSession.mockResolvedValue(CHECKOUT_SESSION_URL)
+        }
+      },
+      {
+        name: 'should throw an error if creating a checkout session fails',
+        controllerMethodArgs: {
+          quantity: 5,
+          planId: 1,
+          userId: 1,
+          successUrl: SUCCESS_URL,
+          organizationId: 2
+        },
+        expectedParams: {
+          quantity: 5,
+          planId: 1,
+          userId: 1,
+          successUrl: SUCCESS_URL,
+          organizationId: 2
+        },
+        expectedError: new Error('Checkout session creation failed'),
+        setupMocks: () => {
+          subscriptionService.createCheckoutSession.mockRejectedValue(new Error('Checkout session creation failed'))
+        }
+      }
+    ])('$name', async ({ controllerMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
+      setupMocks()
+
+      const pendingResult = controller.createCheckoutSession(controllerMethodArgs)
+      if (expectedError) {
+        await expect(pendingResult).rejects.toMatchObject(expectedError)
+      } else {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      }
+
+      expect(subscriptionService.createCheckoutSession).toHaveBeenCalledWith(expectedParams)
+    })
   })
 
   describe('deleteSubscription', () => {
@@ -363,7 +401,7 @@ describe('SubscriptionController', () => {
         expectedParams: 1,
         setupMocks: () => {
           subscriptionService.deleteSubscription.mockResolvedValue(true)
-        },
+        }
       },
       {
         name: 'should throw an error if delete user subscription fails',
@@ -372,22 +410,19 @@ describe('SubscriptionController', () => {
         expectedParams: 1,
         setupMocks: () => {
           subscriptionService.deleteSubscription.mockRejectedValue(new Error('Delete subscription failed'))
-        },
-      }
-    ])(
-      '$name',
-      async ({ controllerMethodArgs, expectedError, expectedParams, setupMocks }) => {
-        setupMocks()
-
-        const pendingResult = controller.deleteSubscription(controllerMethodArgs)
-        if (expectedError) {
-          await expect(pendingResult).rejects.toMatchObject(expectedError)
-        } else {
-          await expect(pendingResult).resolves.toBe(true)
         }
-
-        expect(subscriptionService.deleteSubscription).toHaveBeenCalledWith(expectedParams)
       }
-    )
+    ])('$name', async ({ controllerMethodArgs, expectedError, expectedParams, setupMocks }) => {
+      setupMocks()
+
+      const pendingResult = controller.deleteSubscription(controllerMethodArgs)
+      if (expectedError) {
+        await expect(pendingResult).rejects.toMatchObject(expectedError)
+      } else {
+        await expect(pendingResult).resolves.toBe(true)
+      }
+
+      expect(subscriptionService.deleteSubscription).toHaveBeenCalledWith(expectedParams)
+    })
   })
 })

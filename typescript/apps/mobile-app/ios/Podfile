@@ -20,6 +20,8 @@ target 'MobileApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'react-native-branch', path: '../../../../node_modules/react-native-branch'
+
   target 'MobileAppTests' do
     inherit! :complete
     # Pods for testing

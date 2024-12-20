@@ -1,0 +1,142 @@
+name: 'Build and run e2e test for all or specific workspace'
+description: 'Execute common steps necessary for checking applications build and e2e tests'
+
+inputs:
+  ref:
+    description: Ref for checkout. Use the github.ref
+    required: true
+  workspace:
+    description: Workspace for mobile application, which should run e2e test.
+    required: true
+  restore_key:
+    description: Restore key for gradle and android builds cache, based on workspace.
+    required: true
+  pods_restore_key:
+    description: Pods restore key
+    required: true
+  ENV_CONFIG:
+    description: Env file for the react-native-config. Should be the github secret ENV_CONFIG
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref }}
+
+    - name: Set up NodeJs
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.tool-versions'
+        cache: 'yarn'
+
+    - name: Use Setup Yarn action
+      uses: ./.github/actions/setup-yarn
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '.tool-versions'
+        bundler-cache: true
+
+    - name: Cache node_modules
+      if: ${{ github.event.pull_request.draft == true }}
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-e2e-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-e2e
+
+    - name: Cache Pods
+      id: pods-cache
+      uses: actions/cache@v4
+      with:
+        path: ./typescript/apps/${{ inputs.workspace }}/ios/Pods
+        key: ${{ runner.os }}-pods-${{ hashFiles(inputs.pods_restore_key) }}
+        restore-keys: |
+          ${{ runner.os }}-pods-${{ hashFiles(inputs.pods_restore_key) }}
+
+    - name: Cache Detox build
+      id: cache-detox-build
+      uses: actions/cache@v3
+      with:
+        path: ./typescript/apps/${{ inputs.workspace }}/android/app/build
+        key: ${{ runner.os }}-detox-build-mobile-app-e2e${{ hashFiles(inputs.restore_key) }}
+        restore-keys: |
+          ${{ runner.os }}-detox-build-app-e2e
+
+    - name: Download iOS dependencies
+      run: |
+        if ! which applesimutils > /dev/null; then
+          brew tap wix/brew
+          brew install applesimutils
+        else
+          brew tap wix/brew
+          brew reinstall applesimutils
+        fi
+      shell: bash
+
+    - name: Install project dependencies
+      run: |
+        yarn --immutable
+        cd ./typescript/apps/${{ inputs.workspace }}
+        bundle install
+        npx pod-install
+      env:
+        LANG: "en_US.UTF-8"
+      shell: bash
+
+    - name: Download Detox and RN CLI
+      run: |
+        yarn dlx detox-cli react-native-cli
+      shell: bash
+
+    - name: Create secret files
+      run: |
+        echo -n "${{ inputs.ENV_CONFIG }}" | base64 --decode > ./typescript/apps/${{ inputs.workspace }}/.env.development
+      shell: bash
+
+    - name: Check versions of project dependencies
+      run: |
+        echo "Yarn: $(yarn -v)"
+        echo "Node: $(node -v)"
+        echo "NPM: $(npm -v)"
+        echo "Ruby: $(ruby -v)"
+        echo "CocoaPods: $(pod --version)"
+      shell: bash
+
+    - name: Run build and prebuild step for workspace
+      run: |
+        npx turbo run build --filter=./typescript/apps/${{ inputs.workspace }}
+        yarn workspace @dbbs/${{ inputs.workspace }} prebuild
+      shell: bash
+
+    - name: Start metro server
+      run: |
+        cd ./typescript/apps/${{ inputs.workspace }}
+        nohup npx react-native start > metro.log 2>&1 &
+        sleep 5
+        if lsof -i :8081 | grep LISTEN > /dev/null; then
+          echo "Metro server started successfully on port 8081"
+        else
+          echo "Metro server failed to start" && cat metro.log && exit 1
+        fi
+      shell: bash
+
+    - name: Run e2e tests for iOS
+      run: yarn workspace @dbbs/${{ inputs.workspace }} e2e:ios
+      shell: bash
+
+    - name: Stop metro server
+      run: |
+        PID=$(lsof -ti :8081)
+        if [ -n "$PID" ]; then
+          echo "Killing process $PID on port 8081"
+          kill -9 $PID
+        else
+          echo "No process using port 8081"
+        fi
+      shell: bash

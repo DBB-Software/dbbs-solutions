@@ -6,7 +6,6 @@ import { ProductRepository } from '../../repositories/product.repository.js'
 import { ProductService } from '../../services/product.service.js'
 import { ArgumentError, NotFoundError } from '@dbbs/common'
 
-
 describe('ProductService', () => {
   let service: ProductService
   let stripeProductService: jest.Mocked<StripeProductService>
@@ -22,8 +21,8 @@ describe('ProductService', () => {
             getProducts: jest.fn(),
             create: jest.fn(),
             update: jest.fn(),
-            delete: jest.fn(),
-          },
+            delete: jest.fn()
+          }
         },
         {
           provide: ProductRepository,
@@ -32,10 +31,10 @@ describe('ProductService', () => {
             createProduct: jest.fn(),
             getProductById: jest.fn(),
             updateProduct: jest.fn(),
-            deleteProduct: jest.fn(),
-          },
-        },
-      ],
+            deleteProduct: jest.fn()
+          }
+        }
+      ]
     }).compile()
 
     service = module.get<ProductService>(ProductService)
@@ -189,11 +188,26 @@ describe('ProductService', () => {
         },
         expectedError: new NotFoundError('Cannot update non-existing product with ID 999'),
         expectedParams: {
-          productRetrieveById: 999,
+          productRetrieveById: 999
         },
         setupMocks: () => {
           productRepository.getProductById.mockResolvedValue(null)
+        }
+      },
+      {
+        name: 'should throw an error if product update returns null',
+        serviceMethodArgs: {
+          id: 1,
+          name: 'Product 1'
         },
+        expectedError: new Error('Failed to update a product with ID 1: the database update was unsuccessful'),
+        expectedParams: {
+          productRetrieveById: 1
+        },
+        setupMocks: () => {
+          productRepository.getProductById.mockResolvedValue(defaultProduct)
+          productRepository.updateProduct.mockResolvedValue(null)
+        }
       }
     ])('$name', async ({ serviceMethodArgs, expectedResult, expectedError, expectedParams, setupMocks }) => {
       setupMocks()
@@ -229,18 +243,18 @@ describe('ProductService', () => {
         },
         setupMocks: () => {
           productRepository.getProductById.mockResolvedValue(productWithoutPlans)
-        },
+        }
       },
       {
         name: 'should throw an error if the product has associated plans',
         serviceMethodArgs: { id: 1 },
         expectedError: new ArgumentError('You cannot delete a product with plans'),
         expectedParams: {
-          productRetrieveById: { id: 1, populatePlans: true },
+          productRetrieveById: { id: 1, populatePlans: true }
         },
         setupMocks: () => {
           productRepository.getProductById.mockResolvedValue(defaultProduct)
-        },
+        }
       },
       {
         name: 'should return true if the product is not found',
@@ -260,11 +274,10 @@ describe('ProductService', () => {
         const result = await service.deleteProduct(serviceMethodArgs)
         expect(result).toEqual(expectedResult)
 
-        if(expectedParams.productDelete) {
+        if (expectedParams.productDelete) {
           expect(stripeProductService.delete).toHaveBeenCalledWith(expectedParams.stripeProductDelete)
           expect(productRepository.deleteProduct).toHaveBeenCalledWith(expectedParams.productDelete)
         }
-
       } catch (error) {
         expect(error).toEqual(expectedError)
       }

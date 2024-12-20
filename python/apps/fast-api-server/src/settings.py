@@ -42,6 +42,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_prefix="APP_",
         env_file_encoding="utf-8",
+        extra="ignore"
     )
 
 

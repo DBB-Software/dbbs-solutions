@@ -4,13 +4,13 @@ import {
   ListObjectsCommand,
   ListObjectsCommandOutput,
   PutObjectCommand,
-  PutObjectCommandInput,
   PutObjectCommandOutput,
   S3Client,
   S3ClientConfig
 } from '@aws-sdk/client-s3'
 import AWSXRayCore from 'aws-xray-sdk-core'
 import { PassThrough } from 'stream'
+import { Upload } from '@aws-sdk/lib-storage'
 import { isJSONString } from '../helpers.js'
 import {
   IDownloadJsonFromS3Input,
@@ -120,20 +120,21 @@ export class CustomS3Handler {
   }: IUploadFileStreamInput): Promise<{ writeStream: PassThrough; promise: Promise<PutObjectCommandOutput> }> {
     const pass = new PassThrough()
 
-    const commandInput: PutObjectCommandInput = {
-      Bucket: bucket,
-      Key: key,
-      Body: pass,
-      ContentType: contentType ?? 'application/json',
-      ACL: acl,
-      CacheControl: cacheControl
-    }
-
-    const command = new PutObjectCommand(commandInput)
+    const upload = new Upload({
+      client: this.client, // S3 client instance
+      params: {
+        Bucket: bucket,
+        Key: key,
+        Body: pass, // PassThrough stream as the body
+        ContentType: contentType ?? 'application/octet-stream',
+        ACL: acl,
+        CacheControl: cacheControl
+      }
+    })
 
     return {
       writeStream: pass,
-      promise: this.client.send(command)
+      promise: upload.done()
     }
   }
 }

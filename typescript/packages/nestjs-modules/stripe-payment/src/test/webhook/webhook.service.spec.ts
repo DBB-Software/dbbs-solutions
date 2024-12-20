@@ -35,7 +35,7 @@ describe('WebhookService', () => {
             createProduct: jest.fn(),
             updateProduct: jest.fn(),
             deleteProduct: jest.fn()
-          },
+          }
         },
         {
           provide: PlanRepository,
@@ -53,7 +53,7 @@ describe('WebhookService', () => {
             getProductById: jest.fn()
           }
         }
-      ],
+      ]
     }).compile()
 
     service = module.get<WebhookService>(WebhookService)
@@ -72,7 +72,10 @@ describe('WebhookService', () => {
         },
         expectedResult: null,
         setupMocks: () => {
-          productRepository.createProduct.mockRejectedValue({ code: 'SQLITE_CONSTRAINT', message: 'UNIQUE CONSTRAINT FAILED' })
+          productRepository.createProduct.mockRejectedValue({
+            code: 'SQLITE_CONSTRAINT',
+            message: 'UNIQUE CONSTRAINT FAILED'
+          })
         }
       },
       {
@@ -94,9 +97,13 @@ describe('WebhookService', () => {
         },
         expectedError: { name: 'error', code: 'SOME_ANOTHER_ERROR', message: 'ERROR OCCURRED' },
         setupMocks: () => {
-          productRepository.createProduct.mockRejectedValue({ name: 'error', code: 'SOME_ANOTHER_ERROR', message: 'ERROR OCCURRED' })
+          productRepository.createProduct.mockRejectedValue({
+            name: 'error',
+            code: 'SOME_ANOTHER_ERROR',
+            message: 'ERROR OCCURRED'
+          })
         }
-      },
+      }
     ])('$name', async ({ serviceMethodArgs, expectedParams, expectedResult, expectedError, setupMocks }) => {
       setupMocks()
 
@@ -121,23 +128,23 @@ describe('WebhookService', () => {
         },
         setupMocks: () => {
           productRepository.getProductByStripeId.mockResolvedValue(null)
-        },
+        }
       },
       {
         name: 'should update product if the name has changed',
         serviceMethodArgs: productUpdatedStripeEvent,
         expectedParams: {
           getProductByStripeId: 'prod_1',
-          updateProduct: { id: 1, name: 'Updated Product Name' },
+          updateProduct: { id: 1, name: 'Updated Product Name' }
         },
         setupMocks: () => {
           productRepository.getProductByStripeId.mockResolvedValue({
             ...defaultProduct,
             id: 1,
-            name: 'Old Product Name',
+            name: 'Old Product Name'
           })
-        },
-      },
+        }
+      }
     ])('$name', async ({ serviceMethodArgs, expectedParams, setupMocks }) => {
       setupMocks()
 
@@ -173,7 +180,7 @@ describe('WebhookService', () => {
         setupMocks: () => {
           productRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
         }
-      },
+      }
     ])('$name', async ({ serviceMethodArgs, expectedParams, setupMocks }) => {
       setupMocks()
 
@@ -199,12 +206,16 @@ describe('WebhookService', () => {
             interval: BillingPeriod.MONTH,
             stripeId: 'plan_1',
             productId: 1,
-            type: PlanType.RECURRING,
+            type: PlanType.RECURRING
           }
         },
         expectedResult: null,
         setupMocks: () => {
-          planRepository.createPlan.mockRejectedValue({ name: 'error', code: 'SQLITE_CONSTRAINT', message: 'UNIQUE CONSTRAINT FAILED' })
+          planRepository.createPlan.mockRejectedValue({
+            name: 'error',
+            code: 'SQLITE_CONSTRAINT',
+            message: 'UNIQUE CONSTRAINT FAILED'
+          })
           productRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
         }
       },
@@ -220,7 +231,7 @@ describe('WebhookService', () => {
             interval: BillingPeriod.MONTH,
             stripeId: 'plan_1',
             productId: 1,
-            type: PlanType.RECURRING,
+            type: PlanType.RECURRING
           }
         },
         expectedResult: defaultRecurringPlan,
@@ -242,7 +253,7 @@ describe('WebhookService', () => {
             interval: BillingPeriod.MONTH,
             stripeId: 'plan_1',
             productId: 1,
-            type: PlanType.RECURRING,
+            type: PlanType.RECURRING
           }
         },
         expectedResult: defaultRecurringPlan,
@@ -262,15 +273,19 @@ describe('WebhookService', () => {
             interval: BillingPeriod.MONTH,
             stripeId: 'plan_1',
             productId: 1,
-            type: PlanType.RECURRING,
+            type: PlanType.RECURRING
           }
         },
         expectedError: { name: 'error', code: 'SOME_ANOTHER_ERROR', message: 'ERROR OCCURRED' },
         setupMocks: () => {
-          planRepository.createPlan.mockRejectedValue({ name: 'error', code: 'SOME_ANOTHER_ERROR', message: 'ERROR OCCURRED' })
+          planRepository.createPlan.mockRejectedValue({
+            name: 'error',
+            code: 'SOME_ANOTHER_ERROR',
+            message: 'ERROR OCCURRED'
+          })
           productRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
         }
-      },
+      }
     ])('$name', async ({ serviceMethodArgs, expectedParams, expectedResult, expectedError, setupMocks }) => {
       setupMocks()
 
@@ -337,7 +352,7 @@ describe('WebhookService', () => {
       }
     })
   })
-  
+
   describe('handlePlanDeleted', () => {
     it.each([
       {
@@ -360,7 +375,7 @@ describe('WebhookService', () => {
         setupMocks: () => {
           planRepository.getPlanByStripeId.mockResolvedValue(defaultRecurringPlan)
         }
-      },
+      }
     ])('$name', async ({ serviceMethodArgs, expectedParams, setupMocks }) => {
       setupMocks()
 
