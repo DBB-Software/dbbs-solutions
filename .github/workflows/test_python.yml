@@ -16,7 +16,7 @@ on:
       - reopened
       - ready_for_review
     paths:
-      - python/*
+      - python/**
   push:
     branches:
       - main
