@@ -4,9 +4,8 @@ export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('checkout_sessions_metadata', (table) => {
     table.increments('id').primary()
     table.string('checkoutSessionStripeId').notNullable().unique()
-    table.string('organizationName').notNullable().references('name').inTable('organizations')
+    table.integer('organizationId').notNullable().references('name').inTable('organizations')
     table.integer('planId').unsigned().notNullable().references('id').inTable('plans')
-    table.integer('userId').unsigned().notNullable().references('id').inTable('users')
     table.integer('quantity').notNullable()
 
     table.timestamps(true, true, true)

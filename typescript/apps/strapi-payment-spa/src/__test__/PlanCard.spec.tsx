@@ -13,10 +13,21 @@ describe('<PlanCard />', () => {
     fetchMock.mockResponse(JSON.stringify(mockOrganizations))
   })
 
+  afterEach(() => {
+    jest.clearAllMocks()
+    jest.clearAllTimers()
+  })
+
   it('should render default', async () => {
     render(<PlanCard data={mockPlan} />)
 
-    expect(screen.getByText('30day Trial')).toBeVisible()
+    const priceElement = screen.getByText('Price:', { exact: false })
+    expect(priceElement).toHaveTextContent('Price: $10')
+
+    const typeElement = screen.getByText('Type:', { exact: false })
+    expect(typeElement).toHaveTextContent('Type: One time')
+
+    expect(await screen.findByText('30day Trial')).toBeVisible()
   })
 
   it.each([
@@ -25,8 +36,7 @@ describe('<PlanCard />', () => {
   ])('should render different type plans', async (type, typeText) => {
     const mockPlanType = { ...mockPlan, type }
     render(<PlanCard data={mockPlanType} />)
-
-    expect(screen.getByText(`Type: ${typeText}`)).toBeVisible()
+    expect(await screen.findByText(`Type: ${typeText}`)).toBeVisible()
   })
 
   it('should render modal', async () => {

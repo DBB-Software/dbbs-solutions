@@ -2,6 +2,7 @@
  *  service
  */
 
+import createHttpError from 'http-errors'
 import { factories, Strapi } from '@strapi/strapi'
 import { CreatePlanParams, CreateStripePriceParams, DeletePlanParams, GetPlanByIdParams } from '../interfaces'
 import { PlanType } from '../enums'
@@ -20,7 +21,7 @@ export default factories.createCoreService('plugin::stripe-payment.plan', ({ str
     })
 
     if (!product) {
-      return null
+      throw new createHttpError.NotFound(`Cannot create a plan as the product with ID ${productId} was not found`)
     }
 
     const planData: CreateStripePriceParams = {

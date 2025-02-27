@@ -10,7 +10,8 @@
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "test": "echo \"no test specified\" && exit 0",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.0",
@@ -61,18 +62,18 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "1.6.1",
-    "@storybook/addon-essentials": "8.2.9",
-    "@storybook/addon-interactions": "8.2.9",
-    "@storybook/addon-links": "8.2.9",
-    "@storybook/blocks": "8.2.9",
-    "@storybook/react": "8.2.9",
-    "@storybook/react-vite": "8.2.9",
-    "@storybook/test": "8.2.9",
+    "@storybook/addon-essentials": "8.3.6",
+    "@storybook/addon-interactions": "8.3.6",
+    "@storybook/addon-links": "8.3.6",
+    "@storybook/blocks": "8.3.6",
+    "@storybook/react": "8.3.6",
+    "@storybook/react-vite": "8.3.6",
+    "@storybook/test": "8.3.6",
     "@types/prop-types": "15",
-    "eslint-plugin-storybook": "0.8.0",
+    "eslint-plugin-storybook": "0.10.1",
     "postcss": "8.4.41",
     "prop-types": "15.8.1",
-    "storybook": "8.2.9"
+    "storybook": "8.3.6"
   },
   "peerDependencies": {
     "react": "^18.2.0",

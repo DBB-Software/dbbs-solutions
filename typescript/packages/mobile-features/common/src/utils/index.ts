@@ -1,1 +1,1 @@
-export * from './common-utils'
+export * from './parse-json-with-fallback'

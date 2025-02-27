@@ -8,7 +8,13 @@ jest.mock('js-cookie', () => ({
   ...jest.requireActual('js-cookie'),
   get: jest.fn().mockResolvedValue({ jwt: 'jwt' })
 }))
+
 describe('<SubscriptionPage />', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+    jest.clearAllTimers()
+  })
+
   const renderComponent = () => {
     fetchMock.mockResponseOnce(JSON.stringify(mockInitialProductsArray))
 
@@ -17,7 +23,7 @@ describe('<SubscriptionPage />', () => {
 
   it('should render by default', async () => {
     renderComponent()
-    expect(screen.getByText('Subscription')).toBeVisible()
+    expect(await screen.findByText('Subscription')).toBeVisible()
   })
 
   it('should render card with data', async () => {

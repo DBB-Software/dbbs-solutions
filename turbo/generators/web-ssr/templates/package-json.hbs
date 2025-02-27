@@ -14,7 +14,8 @@
     "test": "npx jest --coverage --verbose",
     "cypress:open": "npx cypress open",
     "cypress:run": "npx cypress run",
-    "analyze": "ANALYZE=true yarn build"
+    "analyze": "ANALYZE=true yarn build",
+    "check-types": "npx tsc -p ./tsconfig.spec.json --pretty --noEmit"
   },
   "dependencies": {
     {{#if isReduxToolkit}}

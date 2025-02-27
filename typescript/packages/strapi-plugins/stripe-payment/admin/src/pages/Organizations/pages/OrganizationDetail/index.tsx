@@ -78,7 +78,7 @@ const OrganizationDetail: React.FC = () => {
   }
 
   const handleChangeOwner = async () => {
-    await request(`/stripe-payment/admin/organizations/${id}/change-owner`, {
+    await request(`/stripe-payment/admin/organizations/${id}/owner`, {
       method: 'PATCH',
       body: { ownerId }
     })
@@ -96,7 +96,7 @@ const OrganizationDetail: React.FC = () => {
   }
 
   const handleSaveUser = async () => {
-    const newUser = await request(`/stripe-payment/admin/organizations/${id}/add-user`, {
+    const newUser = await request(`/stripe-payment/admin/organizations/${id}/users`, {
       method: 'PATCH',
       body: { recipientEmail: newUserEmail }
     })
@@ -121,7 +121,10 @@ const OrganizationDetail: React.FC = () => {
 
   const handleDeleteUser = async () => {
     if (deleteUserId) {
-      await request(`/stripe-payment/admin/organizations/${id}/remove-user/${deleteUserId}`, { method: 'PATCH' })
+      await request(`/stripe-payment/admin/organizations/${id}/remove-user`, {
+        method: 'PATCH',
+        body: { userId: deleteUserId }
+      })
       setUsers(users.filter((user) => user.id !== deleteUserId))
       setShowDeleteConfirm(false)
       setDeleteUserId(null)
@@ -167,7 +170,7 @@ const OrganizationDetail: React.FC = () => {
 
   const handleSaveSubscription = async () => {
     if (subscription) {
-      await request(`/stripe-payment/admin/subscriptions/${subscription.id}/update`, {
+      await request(`/stripe-payment/admin/subscriptions/${subscription.id}`, {
         method: 'PATCH',
         body: { quantity: subscriptionQuantity, planId: subscription.plan.id }
       })
@@ -216,6 +219,8 @@ const OrganizationDetail: React.FC = () => {
   const handleCloseDeleteOwnerWarning = () => {
     setShowDeleteOwnerWarning(false)
   }
+
+  const isOwner = (user: User) => Number(user.id) === Number(organization?.owner_id)
 
   // TODO: #836 split components
   return (
@@ -275,13 +280,23 @@ const OrganizationDetail: React.FC = () => {
             {users.map((user) => (
               <Tr key={user.id}>
                 <Td>
-                  <Typography textColor="neutral800">{user.username}</Typography>
+                  <Typography textColor="neutral800">
+                    {user.username}
+                    {isOwner(user) && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
+                  </Typography>
                 </Td>
                 <Td>
                   <Typography textColor="neutral800">{user.email}</Typography>
                 </Td>
                 <Td>
-                  <IconButton onClick={() => handleDeleteIconClick(user.id)} label="Delete" icon={<Trash />} noBorder />
+                  {!isOwner(user) && (
+                    <IconButton
+                      onClick={() => handleDeleteIconClick(user.id)}
+                      label="Delete"
+                      icon={<Trash />}
+                      noBorder
+                    />
+                  )}
                 </Td>
               </Tr>
             ))}

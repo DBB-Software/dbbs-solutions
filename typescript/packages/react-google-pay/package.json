@@ -10,7 +10,8 @@
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
     "test": "npx jest --coverage --verbose",
-    "build": "npx tsc --build tsconfig.json"
+    "build": "npx tsc --build tsconfig.json",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@google-pay/button-react": "3.1.0"

@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Layout /> renders correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root css-k008qs"
+  >
+    <header
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-vongwo-MuiPaper-root-MuiAppBar-root"
+    >
+      <button
+        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeStart MuiIconButton-sizeMedium css-7ubvsf-MuiButtonBase-root-MuiIconButton-root"
+        tabindex="0"
+        type="button"
+      >
+        <svg
+          class="lucide lucide-menu"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line
+            x1="4"
+            x2="20"
+            y1="12"
+            y2="12"
+          />
+          <line
+            x1="4"
+            x2="20"
+            y1="6"
+            y2="6"
+          />
+          <line
+            x1="4"
+            x2="20"
+            y1="18"
+            y2="18"
+          />
+        </svg>
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+    </header>
+    <div
+      class="MuiBox-root css-1at9qkq"
+    >
+      <div
+        class="MuiDrawer-root MuiDrawer-docked css-4u0zen-MuiDrawer-docked"
+      >
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiDrawer-paper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft css-12i7wg6-MuiPaper-root-MuiDrawer-paper"
+        >
+          <div
+            class="MuiBox-root css-5tys7z"
+          >
+            <hr
+              class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
+            />
+            <div
+              class="MuiBox-root css-a74d04"
+            >
+              <div
+                class="MuiBox-root css-0"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <main
+      class="MuiBox-root css-12rwh79"
+    />
+  </div>
+</DocumentFragment>
+`;

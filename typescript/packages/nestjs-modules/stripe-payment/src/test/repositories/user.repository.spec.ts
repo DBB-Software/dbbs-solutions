@@ -1,8 +1,10 @@
 import knex from 'knex'
-import { createUsersTable } from '../factories/database.js'
-import { dbUsersList } from '../mocks/index.js'
-import { UserRepository } from '../../repositories/user.repository.js'
+
+import { UserRepository } from '../../repositories/index.js'
+import { createOrganizationsUsersLinksTable, createUsersTable } from '../factories/database.js'
+import { dbOrganizationsUsersLinksList, dbUsersList, defaultUserEntity } from '../mocks/index.js'
 import { TEST_DB_PATH } from '../../constants.js'
+import { UserEntity } from '../../entites/index.js'
 
 describe('UserRepository', () => {
   let userRepository: UserRepository
@@ -23,10 +25,11 @@ describe('UserRepository', () => {
     userRepository = new UserRepository(db)
 
     await createUsersTable(db, dbUsersList(baseId))
+    await createOrganizationsUsersLinksTable(db, dbOrganizationsUsersLinksList(baseId))
   })
 
   describe('doesUserExist', () => {
-    const testCases = [
+    it.each([
       {
         description: 'should return true if the user exists',
         id: getId(1),
@@ -37,10 +40,54 @@ describe('UserRepository', () => {
         id: getId(999),
         expectedResult: false
       }
-    ]
-
-    it.each(testCases)('$description', async ({ id, expectedResult }) => {
+    ])('$description', async ({ id, expectedResult }) => {
       await expect(userRepository.doesUserExist(id)).resolves.toEqual(expectedResult)
+    })
+  })
+
+  describe('findByEmail', () => {
+    it.each<{
+      name: string
+      email: string
+      expectedResult: UserEntity | null
+    }>([
+      {
+        name: 'should return found user',
+        email: `test${getId(1)}@example.com`,
+        expectedResult: defaultUserEntity(getId(1))
+      },
+      {
+        name: 'should return nul whe user not found',
+        email: 'notfound@mail.com',
+        expectedResult: null
+      }
+    ])('$name', async ({ email, expectedResult }) => {
+      const result = await userRepository.findByEmail(email)
+
+      expect(result).toEqual(expectedResult)
+    })
+  })
+
+  describe(UserRepository.prototype.getOrganizationUsers.name, () => {
+    it.each<{
+      name: string
+      params: number
+      expectedResult: UserEntity[]
+    }>([
+      {
+        name: 'should return all users for organization',
+        params: getId(1),
+        expectedResult: [defaultUserEntity(getId(1))]
+      },
+      {
+        name: 'should empty array for non-exist organization',
+        params: getId(999),
+        expectedResult: []
+      }
+    ])('$name', async ({ params, expectedResult }) => {
+      const result = await userRepository.getOrganizationUsers(params)
+
+      expect(result).toEqual(expectedResult)
     })
   })
 })

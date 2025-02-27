@@ -2,29 +2,43 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { BadRequestException } from '@nestjs/common'
 import { NotFoundError } from '@dbbs/common'
 import { OrganizationService as StripeCustomerService } from '@dbbs/nestjs-module-stripe'
+import { SendgridService } from '@dbbs/nestjs-module-sendgrid'
 import { mockDeep, mockReset } from 'jest-mock-extended'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 
-import { OrganizationService } from '../../services/organization.service.js'
-import { OrganizationRepository } from '../../repositories/organization.repository.js'
+import { InviteService, OrganizationService } from '../../services/index.js'
+import { OrganizationRepository, UserRepository } from '../../repositories/index.js'
 import {
   defaultOrganization,
-  defaultOrganizationEntity,
+  defaultUserEntity,
   MOCK_CREATE_ORGANIZATION_PARAMS,
   MOCK_CREATED_ORGANIZATION,
   MOCK_STRIPE_CUSTOMER,
   stripeOrganization
 } from '../mocks/index.js'
-import { UserRepository } from '../../repositories/user.repository.js'
+import { defaultInviteEntity } from '../mocks/invite.mock.js'
+import { InviteStatus } from '../../enums/invite.enum.js'
 
 describe(OrganizationService.name, () => {
   let service: OrganizationService
   const mockStripeCustomerService = mockDeep<StripeCustomerService>()
   const mockOrganizationRepository = mockDeep<OrganizationRepository>()
   const mockUserRepository = mockDeep<UserRepository>()
+  const mockSendgridService = mockDeep<SendgridService>()
+  const mockInviteService = mockDeep<InviteService>()
+  const mockConfigService = mockDeep<ConfigService>()
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OrganizationService, StripeCustomerService, OrganizationRepository, UserRepository]
+      imports: [ConfigModule],
+      providers: [
+        OrganizationService,
+        StripeCustomerService,
+        OrganizationRepository,
+        UserRepository,
+        SendgridService,
+        InviteService
+      ]
     })
       .overrideProvider(StripeCustomerService)
       .useValue(mockStripeCustomerService)
@@ -32,6 +46,12 @@ describe(OrganizationService.name, () => {
       .useValue(mockOrganizationRepository)
       .overrideProvider(UserRepository)
       .useValue(mockUserRepository)
+      .overrideProvider(SendgridService)
+      .useValue(mockSendgridService)
+      .overrideProvider(InviteService)
+      .useValue(mockInviteService)
+      .overrideProvider(ConfigService)
+      .useValue(mockConfigService)
       .compile()
     service = module.get<OrganizationService>(OrganizationService)
   })
@@ -40,6 +60,7 @@ describe(OrganizationService.name, () => {
     mockReset(mockStripeCustomerService)
     mockReset(mockUserRepository)
     mockReset(mockOrganizationRepository)
+    mockReset(mockSendgridService)
   })
 
   describe(OrganizationService.prototype.createOrganization.name, () => {
@@ -484,6 +505,239 @@ describe(OrganizationService.name, () => {
       if (expectedResult) {
         await expect(pendingResult).resolves.toEqual(expectedResult)
         expect(mockOrganizationRepository.updateOrganization).toHaveBeenCalledWith(expectedParams.organizationUpdate)
+      } else {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      }
+    })
+  })
+
+  describe(OrganizationService.prototype.sendInviteToOrganization.name, () => {
+    it.each<{
+      name: string
+      params: Parameters<typeof OrganizationService.prototype.sendInviteToOrganization>
+      setupMocks: () => void
+      expectedResult?: boolean
+      expectedError?: Error
+    }>([
+      {
+        name: 'should send email to unregistered user',
+        params: [{ organizationId: 1, organizationName: 'Some org', recipientEmail: 'mail@gmail.com' }],
+        setupMocks: () => {
+          mockSendgridService.sendEmail.mockReturnThis()
+        },
+        expectedResult: true
+      },
+      {
+        name: 'should send email to registered user',
+        params: [{ organizationId: 1, organizationName: 'Some org', recipientEmail: 'mail@gmail.com', userId: 1 }],
+        setupMocks: () => {
+          mockConfigService.get.mockReturnValueOnce('dbb.com')
+          mockSendgridService.sendEmail.mockReturnThis()
+          mockInviteService.createInvite.mockResolvedValueOnce(defaultInviteEntity(1))
+        },
+        expectedResult: true
+      },
+      {
+        name: 'should throw error if send email fails',
+        params: [{ organizationId: 1, organizationName: 'Some org', recipientEmail: 'mail@gmail.com' }],
+        setupMocks: () => {
+          mockSendgridService.sendEmail.mockRejectedValueOnce(new Error())
+        }
+      }
+    ])('$name', async ({ params, setupMocks, expectedResult, expectedError }) => {
+      setupMocks()
+
+      const pendingResult = service.sendInviteToOrganization(...params)
+
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      }
+    })
+  })
+
+  describe(OrganizationService.prototype.addUserToOrganization.name, () => {
+    it.each<{
+      name: string
+      params: Parameters<typeof OrganizationService.prototype.addUserToOrganization>
+      setupMocks: () => void
+      expectedResult?: boolean
+      expectedError?: Error
+    }>([
+      {
+        name: 'should add user to organization',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(defaultOrganization)
+          mockUserRepository.doesUserExist.mockResolvedValueOnce(true)
+          mockUserRepository.getOrganizationUsers.mockResolvedValueOnce([])
+          mockOrganizationRepository.addUser.mockResolvedValueOnce(1)
+        },
+        expectedResult: true
+      },
+      {
+        name: 'should throw error if organization does not exist',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(null)
+        },
+        expectedError: new NotFoundError('Organization with Id 1 does not exist')
+      },
+      {
+        name: 'should throw error if user does not exist',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(defaultOrganization)
+          mockUserRepository.doesUserExist.mockResolvedValueOnce(false)
+        },
+        expectedError: new NotFoundError('User with Id 1 does not exist')
+      },
+      {
+        name: 'should throw error if user already exists in organization',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(defaultOrganization)
+          mockUserRepository.doesUserExist.mockResolvedValueOnce(true)
+          mockUserRepository.getOrganizationUsers.mockResolvedValueOnce([defaultUserEntity(1)])
+        },
+        expectedError: new BadRequestException(`User with Id 1 already exists in organization ${defaultOrganization.name}`)
+      },
+      {
+        name: 'should throw error if organization quantity is exceeded',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce({...defaultOrganization, quantity:1})
+          mockUserRepository.doesUserExist.mockResolvedValueOnce(true)
+          mockUserRepository.getOrganizationUsers.mockResolvedValueOnce([defaultUserEntity(2)])
+        },
+        expectedError: new BadRequestException('Cannot add user to organization, increase your organization quantity')
+      }
+    ])('$name', async ({ params, setupMocks, expectedResult, expectedError }) => {
+      setupMocks()
+
+      const pendingResult = service.addUserToOrganization(...params)
+
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      }
+    })
+  })
+
+  describe(OrganizationService.prototype.acceptInvite.name, () => {
+    it.each<{
+      name: string
+      params: Parameters<typeof OrganizationService.prototype.acceptInvite>
+      setupMocks: () => void
+      expectedResult?: boolean
+      expectedError?: Error
+    }>([
+      {
+        name: 'should accept an invite',
+        params: [{ inviteId: 1, userId: 1, organizationId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(defaultOrganization)
+          mockInviteService.getInviteById.mockResolvedValueOnce(defaultInviteEntity(1))
+          mockInviteService.acceptInvite.mockResolvedValueOnce(true)
+          mockUserRepository.doesUserExist.mockResolvedValueOnce(true)
+          mockUserRepository.getOrganizationUsers.mockResolvedValueOnce([])
+        },
+        expectedResult: true
+      },
+      {
+        name: 'should throw error if invite does not exist',
+        params: [{ inviteId: 1, userId: 1, organizationId: 1 }],
+        setupMocks: () => {
+          mockInviteService.getInviteById.mockResolvedValueOnce(null)
+        },
+        expectedError: new NotFoundError(
+          `Invite with Id 1 to organization with Id 1 for user 1 not found`
+        )
+      },
+      {
+        name: 'should throw error if invite already been accepted',
+        params: [{ inviteId: 1, userId: 1, organizationId: 1 }],
+        setupMocks: () => {
+          mockInviteService.getInviteById.mockResolvedValueOnce({...defaultInviteEntity(1), status: InviteStatus.Accepted})
+        },
+        expectedError: new BadRequestException(`Invite with Id 1 already accepted`)
+      },
+      {
+        name: 'should throw error if invite already been cancelled',
+        params: [{ inviteId: 1, userId: 1, organizationId: 1 }],
+        setupMocks: () => {
+          mockInviteService.getInviteById.mockResolvedValueOnce({...defaultInviteEntity(1), status: InviteStatus.Cancelled})
+        },
+        expectedError: new BadRequestException(`Invite with Id 1 already cancelled, create new invite`)
+      }
+    ])('$name', async ({ params, setupMocks, expectedResult, expectedError }) => {
+      setupMocks()
+
+      const pendingResult = service.acceptInvite(...params)
+
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      }
+    })
+  })
+
+  describe(OrganizationService.prototype.removeUserFromOrganization.name, () => {
+    it.each<{
+      name: string
+      params: Parameters<typeof OrganizationService.prototype.removeUserFromOrganization>
+      setupMocks: () => void
+      expectedResult?: boolean
+      expectedError?: Error
+    }>([
+      {
+        name: 'should remove user from organization',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(defaultOrganization)
+          mockUserRepository.doesUserExist.mockResolvedValueOnce(true)
+          mockUserRepository.getOrganizationUsers.mockResolvedValueOnce([defaultUserEntity(1)])
+          mockOrganizationRepository.removeUserFromOrganization.mockResolvedValueOnce(1)
+        },
+        expectedResult: true
+      },
+      {
+        name: 'should throw error if user does not exist in organization',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(defaultOrganization)
+          mockUserRepository.doesUserExist.mockResolvedValueOnce(true)
+          mockUserRepository.getOrganizationUsers.mockResolvedValueOnce([])
+        },
+        expectedError: new BadRequestException('User with id 1 is not a member of organization')
+      },
+      {
+        name: 'should throw error if organization does not exist',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(null)
+        },
+        expectedError: new NotFoundError('Organization with Id 1 does not exist')
+      },
+      {
+        name: 'should throw error if user does not exist',
+        params: [{ organizationId: 1, userId: 1 }],
+        setupMocks: () => {
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce(defaultOrganization)
+          mockUserRepository.doesUserExist.mockResolvedValueOnce(false)
+        },
+        expectedError: new NotFoundError('User with Id 1 does not exist')
+      } 
+    ])('$name', async ({ params, setupMocks, expectedResult, expectedError }) => {
+      setupMocks()
+
+      const pendingResult = service.removeUserFromOrganization(...params)
+
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
       } else {
         await expect(pendingResult).rejects.toThrow(expectedError)
       }

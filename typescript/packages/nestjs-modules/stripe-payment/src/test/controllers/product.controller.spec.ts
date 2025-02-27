@@ -1,11 +1,12 @@
 import { jest } from '@jest/globals'
 import { beforeEach, expect } from '@jest/globals'
 import { Test, TestingModule } from '@nestjs/testing'
-import { createProductDto, defaultProduct, deletedProduct } from '../mocks/index.js'
-import { ProductController } from '../../controllers/product.controller.js'
-import { ProductService } from '../../services/product.service.js'
 import { ArgumentError, NotFoundError } from '@dbbs/common'
 import { LoggerModule } from '@dbbs/nestjs-module-logger'
+
+import { ProductController } from '../../controllers/index.js'
+import { ProductService } from '../../services/index.js'
+import { createProductDto, defaultProduct, deletedProduct } from '../mocks/index.js'
 
 describe('ProductController', () => {
   let controller: ProductController

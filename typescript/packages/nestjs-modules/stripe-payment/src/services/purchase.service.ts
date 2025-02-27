@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { NotFoundError } from '@dbbs/common'
-import { OrganizationRepository } from '../repositories/organization.repository.js'
+
+import { OrganizationRepository, PurchaseRepository } from '../repositories/index.js'
 import { IPaginatedResponse, IPaginationOptions, IPurchase } from '../interfaces/index.js'
-import { PurchaseRepository } from '../repositories/purchase.repository.js'
 
 @Injectable()
 export class PurchaseService {

@@ -6,7 +6,6 @@ const meta: Meta<typeof Badge> = {
   title: 'Badge',
   component: Badge,
   tags: ['autodocs'],
-  subcomponents: { Avatar },
   argTypes: {
     variant: {
       options: ['dot', 'standard'],

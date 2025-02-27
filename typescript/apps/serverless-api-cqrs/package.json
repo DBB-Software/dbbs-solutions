@@ -15,7 +15,8 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --forceExit --coverage --verbose --testTimeout=10000000 --detectOpenHandles",
     "watch": "npx tsc -w --preserveWatchOutput",
     "docs:generate": "npx compodoc -p tsconfig.json",
-    "docs:serve": "yarn docs:generate -s"
+    "docs:serve": "yarn docs:generate -s",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@dbbs/common": "*",
@@ -23,25 +24,25 @@
     "@dbbs/nestjs-module-health": "*",
     "@dbbs/nestjs-module-logger": "*",
     "@dbbs/s3-log-transport": "*",
-    "@middy/core": "4.7.0",
-    "@middy/do-not-wait-for-empty-event-loop": "4.7.0",
-    "@middy/http-security-headers": "4.7.0",
-    "@middy/input-output-logger": "4.7.0",
-    "@nestjs/axios": "3.0.3",
-    "@nestjs/common": "10.4.1",
-    "@nestjs/config": "3.2.3",
-    "@nestjs/core": "10.4.1",
-    "@nestjs/cqrs": "10.2.7",
+    "@middy/core": "5.5.1",
+    "@middy/do-not-wait-for-empty-event-loop": "5.5.1",
+    "@middy/http-security-headers": "5.5.1",
+    "@middy/input-output-logger": "5.5.1",
+    "@nestjs/axios": "4.0.0",
+    "@nestjs/common": "11.0.10",
+    "@nestjs/config": "4.0.0",
+    "@nestjs/core": "11.0.10",
+    "@nestjs/cqrs": "10.2.8",
     "@nestjs/mapped-types": "^2.0.5",
-    "@nestjs/passport": "10.0.3",
-    "@nestjs/platform-express": "10.4.1",
+    "@nestjs/passport": "11.0.5",
+    "@nestjs/platform-express": "10.4.6",
     "@nestjs/terminus": "10.2.3",
     "@serdnam/pino-cloudwatch-transport": "1.0.4",
-    "@types/aws-lambda": "8.10.145",
+    "@types/aws-lambda": "8.10.147",
     "@vendia/serverless-express": "4.12.6",
-    "express": "4.19.2",
-    "form-data": "4.0.0",
-    "helmet": "7.1.0",
+    "express": "4.21.1",
+    "form-data": "4.0.1",
+    "helmet": "8.0.0",
     "jwks-rsa": "3.1.0",
     "knex": "^3.1.0",
     "nestjs-knex": "^2.0.0",
@@ -50,12 +51,12 @@
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.1",
     "sqlite3": "5.1.7",
-    "uuid": "9.0.1"
+    "uuid": "11.1.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "@types/uuid": "9"
+    "@types/uuid": "10"
   }
 }

@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import { SubscriptionService as StripeSubscriptionService } from '@dbbs/nestjs-module-stripe'
 import { ArgumentError, NotFoundError } from '@dbbs/common'
-import { SubscriptionRepository } from '../repositories/subscription.repository.js'
+
+import {
+  SubscriptionRepository,
+  OrganizationRepository,
+  PlanRepository,
+  CheckoutSessionMetadataRepository,
+  UserRepository
+} from '../repositories/index.js'
 import {
   ICreateCheckoutSessionParams,
   IPaginatedResponse,
@@ -10,9 +17,6 @@ import {
   ISubscription
 } from '../interfaces/index.js'
 import { PlanType, SubscriptionStatus, SubscriptionStatusId } from '../enums/index.js'
-import { OrganizationRepository } from '../repositories/organization.repository.js'
-import { PlanRepository } from '../repositories/plan.repository.js'
-import { CheckoutSessionMetadataRepository } from '../repositories/checkoutSessionMetadata.repository.js'
 
 @Injectable()
 export class SubscriptionService {
@@ -21,6 +25,7 @@ export class SubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly organizationRepository: OrganizationRepository,
     private readonly planRepository: PlanRepository,
+    private readonly userRepository: UserRepository,
     private readonly checkoutSessionMetadataRepository: CheckoutSessionMetadataRepository
   ) {}
 
@@ -35,40 +40,6 @@ export class SubscriptionService {
     return subscription
   }
 
-  private async resolveOrganizationIdentifiers(
-    organizationName?: string,
-    organizationId?: number
-  ): Promise<{ name: string; stripeCustomerId?: string }> {
-    if (!organizationName && !organizationId) {
-      throw new ArgumentError('Either organizationName or organizationId must be provided')
-    }
-
-    if (organizationName) {
-      const organizationExists = await this.organizationRepository.organizationExistsByName(organizationName)
-      if (organizationExists) {
-        throw new Error(`Organization '${organizationName}' already exists`)
-      }
-      return { name: organizationName }
-    }
-
-    const organization = await this.organizationRepository.getOrganizationById(organizationId!)
-    if (!organization) {
-      throw new NotFoundError(`Organization with ID ${organizationId} was not found`)
-    }
-
-    const subscriptionStatusId = await this.subscriptionRepository.getStatusIdByOrganizationId(organizationId!)
-    if (subscriptionStatusId !== SubscriptionStatusId.CANCELED) {
-      throw new Error(
-        `Cannot create a checkout session for organization with ID ${organizationId} as it has a non-canceled subscription`
-      )
-    }
-
-    return {
-      name: organization.name,
-      stripeCustomerId: organization.stripeCustomerId
-    }
-  }
-
   private async getValidPlanById(planId: number): Promise<IPlan> {
     const plan = await this.planRepository.getPlanById(planId)
     if (!plan) {
@@ -81,9 +52,17 @@ export class SubscriptionService {
   }
 
   async createCheckoutSession(params: ICreateCheckoutSessionParams): Promise<string> {
-    const { userId, planId, quantity, successUrl, organizationName, organizationId } = params
+    const { userId, planId, quantity, successUrl, organizationId } = params
 
-    const { name, stripeCustomerId } = await this.resolveOrganizationIdentifiers(organizationName, organizationId)
+    const organization = await this.organizationRepository.getOrganizationById(organizationId)
+    if (!organization) {
+      throw new Error(`Cannot create checkout session for non existing organization with ID ${organizationId}`)
+    }
+
+    const userExists = await this.userRepository.doesUserExist(userId)
+    if (!userExists) {
+      throw new Error(`Cannot create checkout session as a user with ID ${userId} does not exist`)
+    }
 
     const plan = await this.getValidPlanById(planId)
 
@@ -94,7 +73,7 @@ export class SubscriptionService {
         type: plan.type
       },
       quantity,
-      ...(stripeCustomerId && { customerId: stripeCustomerId })
+      customerId: organization.stripeCustomerId
     })
 
     if (!session.url) {
@@ -103,9 +82,8 @@ export class SubscriptionService {
 
     await this.checkoutSessionMetadataRepository.saveMetadata({
       checkoutSessionStripeId: session.id,
-      organizationName: name,
+      organizationId,
       planId: plan.id,
-      userId,
       quantity
     })
 

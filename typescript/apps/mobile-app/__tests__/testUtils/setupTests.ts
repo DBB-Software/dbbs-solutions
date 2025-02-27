@@ -1,6 +1,7 @@
 import '@testing-library/react-native/extend-expect'
 
 import fetchMock from 'jest-fetch-mock'
+import mockSafeAreaContext from 'react-native-safe-area-context/jest/mock'
 
 beforeAll(() => {
   jest.clearAllMocks()
@@ -10,6 +11,8 @@ beforeAll(() => {
 afterAll(() => {
   fetchMock.disableMocks()
 })
+
+jest.mock('react-native-safe-area-context', () => mockSafeAreaContext)
 
 jest.mock('@react-native-firebase/remote-config', () => ({
   __esModule: true,
@@ -97,5 +100,26 @@ jest.mock('@dbbs/react-localization-provider', () => ({
   initReactI18next: {
     type: '3rdParty',
     init: () => {}
+  }
+}))
+
+jest.mock('react-native-branch', () => ({
+  __esModule: true,
+  BranchParams: jest.fn(),
+  default: {
+    initSession: jest.fn(),
+    createBranchUniversalObject: jest.fn().mockReturnValue({
+      generateShortUrl: jest.fn(),
+      showShareSheet: jest.fn()
+    }),
+    STANDARD_EVENT_ADD_TO_CART: 'ADD_TO_CART',
+    OS: 'ios',
+    subscribe: jest.fn((callback) => {
+      callback({
+        error: null,
+        params: { mockKey: 'mockValue' }
+      })
+      return jest.fn()
+    })
   }
 }))

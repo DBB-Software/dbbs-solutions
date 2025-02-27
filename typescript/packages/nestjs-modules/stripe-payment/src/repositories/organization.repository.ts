@@ -4,9 +4,11 @@ import { InjectConnection } from 'nest-knexjs'
 
 import { SubscriptionRepository } from './subscription.repository.js'
 import {
+  AddUserToOrganizationPayload,
   CreateOrganizationPayload,
   OrganizationDbRecord,
   PaginationOptions,
+  RemoveUserFromOrganizationPayload,
   UpdateOrganizationPayload
 } from '../types/index.js'
 import { OrganizationEntity } from '../entites/index.js'
@@ -168,6 +170,11 @@ export class OrganizationRepository {
     )
   }
 
+  async addUser(payload: AddUserToOrganizationPayload): Promise<number> {
+    const [recordId] = await this.knexConnection('organizations_users').insert(payload)
+    return recordId
+  }
+
   async updateOrganization(payload: UpdateOrganizationPayload): Promise<OrganizationEntity | null> {
     const { id, ...fieldsToUpdate } = payload
 
@@ -192,5 +199,9 @@ export class OrganizationRepository {
       .orderBy('organizations.id', 'asc')
 
     return organizations.map(OrganizationRepository.toJSON)
+  }
+
+  removeUserFromOrganization({ organizationId, userId }: RemoveUserFromOrganizationPayload): Promise<number> {
+    return this.knexConnection('organizations_users').delete().where({ organizationId, userId })
   }
 }

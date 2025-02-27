@@ -1,5 +1,4 @@
 import { BillingPeriod, PlanType } from '../enums'
-import { Product } from './product.interface'
 
 export interface CreatePlanParams {
   price: number
@@ -20,7 +19,11 @@ export interface Plan {
   price: number
   interval: BillingPeriod
   stripe_id: string
-  product: Product
+  product: {
+    name: string
+    id: number
+    stripe_id: string
+  }
 }
 
 export interface CreateStripePriceParams {

@@ -3,15 +3,15 @@ import { TransactionStatus } from '../enums/index.js'
 export class TransactionDto {
   id: number
 
-  subscriptionId: number
-
   organizationId: number
 
-  purchaseId: number
+  stripeInvoiceId: string
 
   status: TransactionStatus
 
-  stripeInvoiceId: string
+  subscriptionId?: number
+
+  purchaseId?: number
 
   createdAt: Date
 

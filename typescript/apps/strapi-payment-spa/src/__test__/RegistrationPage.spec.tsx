@@ -8,6 +8,11 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 describe('<RegistrationPage />', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+    jest.clearAllTimers()
+  })
+
   const mockedUseNavigate = useNavigate as jest.Mock
 
   beforeEach(() => {

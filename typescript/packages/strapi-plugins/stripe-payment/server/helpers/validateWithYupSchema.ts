@@ -1,12 +1,12 @@
 import * as yup from 'yup'
-import { errors } from '@strapi/utils'
+import createHttpError from 'http-errors'
 
-export async function validateWithYupSchema(schema: yup.Schema, data: unknown): Promise<void> {
+export async function validateWithYupSchema(schema: yup.Schema, data: unknown): Promise<object> {
   try {
-    await schema.validate(data)
+    return await schema.validate(data, { stripUnknown: true })
   } catch (error) {
     if (error instanceof yup.ValidationError) {
-      throw new errors.ValidationError(error.errors.join(', '))
+      throw new createHttpError.BadRequest(`Validation failed: ${error.errors.join(', ')}`)
     }
     throw error
   }

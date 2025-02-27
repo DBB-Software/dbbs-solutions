@@ -1,0 +1,27 @@
+{
+  "name": "@dbbs/react-google-maps",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
+    "test": "npx jest --coverage --verbose",
+    "build": "npx tsc --build tsconfig.json",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
+  },
+  "dependencies": {
+    "@googlemaps/markerclusterer": "2.5.3",
+    "@vis.gl/react-google-maps": "1.4.2"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  }
+}

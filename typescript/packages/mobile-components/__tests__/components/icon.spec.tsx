@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react-native'
-import { CustomIcon } from '../../src'
-import { IconManagerType } from '../../src/utils'
+import { CustomIcon, IconManagerType } from '../../src'
 
 describe('CustomIcon', () => {
   const testData = [

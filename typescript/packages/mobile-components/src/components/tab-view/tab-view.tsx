@@ -9,8 +9,8 @@ import {
 } from 'react-native-tab-view'
 import type { Props as RNTabViewProps } from 'react-native-tab-view/lib/typescript/src/TabView'
 import { Text } from 'react-native-paper'
-import type { ItemTypeFromArray } from '../../types'
-import { useAppTheme } from '../../hooks'
+import type { ItemTypeFromArray } from '../../shared/types'
+import { useAppTheme } from '../../shared/hooks'
 import { makeStyles } from './styles'
 
 const DEFAULT_ACTIVE_TAB_INDEX = 0

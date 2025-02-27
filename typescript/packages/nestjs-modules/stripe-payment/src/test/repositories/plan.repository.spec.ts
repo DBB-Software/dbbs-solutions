@@ -1,5 +1,6 @@
 import knex from 'knex'
-import { PlanRepository } from '../../repositories/plan.repository.js'
+
+import { PlanRepository } from '../../repositories/index.js'
 import { createPlansTable, createProductsTable } from '../factories/database.js'
 import {
   createdOneTimePlan,

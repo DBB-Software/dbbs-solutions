@@ -2,21 +2,19 @@ import { Global, Module, DynamicModule } from '@nestjs/common'
 import { APP_FILTER } from '@nestjs/core'
 import * as Sentry from '@sentry/node'
 import { SentryGlobalFilter } from '@sentry/nestjs/setup'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { Logger } from '@dbbs/nestjs-module-logger'
+import { nodeProfilingIntegration } from '@sentry/profiling-node'
 
-export interface ISentryModuleOptions extends Sentry.NodeOptions {}
-
-const SENTRY_PROVIDER = 'SENTRY_PROVIDER'
+export const SENTRY_PROVIDER = 'SENTRY_PROVIDER'
 
 @Global()
 @Module({})
-export class SentryModule {
-  static forRoot(options: ISentryModuleOptions = {}): DynamicModule {
-    const { dsn = process.env.SENTRY_DSN } = options
-
+class SentryModule {
+  static forRootAsync(): DynamicModule {
     return {
       module: SentryModule,
-      imports: [],
+      imports: [ConfigModule],
       providers: [
         {
           provide: APP_FILTER,
@@ -24,17 +22,38 @@ export class SentryModule {
         },
         {
           provide: SENTRY_PROVIDER,
-          useFactory: async (logger: Logger) => {
+          useFactory: async (configService: ConfigService, logger: Logger) => {
+            const dsn = configService.get<string>('SENTRY_DSN')
+            const environment = configService.get<string>('NODE_ENV', 'development')
+            const tracesSampleRate = configService.get<number>('SENTRY_TRACES_SAMPLE_RATE', 1.0)
+            const profilesSampleRate = configService.get<number>('SENTRY_PROFILES_SAMPLE_RATE', 1.0)
+
             if (!dsn) {
               logger.warn('Sentry DSN is not provided')
+              return null
             }
 
-            return Sentry.init({ ...options, dsn })
+            Sentry.init({
+              dsn,
+              environment,
+              integrations: [nodeProfilingIntegration()],
+              tracesSampleRate,
+              profilesSampleRate
+            })
+
+            logger.info('Sentry initialized successfully')
+            return Sentry
           },
-          inject: [Logger]
+          inject: [ConfigService, Logger]
+        },
+        {
+          provide: APP_FILTER,
+          useClass: SentryGlobalFilter
         }
       ],
-      exports: [SentryModule]
+      exports: [SENTRY_PROVIDER]
     }
   }
 }
+
+export { SentryModule }

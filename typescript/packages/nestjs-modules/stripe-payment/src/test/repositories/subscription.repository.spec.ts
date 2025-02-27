@@ -1,5 +1,6 @@
 import knex from 'knex'
-import { SubscriptionRepository } from '../../repositories/subscription.repository.js'
+
+import { SubscriptionRepository } from '../../repositories/index.js'
 import {
   createOrganizationsTable,
   createPlansTable,
@@ -11,11 +12,12 @@ import {
   dbOrganizationsList,
   dbPlansList,
   dbSubscriptionsList,
-  populatedSubscriptionEntity,
-  defaultSubscriptionEntity,
-  secondSubscriptionEntity,
   dbUsersList,
-  resubscribedDbSubscription
+  defaultSubscriptionEntity,
+  populatedSubscriptionEntity,
+  resubscribedDbSubscription,
+  secondSubscriptionEntity,
+  thirdSubscriptionEntity
 } from '../mocks/index.js'
 import { SubscriptionStatusId } from '../../enums/index.js'
 import { TEST_DB_PATH } from '../../constants.js'
@@ -102,6 +104,34 @@ describe('SubscriptionRepository', () => {
     })
   })
 
+  describe(SubscriptionRepository.prototype.getSubscriptionByStripeId.name, () => {
+    const testCases = [
+      {
+        description: 'should return the correct subscription by StripeId with populated fields',
+        repositoryMethodArgs: { stripeId: `sub_${getId(1)}`, populate: true },
+        expected: populatedSubscriptionEntity(baseId)
+      },
+      {
+        description: 'should return the correct subscription by StripeId without populated fields',
+        repositoryMethodArgs: { stripeId: `sub_${getId(1)}`, populate: false },
+        expected: defaultSubscriptionEntity(baseId)
+      },
+      {
+        description: 'should return null if subscription does not exist',
+        repositoryMethodArgs: { stripeId: `sub_${getId(999)}`, populate: true },
+        expected: null
+      }
+    ]
+
+    it.each(testCases)('$description', async ({ repositoryMethodArgs, expected }) => {
+      const { stripeId, populate } = repositoryMethodArgs
+
+      const result = await subscriptionRepository.getSubscriptionByStripeId(stripeId, populate)
+
+      expect(result).toEqual(expected)
+    })
+  })
+
   describe('getStatusIdByOrganizationId', () => {
     const testCases = [
       {
@@ -164,6 +194,49 @@ describe('SubscriptionRepository', () => {
 
       const result = await subscriptionRepository.updateSubscriptionQuantity(id, quantity)
       expect(result).toEqual(expectedResult)
+    })
+  })
+
+  describe('updateSubscriptionPlan', () => {
+    const testCases = [
+      {
+        description: "should update subscription's plan",
+        repositoryMethodArgs: { id: getId(3), planId: getId(2) },
+        expectedResult: { ...thirdSubscriptionEntity(baseId), plan: getId(2) }
+      },
+      {
+        description: 'should return null if subscription does not exist',
+        repositoryMethodArgs: { id: getId(999), planId: getId(2) },
+        expectedResult: null
+      }
+    ]
+
+    it.each(testCases)('$description', async ({ repositoryMethodArgs, expectedResult }) => {
+      const { id, planId } = repositoryMethodArgs
+
+      const result = await subscriptionRepository.updateSubscriptionPlan(id, planId)
+      expect(result).toEqual(expectedResult)
+    })
+  })
+
+  describe('Create subscription', () => {
+    it('should successfully create a subscription', async () => {
+      const countSubscriptions = async (): Promise<number> => {
+        const result = await db('subscriptions').count({ count: '*' }).first<{ count: string | number }>()
+        return Number(result.count)
+      }
+
+      const countBeforeInsert = await countSubscriptions()
+      await subscriptionRepository.createSubscription({
+        stripeId: `sub_${getId(16)}`,
+        planId: getId(1),
+        organizationId: getId(9),
+        quantity: 3,
+        statusId: SubscriptionStatusId.ACTIVE
+      })
+      const countAfterInsert = await countSubscriptions()
+
+      expect(countAfterInsert).toBe(countBeforeInsert + 1)
     })
   })
 

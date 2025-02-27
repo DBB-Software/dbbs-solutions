@@ -14,7 +14,8 @@
     "docs:serve": "yarn docs:generate -s",
     "config:export": "config-sync export",
     "config:import": "config-sync import",
-    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0"
+    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@ckeditor/strapi-plugin-ckeditor": "0.0.13",
@@ -28,6 +29,7 @@
     "@strapi/plugin-users-permissions": "4.25.8",
     "@strapi/strapi": "4.25.8",
     "better-sqlite3": "10.1.0",
+    "jsonwebtoken": "9.0.2",
     "pg": "8.12.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -39,7 +41,8 @@
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
-    "@dbbs/tsconfig": "*"
+    "@dbbs/tsconfig": "*",
+    "@types/jsonwebtoken": "9"
   },
   "author": {
     "name": "DBBSoftware"

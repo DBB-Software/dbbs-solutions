@@ -12,7 +12,8 @@
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "start": "npx next start",
     "test": "npx jest --coverage --verbose",
-    "analyze": "ANALYZE=true yarn build"
+    "analyze": "ANALYZE=true yarn build",
+    "check-types": "npx tsc -p ./tsconfig.spec.json --pretty --noEmit"
   },
   "dependencies": {
     "@dbbs/next-serverless-deployment": "1.0.0",

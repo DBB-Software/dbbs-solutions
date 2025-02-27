@@ -3,7 +3,7 @@ from typing import Iterator, Any
 from unittest.mock import patch, MagicMock
 
 import pytest
-from fastapi.security import SecurityScopes, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials
 
 from fastapi_authz.settings import settings
 from fastapi_authz.auth import Auth0
@@ -14,7 +14,6 @@ MOCK_ENV = {
     "domain": "test.auth0.com",
     "api_audience": "https://test-api",
     "issuer": "https://test.auth0.com/",
-    "algorithms": "RS256",
 }
 
 
@@ -32,14 +31,6 @@ def auth0_instance() -> Auth0:
     Fixture to create an instance of Auth0.
     """
     return Auth0()
-
-
-@pytest.fixture
-def mock_security_scopes() -> SecurityScopes:
-    """
-    Fixture to mock a SecurityScopes.
-    """
-    return SecurityScopes()
 
 
 @pytest.fixture
@@ -64,7 +55,7 @@ def mock_jwks_client() -> Iterator[Any]:
 
 
 @pytest.fixture
-def patch_settings(request) -> Iterator[Settings]:
+def patch_settings(request: pytest.FixtureRequest) -> Iterator[Settings]:
     """
     Fixture to set up settings with optional overridden MOCK_ENV.
     """

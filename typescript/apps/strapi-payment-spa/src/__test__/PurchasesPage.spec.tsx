@@ -8,6 +8,11 @@ jest.mock('js-cookie', () => ({
   get: jest.fn().mockResolvedValue({ jwt: 'jwt' })
 }))
 describe('<PurchasesPage />', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+    jest.clearAllTimers()
+  })
+
   const renderComponent = () => {
     fetchMock.mockResponseOnce(JSON.stringify(mockInitialProductsArray))
 
@@ -16,7 +21,7 @@ describe('<PurchasesPage />', () => {
 
   it('should render by default', async () => {
     renderComponent()
-    expect(screen.getByText('Purchases')).toBeVisible()
+    expect(await screen.findByText('Purchases')).toBeVisible()
   })
 
   it('should render card with data', async () => {

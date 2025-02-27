@@ -1,5 +1,5 @@
+import createHttpError from 'http-errors'
 import { factories } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import {
   AcceptInviteParams,
   AddUserParams,
@@ -9,7 +9,8 @@ import {
   GetOrganizationByIdParams,
   GetPaymentMethodParams,
   UpdateOrganizationParams,
-  UpdateOwnerParams
+  UpdateOwnerParams,
+  RemoveUserParams
 } from '../interfaces'
 import {
   createOrganizationSchema,
@@ -21,50 +22,64 @@ import {
   removeUserSchema,
   acceptInviteSchema,
   getDefaultPaymentMethodSchema,
-  updateDefaultPaymentMethodSchema
+  updateDefaultPaymentMethodSchema,
+  createOrganizationByAdminSchema
 } from '../validationSchemas'
 import { validateWithYupSchema } from '../helpers'
 
 export default factories.createCoreController('plugin::stripe-payment.organization', ({ strapi }) => ({
   async create(ctx) {
     const { name, email, quantity } = ctx.request.body as Omit<CreateOrganizationParams, 'ownerId'>
-    const { user } = ctx.state
+    const {
+      user: { id: ownerId }
+    } = ctx.state
 
-    await validateWithYupSchema(createOrganizationSchema, ctx.request.body)
+    const validatedParams = await validateWithYupSchema(createOrganizationSchema, { name, email, quantity })
 
-    const organization = await strapi.plugin('stripe-payment').service('organization').create({
-      ownerId: user.id,
-      name,
-      email,
-      quantity
-    })
+    const organization = await strapi
+      .plugin('stripe-payment')
+      .service('organization')
+      .create({
+        ownerId,
+        ...validatedParams
+      })
 
+    if (!organization) {
+      throw new createHttpError.NotFound(`Cannot create an organization as the owner with ID ${ownerId} was not found`)
+    }
     ctx.send(organization)
   },
 
   async createByAdmin(ctx) {
     const { name, ownerId, email, quantity } = ctx.request.body as CreateOrganizationParams
 
-    await validateWithYupSchema(createOrganizationSchema, ctx.request.body)
-
-    const organization = await strapi.plugin('stripe-payment').service('organization').create({
+    const validatedParams = await validateWithYupSchema(createOrganizationByAdminSchema, {
       name,
       ownerId,
       email,
       quantity
     })
+
+    const organization = await strapi.plugin('stripe-payment').service('organization').create(validatedParams)
+
+    if (!organization) {
+      throw new createHttpError.NotFound(`Cannot create an organization as the owner with ID ${ownerId} was not found`)
+    }
     ctx.send(organization)
   },
 
   async getOrganizationById(ctx) {
     const { id } = ctx.params as GetOrganizationByIdParams
 
-    await validateWithYupSchema(getOrganizationByIdSchema, { id })
+    const validatedParams = await validateWithYupSchema(getOrganizationByIdSchema, { id })
 
-    const organization = await strapi.plugin('stripe-payment').service('organization').getOrganizationById({ id })
+    const organization = await strapi
+      .plugin('stripe-payment')
+      .service('organization')
+      .getOrganizationById(validatedParams)
 
     if (!organization) {
-      throw new errors.NotFoundError(`Organization with ID ${id} was not found`)
+      throw new createHttpError.NotFound(`Organization with ID ${id} was not found`)
     }
 
     ctx.send(organization)
@@ -89,12 +104,15 @@ export default factories.createCoreController('plugin::stripe-payment.organizati
   async getDefaultPaymentMethod(ctx) {
     const { id } = ctx.params as GetPaymentMethodParams
 
-    await validateWithYupSchema(getDefaultPaymentMethodSchema, { id })
+    const validatedParams = await validateWithYupSchema(getDefaultPaymentMethodSchema, { id })
 
-    const paymentMethod = await strapi.plugin('stripe-payment').service('organization').getDefaultPaymentMethod({ id })
+    const paymentMethod = await strapi
+      .plugin('stripe-payment')
+      .service('organization')
+      .getDefaultPaymentMethod(validatedParams)
 
     if (!paymentMethod) {
-      throw new errors.NotFoundError(`Organization with ID ${id} was not found`)
+      throw new createHttpError.NotFound(`Organization with ID ${id} was not found`)
     }
 
     ctx.send(paymentMethod)
@@ -104,16 +122,12 @@ export default factories.createCoreController('plugin::stripe-payment.organizati
     const { id } = ctx.params
     const { quantity, name } = ctx.request.body as Omit<UpdateOrganizationParams, 'id'>
 
-    await validateWithYupSchema(updateOrganizationSchema, { id, quantity, name })
+    const validatedParams = await validateWithYupSchema(updateOrganizationSchema, { id, quantity, name })
 
-    const organization = await strapi.plugin('stripe-payment').service('organization').update({
-      id,
-      quantity,
-      name
-    })
+    const organization = await strapi.plugin('stripe-payment').service('organization').update(validatedParams)
 
     if (!organization) {
-      throw new errors.NotFoundError(`Organization with ID ${id} not found`)
+      throw new createHttpError.NotFound(`Organization with ID ${id} not found`)
     }
 
     ctx.send(organization)
@@ -122,12 +136,12 @@ export default factories.createCoreController('plugin::stripe-payment.organizati
   async delete(ctx) {
     const { id } = ctx.params as DeleteOrganizationParams
 
-    await validateWithYupSchema(deleteOrganizationSchema, { id })
+    const validatedParams = await validateWithYupSchema(deleteOrganizationSchema, { id })
 
-    const result = await strapi.plugin('stripe-payment').service('organization').delete({ id })
+    const result = await strapi.plugin('stripe-payment').service('organization').delete(validatedParams)
 
     if (!result) {
-      throw new errors.NotFoundError(`Organization with ID ${id} was not found`)
+      throw new createHttpError.NotFound(`Organization with ID ${id} was not found`)
     }
 
     ctx.send(result)
@@ -137,12 +151,12 @@ export default factories.createCoreController('plugin::stripe-payment.organizati
     const { id } = ctx.params
     const { ownerId } = ctx.request.body as Omit<UpdateOwnerParams, 'id'>
 
-    await validateWithYupSchema(updateOwnerSchema, { id, ownerId })
+    const validatedParams = await validateWithYupSchema(updateOwnerSchema, { id, ownerId })
 
-    const organization = await strapi.plugin('stripe-payment').service('organization').updateOwner({ id, ownerId })
+    const organization = await strapi.plugin('stripe-payment').service('organization').updateOwner(validatedParams)
 
     if (!organization) {
-      throw new errors.NotFoundError(`Organization with ID ${id} or user with ID ${ownerId} was not found`)
+      throw new createHttpError.NotFound(`Organization with ID ${id} or user with ID ${ownerId} was not found`)
     }
 
     ctx.send(organization)
@@ -151,15 +165,15 @@ export default factories.createCoreController('plugin::stripe-payment.organizati
   async createDefaultPaymentMethodUpdateCheckoutSession(ctx) {
     const { id } = ctx.params as CreateDefaultPaymentMethodUpdateCheckoutSessionParams
 
-    await validateWithYupSchema(updateDefaultPaymentMethodSchema, { id })
+    const validatedParams = await validateWithYupSchema(updateDefaultPaymentMethodSchema, { id })
 
     const checkoutSession = await strapi
       .plugin('stripe-payment')
       .service('organization')
-      .createDefaultPaymentMethodUpdateCheckoutSession({ id })
+      .createDefaultPaymentMethodUpdateCheckoutSession(validatedParams)
 
     if (!checkoutSession) {
-      throw new errors.NotFoundError(`Organization with ID ${id} was not found`)
+      throw new createHttpError.NotFound(`Organization with ID ${id} was not found`)
     }
 
     ctx.send(checkoutSession)
@@ -169,32 +183,27 @@ export default factories.createCoreController('plugin::stripe-payment.organizati
     const { id: organizationId } = ctx.params
     const { recipientEmail } = ctx.request.body as Omit<AddUserParams, 'id'>
 
-    await validateWithYupSchema(addUserSchema, { organizationId, recipientEmail })
+    const validatedParams = await validateWithYupSchema(addUserSchema, { organizationId, recipientEmail })
 
-    const organization = await strapi
-      .plugin('stripe-payment')
-      .service('organization')
-      .addUser({ organizationId, recipientEmail })
+    const organization = await strapi.plugin('stripe-payment').service('organization').addUser(validatedParams)
 
     if (!organization) {
-      throw new errors.NotFoundError(`Organization with ID ${organizationId} was not found`)
+      throw new createHttpError.NotFound(`Organization with ID ${organizationId} was not found`)
     }
 
     ctx.send(organization)
   },
 
   async removeUser(ctx) {
-    const { id, userId } = ctx.params
+    const { id: organizationId } = ctx.params
+    const { userId } = ctx.request.body as Omit<RemoveUserParams, 'organizationId'>
 
-    await validateWithYupSchema(removeUserSchema, { organizationId: id, userId })
+    const validatedParams = await validateWithYupSchema(removeUserSchema, { organizationId, userId })
 
-    const organization = await strapi
-      .plugin('stripe-payment')
-      .service('organization')
-      .removeUser({ organizationId: id, userId })
+    const organization = await strapi.plugin('stripe-payment').service('organization').removeUser(validatedParams)
 
     if (!organization) {
-      throw new errors.NotFoundError(`Organization with ID ${id} was not found`)
+      throw new createHttpError.NotFound(`Organization with ID ${organizationId} was not found`)
     }
 
     ctx.send(organization)
@@ -205,11 +214,9 @@ export default factories.createCoreController('plugin::stripe-payment.organizati
     const { user } = ctx.state
     const { token } = ctx.request.body as Omit<AcceptInviteParams, 'userId'>
 
-    const acceptInviteData = { organizationId, userId: user.id, token } as AcceptInviteParams
+    const validatedParams = await validateWithYupSchema(acceptInviteSchema, { organizationId, userId: user.id, token })
 
-    await validateWithYupSchema(acceptInviteSchema, acceptInviteData)
-
-    const result = await strapi.plugin('stripe-payment').service('organization').acceptInvite(acceptInviteData)
+    const result = await strapi.plugin('stripe-payment').service('organization').acceptInvite(validatedParams)
 
     ctx.send(result)
   }

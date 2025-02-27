@@ -18,7 +18,7 @@ export default factories.createCoreService('plugin::stripe-payment.purchase', ({
       return null
     }
 
-    return await strapi.query('plugin::stripe-payment.purchase').findMany({
+    return strapi.query('plugin::stripe-payment.purchase').findMany({
       where: {
         organization: organization.id
       },

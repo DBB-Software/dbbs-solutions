@@ -1,18 +1,20 @@
-# NestJS Modules: Usage and Testing Guide
+# Modules: Usage and Testing Guide
 
-This document describes the process for adding, testing, and integrating internal modules from the @dbbs/nestjs-modules package in a Turborepo environment. These modules are designed to simplify development by offering reusable NestJS components that can be directly copied or installed as dependencies based on project requirements.
+This document describes the process for adding, testing, and integrating internal modules from the modules folder in a Turborepo environment. These modules are designed to simplify development by offering reusable NestJS components that can be directly copied or installed as dependencies based on project requirements.
 
-## Overview
+## Nestjs Modules
+
+### Overview
 
 The @dbbs/nestjs-modules package contains NestJS modules intended to streamline application development. While the package can be installed directly, its primary purpose is to allow modules to be copied into projects using a CLI during app generation.
 
 ---
 
-## Adding a New Module
+### Adding a New Module
 
 To add a new module to the @dbbs/nestjs-modules package:
 
-### 1. Create and Test the Module in a Test Application
+#### 1. Create and Test the Module in a Test Application
 
 - Add the module to the test application (e.g., @dbbs/server-api):
 
@@ -51,7 +53,7 @@ To add a new module to the @dbbs/nestjs-modules package:
 
 ---
 
-### 2. Copy the Module to @dbbs/nestjs-modules
+#### 2. Copy the Module to @dbbs/nestjs-modules
 
 - Copy the module:
 
@@ -68,8 +70,8 @@ To add a new module to the @dbbs/nestjs-modules package:
     ```json
     "dependencies": {
         "@nestjs-modules/ioredis": "2.0.2",
-        "@nestjs/common": "10.4.1",
-        "@nestjs/config": "3.2.3",
+        "@nestjs/common": "11.0.10",
+        "@nestjs/config": "4.0.0",
         "@nestjs/mongoose": "10.1.0"
     }
     ```
@@ -91,7 +93,7 @@ To add a new module to the @dbbs/nestjs-modules package:
 
 ---
 
-### 3. Test the Module in @dbbs/nestjs-modules
+#### 3. Test the Module in @dbbs/nestjs-modules
 
 - Install @dbbs/nestjs-modules in the test application:
 
@@ -112,9 +114,9 @@ To add a new module to the @dbbs/nestjs-modules package:
   - Ensure all functionality remains consistent after integration with the @dbbs/nestjs-modules package.
 
 
-## Usage in Applications
+### Usage in Applications
 
-### Copying Modules Using the CLI
+#### Copying Modules Using the CLI
 
 When using the CLI for project generation:
 

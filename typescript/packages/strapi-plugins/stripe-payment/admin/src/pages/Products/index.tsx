@@ -5,14 +5,18 @@ import { AnErrorOccurred } from '@strapi/helper-plugin'
 import ProductList from './pages/ProductList'
 import ProductDetail from './pages/ProductDetail'
 
-const Products = () => {
-  return (
-    <Switch>
-      <Route path="/settings/stripe-payment/products/:id" component={ProductDetail} exact />
-      <Route path="/settings/stripe-payment/products" component={ProductList} exact />
-      <Route path="" component={AnErrorOccurred} />
-    </Switch>
-  )
-}
+const Products = () => (
+  <Switch>
+    <Route path="/settings/stripe-payment/products/:id">
+      <ProductDetail />
+    </Route>
+    <Route path="/settings/stripe-payment/products">
+      <ProductList />
+    </Route>
+    <Route path="">
+      <AnErrorOccurred />
+    </Route>
+  </Switch>
+)
 
 export default Products

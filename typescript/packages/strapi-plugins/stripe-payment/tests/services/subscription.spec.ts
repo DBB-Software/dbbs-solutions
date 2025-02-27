@@ -1,5 +1,4 @@
 import { Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import subscriptionService from '../../server/services/subscription'
 import { createMockStrapi } from '../factories'
 import { PlanType, SubscriptionStatus } from '../../server/enums'
@@ -167,7 +166,6 @@ describe('Subscription Service', () => {
         },
         queryMethod: 'findOne',
         queryArgs: { where: { id: 1 }, populate: { organization: true, plan: true } },
-        error: errors.NotFoundError
       }
     ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, queryMethod, queryArgs }) => {
       setupMocks()
@@ -276,10 +274,9 @@ describe('Subscription Service', () => {
         expectedResult: null,
         setupMocks: () => {
           jest.spyOn(strapi.query('plugin::stripe-payment.subscription'), 'findOne').mockResolvedValue(null)
-        },
-        error: errors.NotFoundError
+        }
       }
-    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, error }) => {
+    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks }) => {
       setupMocks()
 
       const result = await subscriptionService({ strapi }).cancelSubscription(serviceMethodArgs)
@@ -347,9 +344,8 @@ describe('Subscription Service', () => {
         setupMocks: () => {
           jest.spyOn(strapi.query('plugin::stripe-payment.subscription'), 'findOne').mockResolvedValue(null)
         },
-        error: errors.NotFoundError
       }
-    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, error }) => {
+    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks }) => {
       setupMocks()
 
       const result = await subscriptionService({ strapi }).pauseSubscription(serviceMethodArgs)
@@ -417,9 +413,8 @@ describe('Subscription Service', () => {
         setupMocks: () => {
           jest.spyOn(strapi.query('plugin::stripe-payment.subscription'), 'findOne').mockResolvedValue(null)
         },
-        error: errors.NotFoundError
       }
-    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, error }) => {
+    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks }) => {
       setupMocks()
 
       const result = await subscriptionService({ strapi }).resumeSubscription(serviceMethodArgs)

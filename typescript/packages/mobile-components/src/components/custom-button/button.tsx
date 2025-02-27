@@ -1,6 +1,6 @@
 import React, { FC, ComponentProps } from 'react'
 import { Button } from 'react-native-paper'
-import { IconManager, IconManagerType } from '../../utils'
+import { IconManager, IconManagerType } from '../custom-icon'
 
 export const DEFAULT_CUSTOM_BUTTON_TEST_ID = 'custom-button'
 

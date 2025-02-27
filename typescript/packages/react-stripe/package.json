@@ -1,0 +1,27 @@
+{
+  "name": "@dbbs/react-stripe",
+  "private": true,
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "lint": "eslint . --ext ts,tsx --max-warnings 0",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit",
+    "test": "npx jest --coverage --verbose",
+    "build": "npx tsc --build tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "3.1.1",
+    "@stripe/stripe-js": "5.4.0"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

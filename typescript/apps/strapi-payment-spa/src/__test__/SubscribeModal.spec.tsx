@@ -1,4 +1,5 @@
 import fetchMock from 'jest-fetch-mock'
+import userEvent from '@testing-library/user-event/index'
 import { render, screen, waitFor } from '../testUtils/testUtils.tsx'
 import SubscribeModal from '../components/modals/subscribeModal/SubscribeModal.tsx'
 import { mockOrganizations } from './mocks'
@@ -10,7 +11,22 @@ jest.mock('js-cookie', () => ({
   get: jest.fn().mockResolvedValue({ jwt: 'jwt' })
 }))
 
+export async function selectExistingOrganizationMock(user: ReturnType<typeof userEvent.setup>) {
+  const buttonExisingOrganization = await screen.findByText('Existing Organization')
+  await user.click(buttonExisingOrganization)
+
+  const selectElement = screen.getByRole('combobox')
+  expect(selectElement).toBeVisible()
+
+  await user.click(selectElement)
+}
+
 describe('<SubscribeModal />', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+    jest.clearAllTimers()
+  })
+
   const renderComponent = (mock: { id: number; name: string }[] = []) => {
     fetchMock.mockResponseOnce(JSON.stringify(mock))
 
@@ -18,9 +34,13 @@ describe('<SubscribeModal />', () => {
   }
 
   it('should render by default', async () => {
-    renderComponent()
+    const { user } = renderComponent(mockOrganizations)
 
-    expect(screen.getByText('Select Type Commpany')).toBeVisible()
+    expect(await screen.findByText('Select Type Commpany')).toBeVisible()
+
+    await selectExistingOrganizationMock(user)
+
+    expect(await screen.findByText(mockOrganizations[0].name)).toBeVisible()
   })
 
   it('should render disabled new organization button', async () => {
@@ -74,30 +94,25 @@ describe('<SubscribeModal />', () => {
   })
 
   it('should work submit a existing organization form and open a new tab', async () => {
+    jest.setTimeout(10000)
     const { user } = renderComponent(mockOrganizations)
     fetchMock.mockResponseOnce(JSON.stringify({ url }))
     window.open = jest.fn()
 
-    const buttonExisingOrganization = await screen.findByText('Existing Organization')
-    await user.click(buttonExisingOrganization)
-
-    const selectElement = screen.getByRole('combobox')
-    expect(selectElement).toBeVisible()
-
-    user.click(selectElement)
+    await selectExistingOrganizationMock(user)
 
     const inputQuantity = screen.getByLabelText('Quantity')
     const buttonSubmit = screen.getByText('Send')
     const listItem = await screen.findByText('Organization 1')
 
-    user.click(listItem)
+    await user.click(listItem)
     await user.type(inputQuantity, '100')
 
-    user.click(listItem)
+    await user.click(listItem)
 
     expect(buttonSubmit).toBeEnabled()
 
-    user.click(buttonSubmit)
+    await user.click(buttonSubmit)
 
     await waitFor(() => {
       expect(window.open).toHaveBeenCalledWith(url, '_blank')

@@ -7,8 +7,8 @@ const jestConfig: JestConfigWithTsJest = {
   ...baseConfig,
   ...tsjPreset,
   displayName: 'mobile-expo-app',
-  preset: 'jest-expo',
-  transformIgnorePatterns: ['../../../node_modules', '../packages'],
+  preset: 'react-native',
+  transformIgnorePatterns: ['../../../node_modules'],
   testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
   setupFilesAfterEnv: [
     './__tests__/testUtils/setupTests.ts',

@@ -24,6 +24,8 @@ common = {path = "../../packages/common"}
 pydantic = "2.9.2"
 httpx = "0.27.2"
 fastapi-authz = {path = "../../packages/fast-api-modules/authz"}
+fast-api-db = {path = "../../packages/fast-api-modules/sqlalchemy", extras = ["postgresql"]}
+fast-api-cloudwatch = {path = "../../packages/fast-api-modules/cloudwatch"}
 
 [tool.coverage.run]
 branch = true

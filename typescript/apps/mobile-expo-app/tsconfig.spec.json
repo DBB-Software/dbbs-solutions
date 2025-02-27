@@ -1,17 +1,19 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "types": ["jest"]
+        "types": ["jest", "node"]
     },
     "include": [
-        "./jest.config.ts",
-        "**/testUtils/**/*",
-        "**/*.test.ts",
+        "src",
+        "e2e",
+        "__tests__",
         "**/*.spec.ts",
-        "**/*.test.tsx",
         "**/*.spec.tsx",
-        "**/*.ts",
-        "**/*.tsx",
-        ".ondevice/**/*"
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "./jest.config.ts",
+        "./app.config.ts",
+        "./detox.config.ts",
+        "**/*.json"
     ]
 }

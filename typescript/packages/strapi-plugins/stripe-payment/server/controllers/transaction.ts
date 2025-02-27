@@ -2,8 +2,8 @@
  *  controller
  */
 
+import createHttpError from 'http-errors'
 import { factories, Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 
 export default factories.createCoreController(
   'plugin::stripe-payment.transaction',
@@ -16,7 +16,7 @@ export default factories.createCoreController(
       })
 
       if (!paymentTransactions) {
-        throw new errors.NotFoundError(`Organization with ownerId ${user.id} was not found`)
+        throw new createHttpError.NotFound(`Organization with ownerId ${user.id} was not found`)
       }
 
       ctx.send(paymentTransactions)

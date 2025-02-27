@@ -1,14 +1,15 @@
 import knex from 'knex'
 import {
+  dbCheckoutSessionMetadataList,
   dbOrganizationsList,
   dbOrganizationsUsersLinksList,
+  dbPurchasesList,
   dbSubscriptionsList,
+  dbTransactionsList,
   defaultDateISOString
 } from '../mocks/index.js'
 import { PlanDbRecord, ProductDbRecord, UserDbRecord } from '../../types/index.js'
-import { dbPurchasesList } from '../mocks/purchase.mock.js'
-import { dbTransactionsList } from '../mocks/transaction.mock.js'
-import { dbCheckoutSessionMetadataList } from '../mocks/checkoutSessionMetadata.mock.js'
+import { dbInvitesList } from '../mocks/invite.mock.js'
 
 export const createProductsTable = async (db: knex.Knex, data: ProductDbRecord[]) => {
   const tableExists = await db.schema.hasTable('products')
@@ -71,15 +72,9 @@ export const createUsersTable = async (db: knex.Knex, data: UserDbRecord[]) => {
   if (!tableExists) {
     await db.schema.createTable('users', (table) => {
       table.increments('id')
-      table.string('username')
+      table.string('firstname')
+      table.string('lastname')
       table.string('email')
-      table.string('provider')
-      table.string('password')
-      table.string('resetPasswordToken')
-      table.string('confirmationToken')
-      table.integer('confirmed')
-      table.integer('blocked')
-      table.integer('organizationId')
       table.string('createdAt')
       table.string('updatedAt')
     })
@@ -103,7 +98,16 @@ export const createStatusesTable = async (db: knex.Knex) => {
   if (!existingStatuses?.count) {
     await db
       .table('statuses')
-      .insert([{ status: 'trialing' }, { status: 'active' }, { status: 'cancelled' }, { status: 'paused' }])
+      .insert([
+        { status: 'trialing' },
+        { status: 'active' },
+        { status: 'cancelled' },
+        { status: 'paused' },
+        { status: 'incomplete' },
+        { status: 'incomplete_expired' },
+        { status: 'past_due' },
+        { status: 'unpaid' }
+      ])
   }
 }
 
@@ -153,7 +157,7 @@ export const createCheckoutSessionMetadataTable = async (
     await db.schema.createTable('checkout_sessions_metadata', (table) => {
       table.increments('id').primary()
       table.string('checkoutSessionStripeId')
-      table.string('organizationName')
+      table.integer('organizationId')
       table.integer('planId').unsigned()
       table.integer('userId').unsigned()
       table.integer('quantity')
@@ -218,4 +222,21 @@ export const createTransactionsTable = async (db: knex.Knex, data: ReturnType<ty
   }
 
   await db.table('transactions').insert(data)
+}
+
+export const createInviteTable = async (db: knex.Knex, data: ReturnType<typeof dbInvitesList>) => {
+  const tableExists = await db.schema.hasTable('invites')
+
+  if (!tableExists) {
+    await db.schema.createTable('invites', (table) => {
+      table.increments('id').primary()
+      table.string('email').notNullable()
+      table.integer('organizationId').unsigned()
+      table.integer('userId').unsigned()
+      table.integer('statusId').unsigned()
+      table.timestamps(true, true, true)
+    })
+  }
+
+  await db.table('invites').insert(data)
 }

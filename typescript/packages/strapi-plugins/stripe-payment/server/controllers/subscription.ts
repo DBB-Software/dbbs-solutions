@@ -1,5 +1,5 @@
 import { factories, Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
+import createHttpError from 'http-errors'
 import {
   CreateCheckoutSessionParams,
   GetSubscriptionByIdParams,
@@ -28,15 +28,20 @@ export default factories.createCoreController(
       >
       const { user } = ctx.state
 
-      await validateWithYupSchema(createCheckoutSessionSchema, { quantity, planId, organizationName, organizationId })
-
-      const checkoutSessionLink = await strapi.plugin('stripe-payment').service('subscription').createCheckoutSession({
-        userId: user.id,
+      const validatedParams = await validateWithYupSchema(createCheckoutSessionSchema, {
         quantity,
         planId,
         organizationName,
         organizationId
       })
+
+      const checkoutSessionLink = await strapi
+        .plugin('stripe-payment')
+        .service('subscription')
+        .createCheckoutSession({
+          userId: user.id,
+          ...validatedParams
+        })
 
       ctx.send({ url: checkoutSessionLink })
     },
@@ -44,12 +49,15 @@ export default factories.createCoreController(
     async getSubscriptionById(ctx) {
       const { id } = ctx.params as GetSubscriptionByIdParams
 
-      await validateWithYupSchema(getSubscriptionByIdSchema, { id })
+      const validatedParams = await validateWithYupSchema(getSubscriptionByIdSchema, { id })
 
-      const subscription = await strapi.plugin('stripe-payment').service('subscription').getSubscriptionById({ id })
+      const subscription = await strapi
+        .plugin('stripe-payment')
+        .service('subscription')
+        .getSubscriptionById(validatedParams)
 
       if (!subscription) {
-        throw new errors.NotFoundError(`Subscription with ID ${id} not found`)
+        throw new createHttpError.NotFound(`Subscription with ID ${id} not found`)
       }
 
       ctx.send(subscription)
@@ -75,12 +83,12 @@ export default factories.createCoreController(
     async cancelSubscription(ctx) {
       const { id } = ctx.params as PauseSubscriptionParams
 
-      await validateWithYupSchema(pauseSubscriptionSchema, { id })
+      const validatedParams = await validateWithYupSchema(pauseSubscriptionSchema, { id })
 
-      const result = await strapi.plugin('stripe-payment').service('subscription').cancelSubscription({ id })
+      const result = await strapi.plugin('stripe-payment').service('subscription').cancelSubscription(validatedParams)
 
       if (!result) {
-        throw new errors.NotFoundError(`Subscription with ID: ${id} not found`)
+        throw new createHttpError.NotFound(`Subscription with ID: ${id} not found`)
       }
 
       ctx.send(result)
@@ -89,12 +97,15 @@ export default factories.createCoreController(
     async pauseSubscription(ctx) {
       const { id } = ctx.params as PauseSubscriptionParams
 
-      await validateWithYupSchema(pauseSubscriptionSchema, { id })
+      const validatedParams = await validateWithYupSchema(pauseSubscriptionSchema, { id })
 
-      const subscription = await strapi.plugin('stripe-payment').service('subscription').pauseSubscription({ id })
+      const subscription = await strapi
+        .plugin('stripe-payment')
+        .service('subscription')
+        .pauseSubscription(validatedParams)
 
       if (!subscription) {
-        throw new errors.NotFoundError(`Subscription with ID: ${id} not found`)
+        throw new createHttpError.NotFound(`Subscription with ID: ${id} not found`)
       }
 
       ctx.send(subscription)
@@ -103,12 +114,15 @@ export default factories.createCoreController(
     async resumeSubscription(ctx) {
       const { id } = ctx.params as ResumeSubscriptionParams
 
-      await validateWithYupSchema(resumeSubscriptionSchema, { id })
+      const validatedParams = await validateWithYupSchema(resumeSubscriptionSchema, { id })
 
-      const subscription = await strapi.plugin('stripe-payment').service('subscription').resumeSubscription({ id })
+      const subscription = await strapi
+        .plugin('stripe-payment')
+        .service('subscription')
+        .resumeSubscription(validatedParams)
 
       if (!subscription) {
-        throw new errors.NotFoundError(`Subscription with ID: ${id} not found`)
+        throw new createHttpError.NotFound(`Subscription with ID: ${id} not found`)
       }
 
       ctx.send(subscription)
@@ -118,16 +132,15 @@ export default factories.createCoreController(
       const { id } = ctx.params
       const { quantity, planId } = ctx.request.body as Omit<UpdateSubscriptionParams, 'id'>
 
-      await validateWithYupSchema(updateSubscriptionSchema, { id, quantity, planId })
+      const validatedParams = await validateWithYupSchema(updateSubscriptionSchema, { id, quantity, planId })
 
-      const subscription = await strapi.plugin('stripe-payment').service('subscription').updateStripeSubscription({
-        id,
-        quantity,
-        planId
-      })
+      const subscription = await strapi
+        .plugin('stripe-payment')
+        .service('subscription')
+        .updateStripeSubscription(validatedParams)
 
       if (!subscription) {
-        throw new errors.NotFoundError(`Subscription with ID: ${id} not found`)
+        throw new createHttpError.NotFound(`Subscription with ID: ${id} not found`)
       }
 
       ctx.send(subscription)
@@ -136,12 +149,12 @@ export default factories.createCoreController(
     async resubscribe(ctx) {
       const { id } = ctx.params as ResubscribeParams
 
-      await validateWithYupSchema(resubscribeSchema, { id })
+      const validatedParams = await validateWithYupSchema(resubscribeSchema, { id })
 
-      const result = await strapi.plugin('stripe-payment').service('subscription').resubscribe({ id })
+      const result = await strapi.plugin('stripe-payment').service('subscription').resubscribe(validatedParams)
 
       if (!result) {
-        throw new errors.NotFoundError(`Subscription with ID ${id} not found`)
+        throw new createHttpError.NotFound(`Subscription with ID ${id} not found`)
       }
 
       ctx.send(result)

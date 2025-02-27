@@ -11,7 +11,8 @@
     "dev": "npx vite",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "preview": "npx vite preview",
-    "test": "npx jest --coverage --verbose"
+    "test": "npx jest --coverage --verbose",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@dbbs/tailwind-components": "*",

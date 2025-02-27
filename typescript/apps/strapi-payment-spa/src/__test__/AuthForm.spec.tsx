@@ -16,6 +16,11 @@ describe('<AuthForm />', () => {
     mockedUseNavigate.mockClear()
   })
 
+  afterEach(() => {
+    jest.clearAllMocks()
+    jest.clearAllTimers()
+  })
+
   const renderComponent = (isRegistering: boolean) => render(<AuthForm isRegistering={isRegistering} />)
 
   it('should render registration form properly', () => {

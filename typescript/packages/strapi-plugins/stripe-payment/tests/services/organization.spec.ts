@@ -1,3 +1,4 @@
+import createHttpError from 'http-errors'
 import { Strapi } from '@strapi/strapi'
 import organizationService from '../../server/services/organization'
 import { createMockStrapi } from '../factories'
@@ -30,6 +31,9 @@ describe('Organization Service', () => {
         expectedResult: defaultOrganization,
         setupMocks: () => {
           jest
+            .spyOn(strapi.query('plugin::users-permissions.user'), 'findOne')
+            .mockResolvedValue({ id: 2 })
+          jest
             .spyOn(strapi.query('plugin::stripe-payment.organization'), 'create')
             .mockResolvedValue(defaultOrganization)
           jest.spyOn(strapi.plugin('stripe-payment').service('stripe').customers, 'create').mockResolvedValue({
@@ -42,6 +46,16 @@ describe('Organization Service', () => {
         queryMethod: 'create',
         queryArgs: {
           data: { name: 'Test Organization', customer_id: 'cus_123', owner_id: '1', users: ['1'], quantity: 1 }
+        }
+      },
+      {
+        name: 'should return null if the user with ownerId does not exist',
+        serviceMethodArgs: { name: 'Test Organization', ownerId: '1', quantity: 1, email: 'example@gmail.com' },
+        expectedResult: null,
+        setupMocks: () => {
+          jest
+            .spyOn(strapi.query('plugin::users-permissions.user'), 'findOne')
+            .mockResolvedValue(null)
         }
       }
     ])(
@@ -330,30 +344,42 @@ describe('Organization Service', () => {
   describe('Update Owner', () => {
     it.each([
       {
-        name: 'should update organization owner',
+        name: 'should successfully update organization owner',
         serviceMethodArgs: { id: 1, ownerId: 2 },
         expectedResult: updatedOrganization,
         setupMocks: () => {
           jest
             .spyOn(strapi.query('plugin::stripe-payment.organization'), 'findOne')
-            .mockResolvedValue(defaultOrganization)
+            .mockResolvedValue({ ...defaultOrganization, users: [{ id: 2 }] })
           jest
             .spyOn(strapi.query('plugin::stripe-payment.organization'), 'update')
             .mockResolvedValue(updatedOrganization)
         },
         queryMethod: 'update',
         queryArgs: { where: { id: 1 }, data: { owner_id: 2 } }
+      },
+      {
+        name: 'should throw an error if owner is not a member of the organization',
+        serviceMethodArgs: { id: 1, ownerId: 2 },
+        expectedError: createHttpError.BadRequest,
+        setupMocks: () => {
+          jest
+            .spyOn(strapi.query('plugin::stripe-payment.organization'), 'findOne')
+            .mockResolvedValue(defaultOrganization)
+        }
       }
-    ])('$name', async ({ serviceMethodArgs, expectedResult, setupMocks, queryMethod, queryArgs }) => {
+    ])('$name', async ({ serviceMethodArgs, expectedResult, expectedError, setupMocks, queryMethod, queryArgs }) => {
       setupMocks()
 
-      const result = await organizationService({ strapi }).updateOwner(serviceMethodArgs)
-
-      if (queryMethod && queryArgs) {
-        expect(strapi.query('plugin::stripe-payment.organization')[queryMethod]).toBeCalledWith(queryArgs)
+      if (expectedError) {
+        await expect(organizationService({ strapi }).updateOwner(serviceMethodArgs)).rejects.toThrow(expectedError)
+        return
       }
 
+      const result = await organizationService({ strapi }).updateOwner(serviceMethodArgs)
       expect(result).toEqual(expectedResult)
+
+      expect(strapi.query('plugin::stripe-payment.organization')[queryMethod]).toBeCalledWith(queryArgs)
     })
   })
 

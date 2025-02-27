@@ -5,7 +5,6 @@ import { Typography } from '../typography/Typography'
 const meta: Meta<typeof Breadcrumbs> = {
   title: 'Breadcrumbs',
   component: Breadcrumbs,
-  subcomponents: { Typography },
   tags: ['autodocs'],
   argTypes: {}
 }

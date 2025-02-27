@@ -48,17 +48,6 @@ describe('UpdateSubscriptionQuantityDto', () => {
 describe('CreateCheckoutSessionDto', () => {
   it.each([
     {
-      description: 'should validate successfully with valid data (only organizationName is provided)',
-      sessionInfo: {
-        quantity: 2,
-        planId: 1,
-        userId: 5,
-        successUrl: SUCCESS_URL,
-        organizationName: 'Org 1'
-      },
-      expectedErrorsLength: 0
-    },
-    {
       description: 'should validate successfully with valid data (only organizationId is provided)',
       sessionInfo: {
         quantity: 2,
@@ -76,7 +65,7 @@ describe('CreateCheckoutSessionDto', () => {
         planId: 1,
         userId: 5,
         successUrl: SUCCESS_URL,
-        organizationName: 'Org 1'
+        organizationId: 1
       },
       expectedErrorsLength: 1,
       expectedErrorMessage: 'quantity must not be less than 1'
@@ -88,7 +77,7 @@ describe('CreateCheckoutSessionDto', () => {
         planId: 1,
         userId: 5,
         successUrl: SUCCESS_URL,
-        organizationName: 'Org 1'
+        organizationId: 1
       },
       expectedErrorsLength: 1,
       expectedErrorMessage: 'quantity must be an integer number'
@@ -100,7 +89,7 @@ describe('CreateCheckoutSessionDto', () => {
         planId: 1,
         userId: 5,
         successUrl: SUCCESS_URL,
-        organizationName: 'Org 1'
+        organizationId: 1
       },
       expectedErrorsLength: 1,
       expectedErrorMessage: 'quantity must be an integer number'
@@ -112,7 +101,7 @@ describe('CreateCheckoutSessionDto', () => {
         planId: 'plan id',
         userId: 5,
         successUrl: SUCCESS_URL,
-        organizationName: 'Org 1'
+        organizationId: 1
       },
       expectedErrorsLength: 1,
       expectedErrorMessage: 'planId must be an integer number'
@@ -124,7 +113,7 @@ describe('CreateCheckoutSessionDto', () => {
         planId: 1.5,
         userId: 5,
         successUrl: SUCCESS_URL,
-        organizationName: 'Org 1'
+        organizationId: 1
       },
       expectedErrorsLength: 1,
       expectedErrorMessage: 'planId must be an integer number'
@@ -136,7 +125,7 @@ describe('CreateCheckoutSessionDto', () => {
         planId: 1,
         userId: 'user id',
         successUrl: SUCCESS_URL,
-        organizationName: 'Org 1'
+        organizationId: 1
       },
       expectedErrorsLength: 1,
       expectedErrorMessage: 'userId must be an integer number'
@@ -148,7 +137,7 @@ describe('CreateCheckoutSessionDto', () => {
         planId: 1,
         userId: 5.5,
         successUrl: SUCCESS_URL,
-        organizationName: 'Org 1'
+        organizationId: 1
       },
       expectedErrorsLength: 1,
       expectedErrorMessage: 'userId must be an integer number'
@@ -160,34 +149,10 @@ describe('CreateCheckoutSessionDto', () => {
         planId: 1,
         userId: 5,
         successUrl: 'invalid-url',
-        organizationName: 'Org 1'
+        organizationId: 1
       },
       expectedErrorsLength: 1,
       expectedErrorMessage: 'successUrl must be a URL address'
-    },
-    {
-      description: 'should fail validation if both organizationName and organizationId are provided',
-      sessionInfo: {
-        quantity: 2,
-        planId: 1,
-        userId: 5,
-        successUrl: SUCCESS_URL,
-        organizationName: 'Test Org',
-        organizationId: 123
-      },
-      expectedErrorsLength: 1,
-      expectedErrorMessage: 'You must provide either organizationName or organizationId, but not both'
-    },
-    {
-      description: 'should fail validation with neither organizationName nor organizationId provided',
-      sessionInfo: {
-        quantity: 2,
-        planId: 1,
-        userId: 5,
-        successUrl: SUCCESS_URL
-      },
-      expectedErrorsLength: 1,
-      expectedErrorMessage: 'You must provide either organizationName or organizationId, but not both'
     }
   ])('$description', async ({ sessionInfo, expectedErrorsLength, expectedErrorMessage }) => {
     const checkoutSessionDto = plainToInstance(CreateCheckoutSessionDto, sessionInfo)

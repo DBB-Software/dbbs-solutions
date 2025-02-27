@@ -6,7 +6,7 @@ import {
   createSubscriptionsTable,
   createUsersTable
 } from '../factories/database.js'
-import { OrganizationRepository } from '../../repositories/organization.repository.js'
+import { OrganizationRepository } from '../../repositories/index.js'
 import {
   dbOrganizationsList,
   dbOrganizationsUsersLinksList,
@@ -231,6 +231,24 @@ describe(`${OrganizationRepository.name}`, () => {
     })
   })
 
+  describe(OrganizationRepository.prototype.addUser.name, () => {
+    it('should add a user to an organization', async () => {
+      const countUserOrganizationLinks = async (): Promise<number> => {
+        const result = await db('organizations_users').count({ count: '*' }).first<{ count: string | number }>()
+        return Number(result.count)
+      }
+
+      const countBeforeInsert = await countUserOrganizationLinks()
+      const insertedRecordId = await organizationRepository.addUser({
+        organizationId: getId(1),
+        userId: getId(1)
+      })
+      const countAfterInsert = await countUserOrganizationLinks()
+
+      expect(countAfterInsert).toBe(countBeforeInsert + 1)
+    })
+  })
+
   describe(OrganizationRepository.prototype.updateOrganization.name, () => {
     it.each([
       {
@@ -294,6 +312,23 @@ describe(`${OrganizationRepository.name}`, () => {
       const result = await organizationRepository.getUserOrganizations(userId)
 
       expect(result).toEqual(expectedResult)
+    })
+  })
+
+  describe(OrganizationRepository.prototype.removeUserFromOrganization.name, () => {
+    it.each([
+      {
+        name: 'should remove a user from an organization',
+        payload: { userId: getId(3), organizationId: getId(3) },
+        expectedResult: 1
+      },
+      {
+        name: 'should return 0 if the user does not belong to the organization',
+        payload: { userId: getId(0), organizationId: getId(0) },
+        expectedResult: 0
+      }
+    ])('$name', async ({ payload, expectedResult }) => {
+      await expect(organizationRepository.removeUserFromOrganization(payload)).resolves.toEqual(expectedResult)
     })
   })
 })

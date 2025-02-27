@@ -5,18 +5,14 @@
   },
   "include": [
       "src",
-      "src/**/*.json",
-      ".ondevice/**/*"
+      ".ondevice/**/*",
+      "AppEntryPoint.tsx"
     ],
     "exclude": [
-      "dist/",
       "jest.config.ts",
       "**/*.test.ts",
       "**/*.spec.ts",
       "**/*.test.tsx",
-      "**/*.spec.tsx",
-      "./src/stories/*.ts",
-      "./src/stories/*.tsx",
-      "./src/testUtils/**/*"
+      "**/*.spec.tsx"
     ]
 }

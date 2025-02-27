@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@strapi/design-system": "1.19.0",
-    "@strapi/helper-plugin": "4.25.8",
+    "@strapi/helper-plugin": "4.25.12",
     "@strapi/icons": "1.19.0",
     "prop-types": "15.8.1"
   },

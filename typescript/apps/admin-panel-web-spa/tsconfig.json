@@ -1,0 +1,16 @@
+{
+  "extends": "@dbbs/tsconfig/react-spa.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "esModuleInterop": true
+  },
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}

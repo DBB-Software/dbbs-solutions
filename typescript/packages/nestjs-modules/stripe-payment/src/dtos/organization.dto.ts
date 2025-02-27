@@ -65,3 +65,9 @@ export class UpdateOrganizationOwnerDto {
   @IsPositive()
   ownerId: number
 }
+
+export class AcceptInviteDto {
+  @IsNumber()
+  @IsPositive()
+  userId: number
+}

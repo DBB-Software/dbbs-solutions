@@ -1,12 +1,14 @@
 import { Strapi } from '@strapi/strapi'
-import { CustomSesHandler } from '@dbbs/common'
+
+import { SendgridService } from './sendgrid'
 
 export default ({ strapi }: { strapi: Strapi }) => {
-  const awsRegion: string = strapi.config.get('server.stripe.awsRegion')
+  const sendgridApiKey: string = strapi.config.get('server.sendgrid.apiKey')
+  const verifiedEmail: string = strapi.config.get('server.sendgrid.verifiedEmail')
 
-  if (!awsRegion) {
-    throw new Error('awsRegion is not defined')
+  if (!sendgridApiKey || !verifiedEmail) {
+    throw new Error('sendgridApiKey or verifiedEmail is not defined')
   }
 
-  return new CustomSesHandler(awsRegion)
+  return new SendgridService(sendgridApiKey, verifiedEmail)
 }

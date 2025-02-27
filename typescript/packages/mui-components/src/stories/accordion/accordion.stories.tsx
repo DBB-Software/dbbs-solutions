@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { ComponentType } from 'react'
 import { Button } from '../buttons/Button'
 
 import { Accordion, AccordionSummary, AccordionDetails, AccordionActions } from './Accordion'
@@ -6,7 +7,12 @@ import { Accordion, AccordionSummary, AccordionDetails, AccordionActions } from 
 const meta: Meta<typeof Accordion> = {
   title: 'Accordion',
   component: Accordion,
-  subcomponents: { AccordionSummary, AccordionDetails, AccordionActions, Button },
+  subcomponents: {
+    AccordionSummary: AccordionSummary as ComponentType<unknown>,
+    AccordionDetails: AccordionDetails as ComponentType<unknown>,
+    AccordionActions: AccordionActions as ComponentType<unknown>,
+    Button: Button as ComponentType<unknown>
+  },
   tags: ['autodocs']
 }
 export default meta

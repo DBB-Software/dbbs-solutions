@@ -6,12 +6,12 @@ all: setup run-build run-dev
 setup: check-brew install-asdf
 	make -C typescript setup
 	make -C python setup
-	make install-aws install-docker check-versions setup-aws-credentials download-env
+	make install-aws install-docker check-versions download-env
 
 # Target for setting up dependencies for typescript
 setup-ts: check-brew install-asdf
 	make -C typescript setup
-	make install-aws install-docker check-versions setup-aws-credentials download-env
+	make install-aws install-docker check-versions download-env
 
 # Target for setting up dependencies for python
 setup-py: check-brew install-asdf

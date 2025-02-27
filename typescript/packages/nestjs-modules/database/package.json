@@ -14,12 +14,13 @@
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "test": "echo \"no test specified\" && exit 0",
-    "watch": "npx tsc -w --preserveWatchOutput"
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "10.3.8",
+    "@nestjs/common": "11.0.10",
     "knex": "3.1.0",
-    "nest-knexjs": "0.0.23",
+    "nest-knexjs": "0.0.26",
     "sqlite": "5.1.1"
   },
   "devDependencies": {

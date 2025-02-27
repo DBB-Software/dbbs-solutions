@@ -1,6 +1,5 @@
-import { factories, Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import createHttpError from 'http-errors'
+import { factories, Strapi } from '@strapi/strapi'
 import {
   CreateCheckoutSessionParams,
   GetMySubscriptionParams,
@@ -28,7 +27,7 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
       })
 
       if (organizationExisting) {
-        throw new errors.ForbiddenError(`Organization with name ${params.organizationName} already exists`)
+        throw new createHttpError.Forbidden(`Organization with name ${params.organizationName} already exists`)
       }
 
       organizationName = params.organizationName
@@ -38,7 +37,7 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
       })
 
       if (!organizationById) {
-        throw new errors.NotFoundError(`Organization with id ${organizationId} not found`)
+        throw new createHttpError.NotFound(`Organization with id ${organizationId} not found`)
       }
 
       customerId = organizationById.customer_id
@@ -159,7 +158,7 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
     }
 
     if (subscription.status === SubscriptionStatus.CANCELLED) {
-      throw new errors.ForbiddenError(`Subscription with ID ${id} already cancelled`)
+      throw new createHttpError.Forbidden(`Subscription with ID ${id} already cancelled`)
     }
 
     await strapi.plugin('stripe-payment').service('stripe').subscriptions.cancel(subscription.stripe_id)
@@ -187,7 +186,7 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
     }
 
     if (subscription.status !== SubscriptionStatus.ACTIVE) {
-      throw new errors.ForbiddenError(`Subscription with ID ${id} not in active state`)
+      throw new createHttpError.Forbidden(`Subscription with ID ${id} not in active state`)
     }
 
     await strapi
@@ -226,7 +225,7 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
     })
 
     if (subscription.status !== SubscriptionStatus.PAUSED) {
-      throw new errors.ForbiddenError(`Subscription with ID ${id} not in paused state`)
+      throw new createHttpError.Forbidden(`Subscription with ID ${id} not in paused state`)
     }
 
     const updatedSubscription = await strapi.query('plugin::stripe-payment.subscription').update({
@@ -321,11 +320,11 @@ export default factories.createCoreService('plugin::stripe-payment.subscription'
     })
 
     if (!subscription) {
-      throw new errors.NotFoundError(`Subscription with ID ${id} not found`)
+      throw new createHttpError.NotFound(`Subscription with ID ${id} not found`)
     }
 
     if (subscription.status !== SubscriptionStatus.CANCELLED) {
-      throw new errors.ForbiddenError(`subscription with ID ${id} is not cancelled`)
+      throw new createHttpError.Forbidden(`subscription with ID ${id} is not cancelled`)
     }
 
     const quantity = subscription.organization.users.length

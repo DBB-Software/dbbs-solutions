@@ -25,6 +25,16 @@ export type CreateOrganizationPayload = {
   quantity: number
 }
 
+export type AddUserToOrganizationPayload = {
+  organizationId: number
+  userId: number
+}
+
 export type UpdateOrganizationPayload = Partial<OrganizationDbRecord> & {
   id: number
+}
+
+export type RemoveUserFromOrganizationPayload = {
+  userId: number
+  organizationId: number
 }

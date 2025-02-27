@@ -1,3 +1,7 @@
+/**
+ * TODO: Add logic to conditionally choose the middleware based on the selected authorization method.
+ * If Auth0 is selected, use `auth0AuthMiddleware`, otherwise use `extractUserMiddleware`.
+ */
 import extractUserMiddleware from '../../middlewares/extractUser.middleware'
 import checkOrganizationOwnerMiddleware from '../../middlewares/checkOrganizationOwner.middleware'
 
@@ -58,7 +62,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/api/organizations/:id/change-owner',
+    path: '/api/organizations/:id/owner',
     handler: 'organization.updateOwner',
     config: {
       auth: false,
@@ -67,7 +71,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/api/organizations/:id/add-user',
+    path: '/api/organizations/:id/users',
     handler: 'organization.addUser',
     config: {
       auth: false,
@@ -76,7 +80,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/api/organizations/:id/remove-user/:userId',
+    path: '/api/organizations/:id/remove-user',
     handler: 'organization.removeUser',
     config: {
       auth: false,
@@ -85,7 +89,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/api/organizations/:id/accept-invite',
+    path: '/api/organizations/:id/invites/:inviteId/accept',
     handler: 'organization.acceptInvite',
     config: {
       auth: false,
@@ -94,7 +98,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/api/organizations/:id/update-default-payment-method',
+    path: '/api/organizations/:id/default-payment-method',
     handler: 'organization.createDefaultPaymentMethodUpdateCheckoutSession',
     config: {
       auth: false,

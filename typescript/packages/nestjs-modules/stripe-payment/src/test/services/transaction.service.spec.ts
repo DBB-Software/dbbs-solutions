@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals'
 import { Test, TestingModule } from '@nestjs/testing'
 import { NotFoundError } from '@dbbs/common'
-import { OrganizationRepository } from '../../repositories/organization.repository.js'
+
+import { TransactionService } from '../../services/index.js'
+import { OrganizationRepository, TransactionRepository } from '../../repositories/index.js'
 import { defaultTransaction } from '../mocks/index.js'
-import { TransactionService } from '../../services/transaction.service.js'
-import { TransactionRepository } from '../../repositories/transaction.repository.js'
 
 describe('TransactionService', () => {
   let service: TransactionService

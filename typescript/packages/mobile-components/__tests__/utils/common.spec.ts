@@ -1,4 +1,4 @@
-import { clamp, isPositiveNumber } from '../../src/utils'
+import { clamp, isPositiveNumber } from '../../src'
 
 describe('clamp', () => {
   const testData = [

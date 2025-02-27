@@ -1,8 +1,17 @@
 import { jest } from '@jest/globals'
 import { SubscriptionService as StripeSubscriptionService } from '@dbbs/nestjs-module-stripe'
-import { SubscriptionService } from '../../services/subscription.service.js'
-import { SubscriptionRepository } from '../../repositories/subscription.repository.js'
 import { Test, TestingModule } from '@nestjs/testing'
+import { ArgumentError, NotFoundError } from '@dbbs/common'
+
+import { SubscriptionService } from '../../services/index.js'
+import {
+  PlanRepository,
+  CheckoutSessionMetadataRepository,
+  UserRepository,
+  OrganizationRepository,
+  SubscriptionRepository
+} from '../../repositories/index.js'
+import { PlanType, SubscriptionStatus, SubscriptionStatusId } from '../../enums/index.js'
 import {
   CHECKOUT_SESSION_URL,
   defaultCheckoutSession,
@@ -14,18 +23,13 @@ import {
   stripeSubscription,
   SUCCESS_URL
 } from '../mocks/index.js'
-import { PlanType, SubscriptionStatus, SubscriptionStatusId } from '../../enums/index.js'
-import { ArgumentError, NotFoundError } from '@dbbs/common'
-import { OrganizationRepository } from '../../repositories/organization.repository.js'
-import { UserRepository } from '../../repositories/user.repository.js'
-import { PlanRepository } from '../../repositories/plan.repository.js'
-import { CheckoutSessionMetadataRepository } from '../../repositories/checkoutSessionMetadata.repository.js'
 
 describe('SubscriptionService', () => {
   let service: SubscriptionService
   let subscriptionRepository: jest.Mocked<SubscriptionRepository>
   let stripeSubscriptionService: jest.Mocked<StripeSubscriptionService>
   let organizationRepository: jest.Mocked<OrganizationRepository>
+  let userRepository: jest.Mocked<UserRepository>
   let planRepository: jest.Mocked<PlanRepository>
 
   beforeEach(async () => {
@@ -90,6 +94,7 @@ describe('SubscriptionService', () => {
     subscriptionRepository = module.get(SubscriptionRepository) as jest.Mocked<SubscriptionRepository>
     stripeSubscriptionService = module.get(StripeSubscriptionService) as jest.Mocked<StripeSubscriptionService>
     organizationRepository = module.get(OrganizationRepository) as jest.Mocked<OrganizationRepository>
+    userRepository = module.get(UserRepository) as jest.Mocked<UserRepository>
     planRepository = module.get(PlanRepository) as jest.Mocked<PlanRepository>
   })
 
@@ -650,35 +655,7 @@ describe('SubscriptionService', () => {
   describe('createCheckoutSession', () => {
     it.each([
       {
-        name: 'should create a checkout session and an organization successfully',
-        serviceMethodArgs: {
-          organizationName: 'OrgA',
-          userId: 1,
-          planId: 1,
-          quantity: 2,
-          successUrl: SUCCESS_URL
-        },
-        expectedParams: {
-          organizationExistByName: 'OrgA',
-          planRetrieve: 1,
-          stripeSubscriptionCheckoutSessionCreate: {
-            successUrl: SUCCESS_URL,
-            plan: {
-              id: 'plan_1',
-              type: PlanType.RECURRING
-            },
-            quantity: 2
-          }
-        },
-        expectedResult: CHECKOUT_SESSION_URL,
-        setupMocks: () => {
-          organizationRepository.organizationExistsByName.mockResolvedValue(false)
-          planRepository.getPlanById.mockResolvedValue(defaultRecurringPlan)
-          stripeSubscriptionService.createCheckoutSession.mockResolvedValue(defaultCheckoutSession)
-        }
-      },
-      {
-        name: 'should create a checkout session for an existing organization successfully',
+        name: 'should create a checkout session successfully',
         serviceMethodArgs: {
           organizationId: 1,
           userId: 1,
@@ -688,7 +665,6 @@ describe('SubscriptionService', () => {
         },
         expectedParams: {
           organizationRetrieve: 1,
-          subscriptionStatusRetrieve: 1,
           planRetrieve: 1,
           stripeSubscriptionCheckoutSessionCreate: {
             successUrl: SUCCESS_URL,
@@ -703,26 +679,9 @@ describe('SubscriptionService', () => {
         expectedResult: CHECKOUT_SESSION_URL,
         setupMocks: () => {
           organizationRepository.getOrganizationById.mockResolvedValue(defaultOrganization)
-          subscriptionRepository.getStatusIdByOrganizationId.mockResolvedValue(SubscriptionStatusId.CANCELED)
+          userRepository.doesUserExist.mockResolvedValue(true)
           planRepository.getPlanById.mockResolvedValue(defaultRecurringPlan)
           stripeSubscriptionService.createCheckoutSession.mockResolvedValue(defaultCheckoutSession)
-        }
-      },
-      {
-        name: 'should throw error if organization with provided name already exists',
-        serviceMethodArgs: {
-          organizationName: 'OrgA',
-          userId: 1,
-          planId: 1,
-          quantity: 2,
-          successUrl: SUCCESS_URL
-        },
-        expectedParams: {
-          organizationExistByName: 'OrgA'
-        },
-        expectedError: new Error("Organization 'OrgA' already exists"),
-        setupMocks: () => {
-          organizationRepository.organizationExistsByName.mockResolvedValue(true)
         }
       },
       {
@@ -734,7 +693,7 @@ describe('SubscriptionService', () => {
           quantity: 2,
           successUrl: SUCCESS_URL
         },
-        expectedError: new NotFoundError('Organization with ID 999 was not found'),
+        expectedError: new NotFoundError('Cannot create checkout session for non existing organization with ID 999'),
         expectedParams: {
           organizationRetrieve: 999
         },
@@ -743,7 +702,27 @@ describe('SubscriptionService', () => {
         }
       },
       {
-        name: 'should throw error if organization has an active subscription',
+        name: 'should throw error if plan is not found',
+        serviceMethodArgs: {
+          organizationId: 1,
+          userId: 1,
+          planId: 999,
+          quantity: 2,
+          successUrl: SUCCESS_URL
+        },
+        expectedParams: {
+          organizationRetrieve: 1,
+          planRetrieve: 999
+        },
+        expectedError: new NotFoundError('Plan with ID 999 was not found'),
+        setupMocks: () => {
+          organizationRepository.getOrganizationById.mockResolvedValue(defaultOrganization)
+          userRepository.doesUserExist.mockResolvedValue(true)
+          planRepository.getPlanById.mockResolvedValue(null)
+        }
+      },
+      {
+        name: 'should throw error if plan type is ONE_TIME',
         serviceMethodArgs: {
           organizationId: 1,
           userId: 1,
@@ -753,65 +732,26 @@ describe('SubscriptionService', () => {
         },
         expectedParams: {
           organizationRetrieve: 1,
-          subscriptionStatusRetrieve: 1
-        },
-        expectedError: new Error(
-          'Cannot create a checkout session for organization with ID 1 as it has a non-canceled subscription'
-        ),
-        setupMocks: () => {
-          organizationRepository.getOrganizationById.mockResolvedValue(defaultOrganization)
-          subscriptionRepository.getStatusIdByOrganizationId.mockResolvedValue(SubscriptionStatusId.ACTIVE)
-        }
-      },
-      {
-        name: 'should throw error if plan is not found',
-        serviceMethodArgs: {
-          organizationName: 'OrgA',
-          userId: 1,
-          planId: 999,
-          quantity: 2,
-          successUrl: SUCCESS_URL
-        },
-        expectedParams: {
-          organizationExistByName: 'OrgA',
-          planRetrieve: 999
-        },
-        expectedError: new NotFoundError('Plan with ID 999 was not found'),
-        setupMocks: () => {
-          organizationRepository.organizationExistsByName.mockResolvedValue(false)
-          planRepository.getPlanById.mockResolvedValue(null)
-        }
-      },
-      {
-        name: 'should throw error if plan type is ONE_TIME',
-        serviceMethodArgs: {
-          organizationName: 'OrgA',
-          userId: 1,
-          planId: 1,
-          quantity: 2,
-          successUrl: SUCCESS_URL
-        },
-        expectedParams: {
-          organizationExistByName: 'OrgA',
           planRetrieve: 1
         },
         expectedError: new Error('Creating a checkout session for a one-time plan is not allowed'),
         setupMocks: () => {
-          organizationRepository.organizationExistsByName.mockResolvedValue(false)
+          organizationRepository.getOrganizationById.mockResolvedValue(defaultOrganization)
+          userRepository.doesUserExist.mockResolvedValue(true)
           planRepository.getPlanById.mockResolvedValue(defaultOneTimePlan)
         }
       },
       {
         name: 'should throw error if checkout session URL is null',
         serviceMethodArgs: {
-          organizationName: 'OrgA',
+          organizationId: 1,
           userId: 1,
           planId: 1,
           quantity: 2,
           successUrl: SUCCESS_URL
         },
         expectedParams: {
-          organizationExistByName: 'OrgA',
+          organizationRetrieve: 1,
           planRetrieve: 1,
           stripeSubscriptionCheckoutSessionCreate: {
             successUrl: SUCCESS_URL,
@@ -819,12 +759,14 @@ describe('SubscriptionService', () => {
               id: 'plan_1',
               type: PlanType.RECURRING
             },
+            customerId: 'org_1',
             quantity: 2
           }
         },
         expectedError: new Error('Checkout session was created, but no URL was returned'),
         setupMocks: () => {
-          organizationRepository.organizationExistsByName.mockResolvedValue(false)
+          organizationRepository.getOrganizationById.mockResolvedValue(defaultOrganization)
+          userRepository.doesUserExist.mockResolvedValue(true)
           planRepository.getPlanById.mockResolvedValue(defaultRecurringPlan)
           stripeSubscriptionService.createCheckoutSession.mockResolvedValue({
             ...defaultCheckoutSession,
@@ -843,21 +785,13 @@ describe('SubscriptionService', () => {
       }
 
       const {
-        organizationExistByName,
         organizationRetrieve,
-        subscriptionStatusRetrieve,
         planRetrieve,
         stripeSubscriptionCheckoutSessionCreate
       } = expectedParams
 
-      if (organizationExistByName) {
-        expect(organizationRepository.organizationExistsByName).toHaveBeenCalledWith(organizationExistByName)
-      }
       if (organizationRetrieve) {
         expect(organizationRepository.getOrganizationById).toHaveBeenCalledWith(organizationRetrieve)
-      }
-      if (subscriptionStatusRetrieve) {
-        expect(subscriptionRepository.getStatusIdByOrganizationId).toHaveBeenCalledWith(subscriptionStatusRetrieve)
       }
       if (planRetrieve) {
         expect(planRepository.getPlanById).toHaveBeenCalledWith(planRetrieve)

@@ -30,6 +30,18 @@ export class WebhookController {
       case StripeEventType.PriceUpdated:
         await this.webhookService.handlePriceUpdated(event)
         break
+      case StripeEventType.CheckoutSessionCompleted:
+        await this.webhookService.handleCheckoutSessionCompleted(event)
+        break
+      case StripeEventType.InvoicePaymentSucceeded:
+        await this.webhookService.handleInvoicePaymentSucceeded(event)
+        break
+      case StripeEventType.InvoicePaymentFailed:
+        await this.webhookService.handleInvoicePaymentFailed(event)
+        break
+      case StripeEventType.CustomerSubscriptionUpdated:
+        await this.webhookService.handleSubscriptionUpdated(event)
+        break
       default:
         break
     }

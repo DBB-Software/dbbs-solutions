@@ -8,3 +8,9 @@ export type PurchaseDbRecord = {
   createdAt: string
   updatedAt: string
 }
+
+export type CreatePurchasePayload = {
+  stripeId: string
+  planId: number
+  organizationId: number
+}

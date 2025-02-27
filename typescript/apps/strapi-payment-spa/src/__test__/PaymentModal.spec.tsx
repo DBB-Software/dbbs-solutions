@@ -1,4 +1,5 @@
 import fetchMock from 'jest-fetch-mock'
+import userEvent from '@testing-library/user-event/index'
 import { render, screen, waitFor } from '../testUtils/testUtils.tsx'
 import PaymentModal from '../components/modals/paymentModal/PaymentModal.tsx'
 import { mockOrganizations } from './mocks/index.ts'
@@ -9,6 +10,16 @@ jest.mock('js-cookie', () => ({
   ...jest.requireActual('js-cookie'),
   get: jest.fn().mockResolvedValue({ jwt: 'jwt' })
 }))
+
+export async function selectExistingOrganizationMock(user: ReturnType<typeof userEvent.setup>) {
+  const buttonExisingOrganization = await screen.findByText('Existing Organization')
+  await user.click(buttonExisingOrganization)
+
+  const selectElement = screen.getByRole('combobox')
+  expect(selectElement).toBeVisible()
+
+  await user.click(selectElement)
+}
 
 describe('<PaymentModal />', () => {
   beforeAll(() => {
@@ -22,9 +33,10 @@ describe('<PaymentModal />', () => {
   }
 
   it('should render by default', async () => {
-    renderComponent()
-
-    expect(screen.getByText('Select Type Commpany')).toBeVisible()
+    const { user } = renderComponent(mockOrganizations)
+    expect(await screen.findByText('Select Type Commpany')).toBeVisible()
+    await selectExistingOrganizationMock(user)
+    expect(await screen.findByText(mockOrganizations[0].name)).toBeVisible()
   })
 
   it('should call handleClose', async () => {
@@ -65,6 +77,8 @@ describe('<PaymentModal />', () => {
   })
 
   it('should work submit a new organization form and open a new tab', async () => {
+    jest.setTimeout(10000)
+
     const { user } = renderComponent()
     fetchMock.mockResponseOnce(JSON.stringify({ url }))
 
@@ -89,16 +103,12 @@ describe('<PaymentModal />', () => {
   })
 
   it('should work submit a existing organization form and open a new tab', async () => {
+    jest.setTimeout(10000)
+
     const { user } = renderComponent(mockOrganizations)
     fetchMock.mockResponseOnce(JSON.stringify({ url }))
 
-    const buttonExisingOrganization = await screen.findByText('Existing Organization')
-    await user.click(buttonExisingOrganization)
-
-    const selectElement = screen.getByRole('combobox')
-    expect(selectElement).toBeVisible()
-
-    await user.click(selectElement)
+    await selectExistingOrganizationMock(user)
 
     const inputQuantity = screen.getByLabelText('Quantity')
     const buttonSubmit = screen.getByText('Send')

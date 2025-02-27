@@ -1,11 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { ComponentType } from 'react'
 import { ImageList, ImageListItem, ImageListItemBar } from './imageList'
 
 const meta: Meta<typeof ImageList> = {
   title: 'ImageList',
   component: ImageList,
-  subcomponents: { ImageListItem, ImageListItemBar },
-  name: 'Card',
+  subcomponents: {
+    ImageListItem: ImageListItem as ComponentType<unknown>,
+    ImageListItemBar: ImageListItemBar as ComponentType<unknown>
+  },
   tags: ['autodocs'],
   argTypes: {
     cols: {

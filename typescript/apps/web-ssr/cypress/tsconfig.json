@@ -7,7 +7,7 @@
         "target": "ES2019",
         "sourceMap": false,
         "outDir": "./",
-        "noEmit": true
+        "noEmit": false
     },
     "include": [
         "**/*.ts",

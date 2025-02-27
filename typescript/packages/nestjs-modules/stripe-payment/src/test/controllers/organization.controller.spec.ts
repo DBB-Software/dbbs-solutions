@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { LoggerModule } from '@dbbs/nestjs-module-logger'
 import { NotFoundError } from '@dbbs/common'
+import { mockDeep, mockReset } from 'jest-mock-extended'
 
-import { OrganizationController } from '../../controllers/organization.controller.js'
-import { OrganizationService } from '../../services/organization.service.js'
+import { OrganizationController } from '../../controllers/index.js'
+import { PurchaseService, TransactionService, OrganizationService } from '../../services/index.js'
 import {
   createOrganizationDto,
   defaultOrganization,
@@ -12,9 +13,6 @@ import {
   MOCK_CREATE_ORGANIZATION_PARAMS,
   MOCK_CREATED_ORGANIZATION
 } from '../mocks/index.js'
-import { mockDeep, mockReset } from 'jest-mock-extended'
-import { PurchaseService } from '../../services/purchase.service.js'
-import { TransactionService } from '../../services/transaction.service.js'
 
 describe(OrganizationController.name, () => {
   let controller: OrganizationController
@@ -417,6 +415,80 @@ describe(OrganizationController.name, () => {
       }
 
       expect(mockOrganizationService.updateOrganizationOwner).toHaveBeenCalledWith(expectedParams.organizationUpdate)
+    })
+  })
+  
+  describe(OrganizationController.prototype.acceptInvite.name, () => {
+    it.each<{
+      name: string
+      params: Parameters<OrganizationController['acceptInvite']>
+      setupMocks: () => void
+      expectedResult?: boolean
+      expectedError?: Error
+    }>([
+      {
+        name: 'should accept an invite',
+        params: [1, 2, {userId: 3}],
+        setupMocks: () => {
+          mockOrganizationService.acceptInvite.mockResolvedValueOnce(true)
+        },
+        expectedResult: true
+      },
+      {
+        name: 'should throw an error if failed to accept an invite',
+        params: [1, 2, {userId: 3}],
+        setupMocks: () => {
+          mockOrganizationService.acceptInvite.mockRejectedValueOnce(new Error('Failed to accept invite'))
+        },
+        expectedError: new Error('Failed to accept invite')
+      }
+    ])('$name', async ({params, setupMocks, expectedResult, expectedError }) => {
+      setupMocks()
+
+      const pendingResult = controller.acceptInvite(...params)
+
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      }
+    })
+  })
+
+  describe(OrganizationController.prototype.removeUserFromOrganization.name, () => {
+    it.each<{
+      name: string
+      params: Parameters<typeof OrganizationController.prototype.removeUserFromOrganization>
+      expectedError?: Error
+      expectedResult?: boolean
+      setupMocks: () => void
+    }>([
+      {
+        name: 'should remove user from organization',
+        params: [1, 2],
+        setupMocks: () => {
+          mockOrganizationService.removeUserFromOrganization.mockResolvedValueOnce(true)
+        },
+        expectedResult: true
+      },
+      {
+        name: 'should throw an error if failed to remove user from organization',
+        params: [1, 2],
+        setupMocks: () => {
+          mockOrganizationService.removeUserFromOrganization.mockRejectedValueOnce(new Error('Failed to remove user'))
+        },
+        expectedError: new Error('Failed to remove user')
+      }
+    ])('$name', async ({ params, setupMocks, expectedResult, expectedError }) => {
+      setupMocks()
+
+      const pendingResult = controller.removeUserFromOrganization(...params)
+
+      if (expectedResult) {
+        await expect(pendingResult).resolves.toEqual(expectedResult)
+      } else {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      }
     })
   })
 })

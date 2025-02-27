@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { ComponentType } from 'react'
 import { ButtonBase } from './ButtonBase'
 import { Box } from '../box/Box'
 import { Typography } from '../typography/Typography'
@@ -7,7 +8,7 @@ import { styled } from '../..'
 const meta: Meta<typeof ButtonBase> = {
   title: 'ButtonBase',
   component: ButtonBase,
-  subcomponents: { Box, Typography },
+  subcomponents: { Box: Box as ComponentType<unknown>, Typography: Typography as ComponentType<unknown> },
   tags: ['autodocs']
 }
 

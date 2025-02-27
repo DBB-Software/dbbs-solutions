@@ -13,7 +13,8 @@
     "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
     "test": "echo \"Error: no test specified\"",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@emotion/cache": "11.13.1",
@@ -21,7 +22,8 @@
     "@emotion/styled": "11.13.0",
     "@mui/material": "5.16.7",
     "@mui/styled-engine": "5.16.6",
-    "@mui/system": "5.16.7"
+    "@mui/system": "5.16.7",
+    "@mui/x-data-grid": "7.18.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

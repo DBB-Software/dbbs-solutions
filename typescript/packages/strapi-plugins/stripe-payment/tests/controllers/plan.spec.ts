@@ -1,6 +1,6 @@
+import createHttpError from 'http-errors'
 import { Context } from 'koa'
 import { Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import planController from '../../server/controllers/plan'
 import { createMockContext, createMockStrapi } from '../factories'
 import { defaultPlan, strapiPlanControllerMock } from '../mocks'
@@ -43,7 +43,7 @@ describe('Plan Controller', () => {
         name: 'should throw an error if plan not found',
         ctxOverrides: { params: { id: 1 } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)

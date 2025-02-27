@@ -1,5 +1,6 @@
 import knex from 'knex'
-import { CheckoutSessionMetadataRepository } from '../../repositories/checkoutSessionMetadata.repository.js'
+
+import { CheckoutSessionMetadataRepository } from '../../repositories/index.js'
 import { createCheckoutSessionMetadataTable } from '../factories/database.js'
 import {
   createCheckoutSessionMetadataPayload,

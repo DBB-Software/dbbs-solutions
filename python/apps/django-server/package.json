@@ -20,6 +20,6 @@
     "db:flush": "poetry run python manage.py flush --no-input --settings=core.settings.local",
     "admin:create": "poetry run python manage.py createsuperuser --settings=core.settings.local",
     "static:collect": "poetry run python manage.py collectstatic --settings=core.settings.local",
-    "preinstall": "poetry install"
+    "install:deps": "poetry install"
   }
 }

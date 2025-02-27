@@ -1,8 +1,13 @@
 import knex from 'knex'
+
+import { PurchaseRepository } from '../../repositories/index.js'
 import { createOrganizationsTable, createPlansTable, createPurchasesTable } from '../factories/database.js'
-import { dbOrganizationsList, dbPlansList } from '../mocks/index.js'
-import { PurchaseRepository } from '../../repositories/purchase.repository.js'
-import { dbPurchasesList } from '../mocks/index.js'
+import {
+  dbOrganizationsList,
+  dbPlansList,
+  mockCreatePurchasePayload,
+  dbPurchasesList
+} from '../mocks/index.js'
 import { TEST_DB_PATH } from '../../constants.js'
 
 describe('PurchaseRepository', () => {
@@ -59,6 +64,21 @@ describe('PurchaseRepository', () => {
       const result = await purchaseRepository.getOrganizationPurchases(organizationId, paginationOptions)
 
       expect(result.purchases.length).toEqual(expectedLength)
+    })
+  })
+
+  describe(PurchaseRepository.prototype.createPurchase.name, ()  => {
+    it('should successfully create a purchase', async () => {
+      const countPurchases = async (): Promise<number> => {
+        const result = await db('purchases').count({ count: '*' }).first<{ count: string | number }>()
+        return Number(result.count)
+      }
+
+      const countBeforeInsert = await countPurchases()
+      await purchaseRepository.createPurchase(mockCreatePurchasePayload(baseId))
+      const countAfterInsert = await countPurchases()
+
+      expect(countAfterInsert).toBe(countBeforeInsert + 1)
     })
   })
 })

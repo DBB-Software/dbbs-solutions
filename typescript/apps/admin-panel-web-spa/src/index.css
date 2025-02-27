@@ -1,0 +1,11 @@
+.alert-row{
+    border-bottom: 1px solid gray;
+}
+
+.row-warning {
+    background-color: #fff9c4; 
+}
+
+.row-error {
+    background-color: #ffcccb;
+}

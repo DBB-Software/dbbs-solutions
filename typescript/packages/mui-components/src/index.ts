@@ -4,6 +4,9 @@
 'use client'
 
 export * from '@mui/material'
+export type { GridClassKey, GridClasses, gridClasses } from '@mui/x-data-grid'
+export * from '@mui/x-data-grid'
+export * from '@mui/x-data-grid/internals'
 
 // styles
 export { theme } from './theme'

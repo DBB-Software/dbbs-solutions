@@ -1,5 +1,5 @@
+import createHttpError from 'http-errors'
 import { factories, Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import { CreatePlanParams, DeletePlanParams, GetPlanByIdParams } from '../interfaces'
 import { createPlanSchema, deletePlanSchema, getPlanByIdSchema } from '../validationSchemas'
 import { validateWithYupSchema } from '../helpers'
@@ -8,31 +8,26 @@ export default factories.createCoreController('plugin::stripe-payment.plan', ({ 
   async create(ctx) {
     const { price, interval, productId, type } = ctx.request.body as CreatePlanParams
 
-    await validateWithYupSchema(createPlanSchema, {
+    const validatedParams = await validateWithYupSchema(createPlanSchema, {
       price,
       interval,
       productId,
       type
     })
 
-    const plan = await strapi.plugin('stripe-payment').service('plan').create({
-      price,
-      interval,
-      productId,
-      type
-    })
+    const plan = await strapi.plugin('stripe-payment').service('plan').create(validatedParams)
     ctx.send(plan)
   },
 
   async getPlanById(ctx) {
     const { id } = ctx.params as GetPlanByIdParams
 
-    await validateWithYupSchema(getPlanByIdSchema, { id })
+    const validatedParams = await validateWithYupSchema(getPlanByIdSchema, { id })
 
-    const plan = await strapi.plugin('stripe-payment').service('plan').getPlanById({ id })
+    const plan = await strapi.plugin('stripe-payment').service('plan').getPlanById(validatedParams)
 
     if (!plan) {
-      throw new errors.NotFoundError(`Plan with ID ${id} not found`)
+      throw new createHttpError.NotFound(`Plan with ID ${id} not found`)
     }
 
     ctx.send(plan)
@@ -46,12 +41,12 @@ export default factories.createCoreController('plugin::stripe-payment.plan', ({ 
   async delete(ctx) {
     const { id } = ctx.params as DeletePlanParams
 
-    await validateWithYupSchema(deletePlanSchema, { id })
+    const validatedParams = await validateWithYupSchema(deletePlanSchema, { id })
 
-    const result = await strapi.plugin('stripe-payment').service('plan').delete({ id })
+    const result = await strapi.plugin('stripe-payment').service('plan').delete(validatedParams)
 
     if (!result) {
-      throw new errors.NotFoundError(`Plan with ID ${id} not found`)
+      throw new createHttpError.NotFound(`Plan with ID ${id} not found`)
     }
 
     ctx.send(result)

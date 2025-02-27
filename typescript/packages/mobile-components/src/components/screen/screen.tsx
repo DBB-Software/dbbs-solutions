@@ -1,6 +1,6 @@
 import React, { FC, ReactElement, ReactNode } from 'react'
 import { View, ViewProps } from 'react-native'
-import { useAppTheme } from '../../hooks'
+import { useAppTheme } from '../../shared/hooks'
 import { styles } from './styles'
 
 interface ScreenProps extends ViewProps {

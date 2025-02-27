@@ -37,7 +37,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/admin/subscriptions/:id/update',
+    path: '/admin/subscriptions/:id',
     handler: 'subscription.updateStripeSubscription',
     config: {}
   },

@@ -13,7 +13,6 @@ interface AddOrganizationModalProps {
   setOrganizationName: (name: string) => void
   ownerId: string
   setOwnerId: (id: string) => void
-  ownerEmail: string
   setOwnerEmail: (email: string) => void
   quantity: number
   setQuantity: (quantity: number) => void
@@ -58,7 +57,7 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
   }
 
   const handleOwnerChange = (value: string) => {
-    const selectedUser = users.find((user) => user.id === value)
+    const selectedUser = users.find((user) => user.id.toString() === value)
     setOwnerId(value)
     setOwnerEmail(selectedUser ? selectedUser.email : '')
   }

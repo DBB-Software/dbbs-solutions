@@ -2,11 +2,11 @@ import { TransactionStatus } from '../enums/index.js'
 
 export interface ITransaction {
   id: number
-  subscriptionId: number
   organizationId: number
-  purchaseId: number
-  status: TransactionStatus
   stripeInvoiceId: string
+  status: TransactionStatus
+  subscriptionId?: number
+  purchaseId?: number
   createdAt: Date
   updatedAt: Date
 }

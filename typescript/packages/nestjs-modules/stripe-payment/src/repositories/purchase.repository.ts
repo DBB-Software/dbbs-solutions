@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectConnection } from 'nest-knexjs'
 import knex from 'knex'
-import { PaginationOptions, PurchaseDbRecord } from '../types/index.js'
+
+import { CreatePurchasePayload, PaginationOptions, PurchaseDbRecord } from '../types/index.js'
 import { PlanRepository } from './plan.repository.js'
 import { PurchaseEntity } from '../entites/index.js'
 
@@ -63,5 +64,11 @@ export class PurchaseRepository {
       ),
       total
     }
+  }
+
+  async createPurchase(payload: CreatePurchasePayload): Promise<number> {
+    const [{ id }] = await this.knexConnection('purchases').insert(payload).returning('id')
+
+    return Number(id)
   }
 }

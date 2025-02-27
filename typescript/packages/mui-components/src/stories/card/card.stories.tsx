@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { ComponentType } from 'react'
 import { Card, CardContent, CardActions, CardMedia, CardHeader, CardActionArea } from './Card'
 import { Button } from '../buttons/Button'
 import { Box } from '../box/Box'
@@ -7,8 +8,13 @@ import { Typography } from '../typography/Typography'
 const meta: Meta<typeof Card> = {
   title: 'Card',
   component: Card,
-  subcomponents: { CardContent, CardActions, CardMedia, CardHeader, CardActionArea },
-  name: 'Card',
+  subcomponents: {
+    CardContent: CardContent as ComponentType<unknown>,
+    CardActions: CardActions as ComponentType<unknown>,
+    CardMedia: CardMedia as ComponentType<unknown>,
+    CardHeader: CardHeader as ComponentType<unknown>,
+    CardActionArea: CardActionArea as ComponentType<unknown>
+  },
   tags: ['autodocs'],
   argTypes: {
     variant: {

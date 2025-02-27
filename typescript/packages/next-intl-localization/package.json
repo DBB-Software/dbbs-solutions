@@ -39,7 +39,8 @@
   "scripts": {
     "clean": "npx rimraf .turbo node_modules dist bin",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
-    "build": "npx tsc --build tsconfig.lib.json"
+    "build": "npx tsc --build tsconfig.lib.json",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "next-intl": "3.19.1"

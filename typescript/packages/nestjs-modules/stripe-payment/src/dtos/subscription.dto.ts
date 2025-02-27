@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { IsInt, IsString, IsUrl, Min, MinLength, ValidateIf, IsOptional, IsDefined } from 'class-validator'
+import { IsInt, IsUrl, Min } from 'class-validator'
 import { SubscriptionStatus } from '../enums/index.js'
 import { OrganizationDto } from './organization.dto.js'
 import { PlanDto } from './plan.dto.js'
@@ -42,20 +42,6 @@ export class CreateCheckoutSessionDto {
   @IsUrl()
   successUrl: string
 
-  @IsOptional()
-  @IsString()
-  @MinLength(1)
-  organizationName?: string
-
-  @IsOptional()
   @IsInt()
-  organizationId?: number
-
-  @ValidateIf(
-    (dto) =>
-      (dto.organizationName !== undefined && dto.organizationId !== undefined) ||
-      (dto.organizationName === undefined && dto.organizationId === undefined)
-  )
-  @IsDefined({ message: 'You must provide either organizationName or organizationId, but not both' })
-  protected readonly organizationNameOrIdCheck?: undefined
+  organizationId: number
 }

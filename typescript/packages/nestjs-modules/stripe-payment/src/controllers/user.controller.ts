@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common'
 import { InjectLogger, Logger } from '@dbbs/nestjs-module-logger'
 
-import { OrganizationService } from '../services/organization.service.js'
+import { OrganizationService } from '../services/index.js'
 import { OrganizationDto } from '../dtos/index.js'
 
 @Controller('users')

@@ -3,7 +3,6 @@ import type { Knex } from 'knex'
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('invites', (table) => {
     table.increments('id').primary()
-    table.string('token').notNullable()
     table.string('email').notNullable()
     table.integer('userId').unsigned().references('id').inTable('users')
     table.integer('organizationId').unsigned().references('id').inTable('organizations')

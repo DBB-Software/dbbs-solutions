@@ -1,0 +1,15 @@
+{
+  "extends": "@dbbs/tsconfig/react-spa.json",
+  "files": [],
+  "compilerOptions": {
+    "types": ["google-one-tap"]
+  },
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./tsconfig.lib.json"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import React from 'react'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AppNavigator } from '@navigators/app-navigator'
-import { PaperProvider, useDefinedTheme } from '@dbbs/mobile-components'
+import { PaperProvider, Toaster, useDefinedTheme } from '@dbbs/mobile-components'
 import { detectAppLanguage } from '@dbbs/mobile-common'
 import { PushNotificationsProvider, RemoteConfigProvider } from '@dbbs/mobile-firebase'
 import { useRNCliDisplayNotification } from '@dbbs/mobile-react-native-notifications'
@@ -26,7 +27,10 @@ export const App = () => {
     <PushNotificationsProvider>
       <PaperProvider theme={paperTheme}>
         <RemoteConfigProvider initialValues={initialRemoteConfigValues}>
-          <AppNavigator />
+          <SafeAreaProvider>
+            <AppNavigator />
+            <Toaster />
+          </SafeAreaProvider>
         </RemoteConfigProvider>
       </PaperProvider>
     </PushNotificationsProvider>

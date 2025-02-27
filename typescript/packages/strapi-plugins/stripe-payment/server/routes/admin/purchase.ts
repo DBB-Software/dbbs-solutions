@@ -1,7 +1,7 @@
 export default [
   {
     method: 'GET',
-    path: '/admin/purchases/:id',
+    path: '/admin/purchases',
     handler: 'purchase.getAllPurchases',
     config: {}
   }

@@ -1,10 +1,11 @@
 import { jest } from '@jest/globals'
 import { Test, TestingModule } from '@nestjs/testing'
 import { ProductService as StripeProductService } from '@dbbs/nestjs-module-stripe'
-import { defaultProduct, productWithoutPlans, stripeProduct } from '../mocks/index.js'
-import { ProductRepository } from '../../repositories/product.repository.js'
-import { ProductService } from '../../services/product.service.js'
 import { ArgumentError, NotFoundError } from '@dbbs/common'
+
+import { ProductRepository } from '../../repositories/index.js'
+import { ProductService } from '../../services/index.js'
+import { defaultProduct, productWithoutPlans, stripeProduct } from '../mocks/index.js'
 
 describe('ProductService', () => {
   let service: ProductService

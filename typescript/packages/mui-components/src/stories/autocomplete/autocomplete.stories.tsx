@@ -1,11 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { ComponentType } from 'react'
 import { Autocomplete } from './Autocomplete'
 import { TextField } from '../textField/TextField'
 
 const meta: Meta<typeof Autocomplete> = {
   title: 'Autocomplete',
   component: Autocomplete,
-  subcomponents: { TextField },
+  subcomponents: { TextField: TextField as ComponentType<unknown> },
   parameters: {
     controls: { expanded: true }
   },

@@ -3,11 +3,9 @@ export class CheckoutSessionMetadataEntity {
 
   checkoutSessionStripeId: string
 
-  organizationName: string
+  organizationId: number
 
   planId: number
-
-  userId: number
 
   quantity: number
 
