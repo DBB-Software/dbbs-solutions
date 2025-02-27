@@ -12,7 +12,8 @@
     "test": "jest --coverage --verbose",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "generate:dev": "NODE_ENV=development ./scripts/define-app-root.sh tsx ./src/codegen.ts",
-    "generate:prod": "NODE_ENV=production ./scripts/define-app-root.sh tsx ./src/codegen.ts"
+    "generate:prod": "NODE_ENV=production ./scripts/define-app-root.sh tsx ./src/codegen.ts",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@apollo/client": "3.11.8",

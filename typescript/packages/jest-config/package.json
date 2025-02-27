@@ -9,7 +9,8 @@
     ],
     "scripts": {
         "clean": "npx rimraf .turbo node_modules dist bin coverage || exit 0",
-        "build": "npx tsc --build tsconfig.json"
+        "build": "npx tsc --build tsconfig.json",
+        "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
     },
     "publishConfig": {
         "access": "public"

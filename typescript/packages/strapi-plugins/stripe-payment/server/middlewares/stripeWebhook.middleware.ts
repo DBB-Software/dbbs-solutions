@@ -1,6 +1,5 @@
-import { errors } from '@strapi/utils'
 import Stripe from 'stripe'
-import { Strapi } from '@strapi/strapi'
+import createHttpError from 'http-errors'
 
 const stripeWebhookMiddleware = async (ctx, next) => {
   const stripeWebhookSecret: string = strapi.config.get('server.stripe.webhookSecret')
@@ -19,7 +18,7 @@ const stripeWebhookMiddleware = async (ctx, next) => {
       .webhooks.constructEvent(raw, headers['stripe-signature'], stripeWebhookSecret)
   } catch (err) {
     console.log(err)
-    throw new errors.ForbiddenError()
+    throw new createHttpError.Forbidden()
   }
 
   ctx.state.stripeEvent = event

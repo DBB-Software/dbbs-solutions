@@ -1,5 +1,4 @@
 import { Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import { createMockPlugins } from './mockPlugins'
 
 interface MockQueries {
@@ -46,6 +45,14 @@ export const createMockStrapi = (overrides?: Partial<Strapi>): Strapi => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn()
+    },
+    'plugin::users-permissions.user': {
+      findOne: jest.fn(),
+      findMany: jest.fn(),
+      count: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn()
     }
   }
 
@@ -63,7 +70,6 @@ export const createMockStrapi = (overrides?: Partial<Strapi>): Strapi => {
       set: jest.fn(),
       has: jest.fn()
     },
-    errors,
     log: {
       debug: jest.fn(),
       error: jest.fn(),

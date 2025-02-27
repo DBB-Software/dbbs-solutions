@@ -45,7 +45,7 @@ async def client(
 
 
 @pytest.fixture
-async def patch_verify(fastapi_app: FastAPI) -> None:
+async def patch_verify(fastapi_app: FastAPI) -> AsyncGenerator[None, None]:
     from src.api.router import auth
     fastapi_app.dependency_overrides[auth.verify] = lambda: AsyncMock(return_value=True)
     yield

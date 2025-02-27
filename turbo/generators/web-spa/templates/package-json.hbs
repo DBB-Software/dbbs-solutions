@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "lint": "eslint . --ext ts,tsx --max-warnings 0",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit",
     {{#if isAPP}}
     "dev": "npx vite",
     "build": "npx tsc && vite build",

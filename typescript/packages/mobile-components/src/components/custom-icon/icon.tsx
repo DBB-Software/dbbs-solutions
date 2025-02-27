@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Icon } from 'react-native-paper'
 import { View } from 'react-native'
-import { IconManager, IconManagerType } from '../../utils'
+import { IconManager, IconManagerType } from './icon-manager'
 import { styles } from './styles'
 
 interface IconProps {

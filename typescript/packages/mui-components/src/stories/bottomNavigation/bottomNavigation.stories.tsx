@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
 
+import { ComponentType } from 'react'
 import { BottomNavigation, BottomNavigationAction } from './BottomNavigation'
 
 const meta: Meta<typeof BottomNavigation> = {
   title: 'BottomNavigation',
-  subcomponents: { BottomNavigationAction },
+  subcomponents: { BottomNavigationAction: BottomNavigationAction as ComponentType<unknown> },
   component: BottomNavigation,
   tags: ['autodocs']
 }

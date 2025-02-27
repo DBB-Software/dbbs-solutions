@@ -2,7 +2,7 @@ import React, { FC, ReactElement, ReactNode, useCallback, useEffect, useMemo } f
 import { useWindowDimensions, Modal, View, StyleProp, ViewStyle } from 'react-native'
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler'
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
-import { clamp } from '../../utils'
+import { clamp } from '../../shared/utils'
 import { styles } from './styles'
 
 const BASE_MODAL_HEIGHT = 300

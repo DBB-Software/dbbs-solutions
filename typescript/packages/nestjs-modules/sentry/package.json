@@ -14,13 +14,14 @@
     "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
     "lint": "npx eslint \"src/**/*.ts*\" --fix",
     "test": "echo \"Error: no test specified\"",
-    "watch": "npx tsc -w --preserveWatchOutput"
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@dbbs/nestjs-module-logger": "*",
-    "@nestjs/common": "10.3.8",
-    "@sentry/nestjs": "8.34.0",
-    "@sentry/profiling-node": "8.17.0"
+    "@nestjs/common": "11.0.10",
+    "@sentry/nestjs": "9.2.0",
+    "@sentry/profiling-node": "9.2.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

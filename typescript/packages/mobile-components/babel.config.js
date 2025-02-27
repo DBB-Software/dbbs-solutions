@@ -6,6 +6,15 @@ module.exports = {
     },
   },
   plugins: [
+    [
+      'module-resolver',
+      {
+        root: ['./src'],
+        alias: {
+          '@shared': './src/shared'
+        }
+      }
+    ],
     '@babel/plugin-transform-react-jsx',
     'react-native-reanimated/plugin',
     'transform-inline-environment-variables',

@@ -1,4 +1,4 @@
-import { errors } from '@strapi/utils'
+import createHttpError from 'http-errors'
 
 const checkOrganizationOwnerMiddleware = async (ctx, next) => {
   const userId = ctx.state.user.id
@@ -10,11 +10,11 @@ const checkOrganizationOwnerMiddleware = async (ctx, next) => {
   })
 
   if (!organization) {
-    throw new errors.NotFoundError(`Organization with ID ${organizationId} not found`)
+    throw new createHttpError.NotFound(`Organization with ID ${organizationId} not found`)
   }
 
   if (organization.owner_id !== userId.toString()) {
-    throw new errors.ForbiddenError('User is not the owner of this organization')
+    throw new createHttpError.Forbidden('User is not the owner of this organization')
   }
 
   await next()

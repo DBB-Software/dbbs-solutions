@@ -7,9 +7,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string('name').notNullable()
       table.timestamps(true, true, true)
     })
-    .then(() => {
-      knex('invites_statuses').insert([{ name: 'pending' }, { name: 'accepted' }, { name: 'canceled' }])
-    })
+    .then(() => knex('invites_statuses').insert([{ name: 'pending' }, { name: 'accepted' }, { name: 'canceled' }]))
 }
 
 export async function down(knex: Knex): Promise<void> {

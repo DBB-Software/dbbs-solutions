@@ -1,0 +1,25 @@
+{
+  "name": "@dbbs/react-google-login",
+  "version": "0.0.0",
+  "private": true,
+  "description": "React library for integrating Google Login functionality into web apps",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage \"*.tsbuildinfo\" || exit 0",
+    "test": "npx jest --coverage --verbose",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit",
+    "build": "npx tsc --build tsconfig.json"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*",
+    "@types/google-one-tap": "1.2.6"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  }
+}

@@ -1,11 +1,12 @@
 import { jest } from '@jest/globals'
-import { SubscriptionController } from '../../controllers/subscription.controller.js'
-import { SubscriptionService } from '../../services/subscription.service.js'
+import { NotFoundError } from '@dbbs/common'
 import { LoggerModule } from '@dbbs/nestjs-module-logger'
 import { Test, TestingModule } from '@nestjs/testing'
-import { CHECKOUT_SESSION_URL, defaultSubscription, extendedSubscription, SUCCESS_URL } from '../mocks/index.js'
-import { NotFoundError } from '@dbbs/common'
+
+import { SubscriptionController } from '../../controllers/index.js'
+import { SubscriptionService } from '../../services/index.js'
 import { SubscriptionStatus } from '../../enums/index.js'
+import { CHECKOUT_SESSION_URL, defaultSubscription, extendedSubscription, SUCCESS_URL } from '../mocks/index.js'
 
 describe('SubscriptionController', () => {
   let controller: SubscriptionController
@@ -344,14 +345,14 @@ describe('SubscriptionController', () => {
           planId: 1,
           userId: 1,
           successUrl: SUCCESS_URL,
-          organizationName: 'new name'
+          organizationId: 1
         },
         expectedParams: {
           quantity: 5,
           planId: 1,
           userId: 1,
           successUrl: SUCCESS_URL,
-          organizationName: 'new name'
+          organizationId: 1
         },
         expectedResult: CHECKOUT_SESSION_URL,
         setupMocks: () => {

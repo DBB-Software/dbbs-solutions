@@ -1,6 +1,6 @@
+import createHttpError from 'http-errors'
 import { Context } from 'koa'
 import { Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import organizationController from '../../server/controllers/organization'
 import { createMockContext, createMockStrapi } from '../factories'
 import {
@@ -8,9 +8,7 @@ import {
   updatedOrganization,
   strapiOrganizationControllerMock,
   defaultPaymentMethod,
-  defaultCheckoutSession,
-  currency,
-  successUrl
+  defaultCheckoutSession
 } from '../mocks'
 
 describe('Organization Controller', () => {
@@ -53,7 +51,7 @@ describe('Organization Controller', () => {
         name: 'should throw an error if organization not found',
         ctxOverrides: { params: { id: 1 } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
@@ -82,7 +80,7 @@ describe('Organization Controller', () => {
         name: 'should throw an error if organization not found',
         ctxOverrides: { params: { id: 1 } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
@@ -129,7 +127,7 @@ describe('Organization Controller', () => {
         name: 'should throw an error if updated organization not found',
         ctxOverrides: { params: { id: 1 }, request: { body: { name: 'Updated Organization', quantity: 10 } } },
         serviceMethodArgs: { id: 1, name: 'Updated Organization', quantity: 10 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as unknown as Partial<Context>)
@@ -164,7 +162,7 @@ describe('Organization Controller', () => {
         serviceMethodArgs: {
           id: 1
         },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as unknown as Partial<Context>)
@@ -198,7 +196,7 @@ describe('Organization Controller', () => {
         name: 'should throw an error if deleted organization not found',
         ctxOverrides: { params: { id: 1 } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
@@ -225,7 +223,7 @@ describe('Organization Controller', () => {
         name: 'should throw an error if updated owner organization not found',
         ctxOverrides: { params: { id: 1 }, request: { body: { ownerId: 2 } } },
         serviceMethodArgs: { id: 1, ownerId: 2 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as unknown as Partial<Context>)
@@ -244,18 +242,18 @@ describe('Organization Controller', () => {
     it.each([
       {
         name: 'should remove a user from an organization',
-        ctxOverrides: { params: { id: 1, userId: 2 } },
+        ctxOverrides: { params: { id: 1 }, request: { body: { userId: 2 } } },
         serviceMethodArgs: { organizationId: 1, userId: 2 },
         expectedResult: { id: 1, name: 'Test Organization', users: [] }
       },
       {
         name: 'should throw an error if removed user organization not found',
-        ctxOverrides: { params: { id: 1, userId: 2 } },
+        ctxOverrides: { params: { id: 1 }, request: { body: { userId: 2 } } },
         serviceMethodArgs: { id: 1, ownerId: 2 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
-      const ctx = createMockContext(ctxOverrides as Partial<Context>)
+      const ctx = createMockContext(ctxOverrides as unknown as Partial<Context>)
       if (error) {
         strapi.plugin('stripe-payment').service('organization').removeUser.mockResolvedValue(null)
         await expect(organizationController({ strapi }).removeUser(ctx)).rejects.toThrow(error)

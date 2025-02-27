@@ -34,5 +34,9 @@ export default ({ env }) => ({
     awsRegion: env('STRIPE_SES_REGION', 'eu-central-1'),
     sesSenderEmail: env('STRIPE_SES_SENDER_EMAIL', ''),
     domainUrl: env('DOMAIN_URL', '')
+  },
+  auth0: {
+    signInCertificate: env('AUTH0_SIGN_IN_CERTIFICATE', ''),
+    auth0Authorization: env('AUTH_AUTHORIZATION', '')
   }
 })

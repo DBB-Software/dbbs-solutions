@@ -1,3 +1,6 @@
+require 'fastlane_core/ui/ui'
+require_relative '../../../../scripts/manage_version_and_build'
+
 team_id = ''
 team_name = ''
 app_identifier = ''
@@ -8,7 +11,6 @@ app_connect_issuer_id = ''
 android_app_id = ''
 ios_app_id = ''
 application_version = ''
-application_build_number = ''
 fastlane_keychain_name = ''
 keychain_password = ''
 
@@ -19,7 +21,7 @@ entitlements_file_path = "MobileApp/MobileApp.entitlements"
 
 before_all do |lane, options|
   raise ArgumentError, "build variant is required!" unless options[:variant]
-  # Define wich env file should be used
+  # Define which env file should be used
   env_file = options[:variant] == 'prod' ? '.env.production' : '.env.development'
 
   # Load env file
@@ -36,38 +38,15 @@ before_all do |lane, options|
   android_app_id = ENV["ANDROID_APP_ID"]
   ios_app_id = ENV["IOS_APP_ID"]
   application_version = ENV["APPLICATION_VERSION"]
-  application_build_number = ENV["APPLICATION_BUILD_NUMBER"]
   fastlane_keychain_name = ENV["FASTLANE_KEYCHAIN_NAME"]
   keychain_password = ENV["FASTLANE_KEYCHAIN_PASSWORD"]
-
-  check_env()
-end
-
-lane :check_env do
-  raise ArgumentError, "APPLICATION_VERSION ENV should be provided!" unless application_version
-  raise ArgumentError, "APPLICATION_BUILD_NUMBER ENV should be provided!" unless application_build_number
-  UI.success("APPLICATION_VERSION:#{application_version} and APPLICATION_BUILD_NUMBER:#{application_build_number} environments successfully loaded!")
 end
 
 platform :ios do
   desc "Increment Build number"
-  lane :increment_build do
-    increment_build_number(
-      xcodeproj: xcodeproj_path,
-      build_number: application_build_number
-    )
-    increment_version_number(
-      xcodeproj: xcodeproj_path,
-      version_number: application_version
-    )
-  end
-
-  desc "Increment Build number in TestFlight"
-  lane :increment_build_testflight do
-    increment_build_number(
-      xcodeproj: xcodeproj_path,
-      build_number: application_build_number
-    )
+  lane :increment_build do |options|
+    env_file = options[:variant] == 'prod' ? '.env.production' : '.env.development'
+    manage_version_and_build('mobile-app', 'ios', env_file, xcodeproj_path: xcodeproj_path)
   end
 
   desc 'Fetch certificates and provisioning profiles'
@@ -210,7 +189,7 @@ platform :ios do
   end
 
   desc "Firebase distribution of iOS"
-  lane :distribution do |options|
+  lane :firebase do |options|
 
     firebase_app_distribution(
       app: ios_app_id,
@@ -222,9 +201,9 @@ platform :ios do
   end
 
   desc "Upload to Test Flight"
-  lane :beta do |options|
+  lane :testing do |options|
 
-    bild_name = "#{app_identifier}.ipa"
+    build_name = "#{app_identifier}.ipa"
 
     api_key = app_store_connect_api_key(
 			key_id: app_connect_key_id,
@@ -237,7 +216,7 @@ platform :ios do
 			api_key: api_key,
 			app_identifier: app_identifier,
 			team_name: team_name,
-			ipa: "#{build_folder}/#{bild_name}",
+			ipa: "#{build_folder}/#{build_name}",
 			skip_submission: true,
 		)
   end
@@ -245,7 +224,7 @@ platform :ios do
   desc "Upload release to App Store"
   lane :release do |options|
 
-    bild_name = "#{app_identifier}.ipa"
+    build_name = "#{app_identifier}.ipa"
 
     api_key = app_store_connect_api_key(
 			key_id: app_connect_key_id,
@@ -259,7 +238,7 @@ platform :ios do
       app_version: application_version,
       app_identifier: app_identifier,
       team_name: team_name,
-      ipa: "#{build_folder}/#{bild_name}",
+      ipa: "#{build_folder}/#{build_name}",
       overwrite_screenshots: true,
       force: true
     )
@@ -296,15 +275,9 @@ end
 
 platform :android do
   desc "Increment Build number"
-  lane :increment_build do
-    increment_version_code(
-      gradle_file_path: gradle_path,
-      version_code: application_build_number
-    )
-    increment_version_name(
-      gradle_file_path: gradle_path,
-      version_name: application_version
-    )
+  lane :increment_build do |options|
+    env_file = options[:variant] == 'prod' ? '.env.production' : '.env.development'
+    manage_version_and_build('mobile-app', 'android', env_file, gradle_path: gradle_path)
   end
 
   desc "Build a Release artifact (.aab and .apk)"
@@ -317,7 +290,7 @@ platform :android do
     gradlew_path = File.join(android_dir, "gradlew")
     aab_output_variant = variant == "prod" ? "prodRelease" : "devRelease"
     apk_output_variant = variant == "prod" ? "prod/release" : "dev/release"
-    bild_varinat = variant == "prod" ? "app-prod-release" : "app-dev-release"
+    build_variant = variant == "prod" ? "app-prod-release" : "app-dev-release"
     gradle_assemble_task =  variant == "prod" ? "assembleProdRelease" : "assembleDevRelease"
     gradle_bundle_task = variant == "prod" ? "bundleProdRelease" : "bundleDevRelease"
 
@@ -333,8 +306,8 @@ platform :android do
 
     FileUtils.mkdir_p(fastlane_build_directory)
 
-    aab_file_path = File.join(Dir.pwd, "..", "android", "app", "build", "outputs", "bundle", aab_output_variant, "#{bild_varinat}.aab")
-    apk_file_path = File.join(Dir.pwd, "..", "android", "app", "build", "outputs", "apk", apk_output_variant, "#{bild_varinat}.apk")
+    aab_file_path = File.join(Dir.pwd, "..", "android", "app", "build", "outputs", "bundle", aab_output_variant, "#{build_variant}.aab")
+    apk_file_path = File.join(Dir.pwd, "..", "android", "app", "build", "outputs", "apk", apk_output_variant, "#{build_variant}.apk")
 
     build_to_copy = type == "APK" ? apk_file_path : aab_file_path
 
@@ -344,34 +317,34 @@ platform :android do
   end
 
   desc "Firebase distribution of Android"
-  lane :distribution do |options|
+  lane :firebase do |options|
     raise ArgumentError, "build variant is required!" unless options[:variant]
 
     variant = options[:variant]
-    bild_varinat = variant == "prod" ? "app-prod-release" : "app-dev-release"
+    build_variant = variant == "prod" ? "app-prod-release" : "app-dev-release"
 
     firebase_app_distribution(
       app: android_app_id,
       service_credentials_file: json_key_file,
       android_artifact_type: "APK",
-      android_artifact_path: "#{build_folder}/#{bild_varinat}.apk",
+      android_artifact_path: "#{build_folder}/#{build_variant}.apk",
       groups: "qa-team",
       release_notes_file: "./CHANGELOG.md",
     )
   end
 
-  desc "Upload to Play Store beta"
-  lane :beta do |options|
+  desc "Upload to Play Store testing"
+  lane :testing do |options|
     raise ArgumentError, "build variant is required!" unless options[:variant]
 
     variant = options[:variant]
-    bild_varinat = variant == "prod" ? "app-prod-release" : "app-dev-release"
+    build_variant = variant == "prod" ? "app-prod-release" : "app-dev-release"
 
 		upload_to_play_store(
 			package_name: package_name,
 			track: "internal",
 			version_name: application_version,
-			aab: "#{build_folder}/#{bild_varinat}.aab",
+			aab: "#{build_folder}/#{build_variant}.aab",
 			skip_upload_metadata: true,
 			skip_upload_images: true,
 			skip_upload_screenshots: true,

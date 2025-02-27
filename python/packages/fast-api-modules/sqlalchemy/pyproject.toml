@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "fast-api-db"
+version = "0.1.0"
+description = ""
+authors = [
+    "Hryhoriy Bilenko <hryhoriy.bilenko@dbbsoftware.com>"
+]
+readme = "README.md"
+
+[tool.ruff]
+extend = "../../common/pyproject.toml"
+
+[tool.poetry.dependencies]
+python = "3.11.6"
+SQLAlchemy = "2.0.35"
+fastapi = "0.115.0"
+greenlet = "3.1.1"
+packaging = "24.2"
+common = {path = "../../common"}
+pydantic-settings = "2.6.1"
+asyncpg = { version = "0.29.0", optional = true }
+aiosqlite = { version = "0.20.0", optional = true }
+
+
+[tool.poetry.extras]
+postgresql = ["asyncpg"]
+sqlite = ["aiosqlite"]
+all = ["asyncpg", "aiosqlite"]
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

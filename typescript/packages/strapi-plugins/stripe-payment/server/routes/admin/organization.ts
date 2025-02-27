@@ -31,19 +31,19 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/admin/organizations/:id/change-owner',
+    path: '/admin/organizations/:id/owner',
     handler: 'organization.updateOwner',
     config: {}
   },
   {
     method: 'PATCH',
-    path: '/admin/organizations/:id/add-user',
+    path: '/admin/organizations/:id/users',
     handler: 'organization.addUser',
     config: {}
   },
   {
     method: 'PATCH',
-    path: '/admin/organizations/:id/remove-user/:userId',
+    path: '/admin/organizations/:id/remove-user',
     handler: 'organization.removeUser',
     config: {}
   }

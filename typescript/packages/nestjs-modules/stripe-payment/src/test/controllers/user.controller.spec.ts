@@ -3,9 +3,9 @@ import { LoggerModule } from '@dbbs/nestjs-module-logger'
 import { NotFoundError } from '@dbbs/common'
 import { mockDeep, mockReset } from 'jest-mock-extended'
 
-import { UserController } from '../../controllers/user.controller.js'
-import { OrganizationService } from '../../services/organization.service.js'
-import { OrganizationController } from '../../controllers/organization.controller.js'
+import { UserController } from '../../controllers/index.js'
+import { OrganizationService } from '../../services/index.js'
+
 import { defaultOrganization } from '../mocks/index.js'
 
 describe(UserController.name, () => {

@@ -36,6 +36,13 @@ const OrganizationList: React.FC = () => {
     fetchOrganizations()
   }, [])
 
+  const resetOrganizationForm = () => {
+    setNewOrganizationName('')
+    setOwnerId('')
+    setOwnerEmail('')
+    setQuantity(0)
+  }
+
   const handleAddOrganization = () => {
     setShowAddModal(true)
   }
@@ -83,13 +90,6 @@ const OrganizationList: React.FC = () => {
   const handleDeleteIconClick = (id: string) => {
     setDeleteOrganizationId(id)
     setShowDeleteConfirm(true)
-  }
-
-  const resetOrganizationForm = () => {
-    setNewOrganizationName('')
-    setOwnerId('')
-    setOwnerEmail('')
-    setQuantity(0)
   }
 
   return (

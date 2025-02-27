@@ -9,6 +9,11 @@ describe('<ProductCard />', () => {
     expect(screen.getByText(mockProductData.name)).toBeVisible()
   })
 
+  afterEach(() => {
+    jest.clearAllMocks()
+    jest.clearAllTimers()
+  })
+
   it('should render by default', async () => {
     const mockName = `${mockProductData.name} asd`
     render(<ProductCard buttonHandler={() => {}} data={{ ...mockProductData, name: mockName }} />)

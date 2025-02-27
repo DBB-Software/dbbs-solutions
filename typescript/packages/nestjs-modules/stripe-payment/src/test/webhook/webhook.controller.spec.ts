@@ -4,6 +4,9 @@ import { WebhookController } from '../../webhook/webhook.controller.js'
 import { WebhookService } from '../../webhook/webhook.service.js'
 import { StripeWebhookGuard } from '../../webhook/webhook.guard.js'
 import {
+  defaultCheckoutSessionCompletedStripeEvent,
+  defaultInvoicePaymentFailedStripeEvent,
+  defaultInvoicePaymentSucceededStripeEvent,
   nonExistingStripeEvent,
   priceCreatedStripeEvent,
   priceDeletedStripeEvent,
@@ -30,7 +33,10 @@ describe('WebhookController', () => {
             handleProductDeleted: jest.fn(),
             handlePriceCreated: jest.fn(),
             handlePriceDeleted: jest.fn(),
-            handlePriceUpdated: jest.fn()
+            handlePriceUpdated: jest.fn(),
+            handleCheckoutSessionCompleted: jest.fn(),
+            handleInvoicePaymentSucceeded: jest.fn(),
+            handleInvoicePaymentFailed: jest.fn()
           }
         }
       ]
@@ -82,6 +88,24 @@ describe('WebhookController', () => {
         controllerMethodArgs: priceUpdatedStripeEvent,
         serviceMethod: 'handlePriceUpdated',
         serviceMethodArgs: priceUpdatedStripeEvent
+      },
+      {
+        name: 'should handle Stripe checkout session completed event',
+        controllerMethodArgs: defaultCheckoutSessionCompletedStripeEvent,
+        serviceMethod: 'handleCheckoutSessionCompleted',
+        serviceMethodArgs: defaultCheckoutSessionCompletedStripeEvent
+      },
+      {
+        name: 'should handle Stripe invoice payment succeeded event',
+        controllerMethodArgs: defaultInvoicePaymentSucceededStripeEvent,
+        serviceMethod: 'handleInvoicePaymentSucceeded',
+        serviceMethodArgs: defaultInvoicePaymentSucceededStripeEvent
+      },
+      {
+        name: 'should handle Stripe invoice payment failed event',
+        controllerMethodArgs: defaultInvoicePaymentFailedStripeEvent,
+        serviceMethod: 'handleInvoicePaymentFailed',
+        serviceMethodArgs: defaultInvoicePaymentFailedStripeEvent
       },
       {
         name: 'should not handle other Stripe events',

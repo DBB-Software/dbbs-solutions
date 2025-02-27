@@ -9,6 +9,6 @@ export default ({ strapi }: { strapi: Strapi }) => {
   }
 
   return new Stripe(stripeApiKey, {
-    apiVersion: '2024-04-10'
+    apiVersion: '2025-02-24.acacia'
   })
 }

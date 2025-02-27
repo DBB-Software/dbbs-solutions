@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Layout /> renders correctly 1`] = `
+<DocumentFragment>
+  <a
+    href="/dashboard"
+  >
+    <div
+      class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="MuiListItemIcon-root css-1a5375a-MuiListItemIcon-root"
+      />
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-1d9ye53-MuiTypography-root"
+      >
+        Dashboard
+      </p>
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </div>
+  </a>
+</DocumentFragment>
+`;

@@ -1,6 +1,6 @@
 import { StripeSubscription } from '@dbbs/nestjs-module-stripe'
 import { SubscriptionEntity } from '../../entites/index.js'
-import { BillingPeriod, PlanType, SubscriptionStatus } from '../../enums/index.js'
+import { BillingPeriod, PlanType, SubscriptionStatus, SubscriptionStatusId } from '../../enums/index.js'
 import { defaultRecurringPlan } from './plan.mock.js'
 import { defaultDate, defaultDateISOString } from './date.mock.js'
 import { defaultOrganization, defaultOrganizationEntity } from './organization.mock.js'
@@ -9,7 +9,7 @@ export const defaultSubscription: SubscriptionEntity = {
   id: 1,
   stripeId: 'sub_1',
   plan: 1,
-  status: 2,
+  status: SubscriptionStatusId.ACTIVE,
   organization: 1,
   quantity: 5,
   createdAt: defaultDate,
@@ -32,7 +32,7 @@ export const dbSubscriptionsList = (baseId: number) =>
     id: index + baseId + 1,
     stripeId: `sub_${index + baseId + 1}`,
     planId: baseId + 1,
-    statusId: 1,
+    statusId: SubscriptionStatusId.TRIALING,
     organizationId: index + baseId + 1,
     quantity: 5,
     createdAt: defaultDateISOString,
@@ -43,7 +43,7 @@ export const resubscribedDbSubscription = (baseId: number) => ({
   id: baseId + 1,
   stripeId: 'stripe_id',
   planId: baseId + 1,
-  statusId: 3,
+  statusId: SubscriptionStatusId.CANCELED,
   organizationId: baseId + 1,
   quantity: 3,
   createdAt: defaultDateISOString,
@@ -54,7 +54,7 @@ export const defaultSubscriptionEntity = (baseId: number): SubscriptionEntity =>
   id: baseId + 1,
   stripeId: `sub_${baseId + 1}`,
   plan: baseId + 1,
-  status: 1,
+  status: SubscriptionStatusId.TRIALING,
   organization: baseId + 1,
   quantity: 5,
   createdAt: defaultDate,
@@ -66,6 +66,13 @@ export const secondSubscriptionEntity = (baseId: number): SubscriptionEntity => 
   id: baseId + 2,
   stripeId: `sub_${baseId + 2}`,
   organization: baseId + 2
+})
+
+export const thirdSubscriptionEntity = (baseId: number): SubscriptionEntity => ({
+  ...defaultSubscriptionEntity(baseId),
+  id: baseId + 3,
+  stripeId: `sub_${baseId + 3}`,
+  organization: baseId + 3
 })
 
 export const populatedSubscriptionEntity = (baseId: number): SubscriptionEntity => ({

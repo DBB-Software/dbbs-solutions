@@ -1,26 +1,47 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { OrganizationService as StripeCustomerService } from '@dbbs/nestjs-module-stripe'
 import { NotFoundError } from '@dbbs/common'
+import { SendgridService } from '@dbbs/nestjs-module-sendgrid'
+import { ConfigService } from '@nestjs/config'
 
-import { OrganizationRepository } from '../repositories/organization.repository.js'
+import { OrganizationRepository, UserRepository } from '../repositories/index.js'
 import {
+  IAcceptInvite,
+  IAddUserToOrganization,
   ICreateOrganizationParams,
+  IDeleteUser,
   IOrganization,
   IPaginatedResponse,
   IPaginationOptions,
+  ISendInviteToOrganization,
   IUpdateOrganizationName,
   IUpdateOrganizationOwner,
   IUpdateOrganizationQuantity
 } from '../interfaces/index.js'
-import { UserRepository } from '../repositories/user.repository.js'
+import { InviteService } from './invite.service.js'
+import { emailToAuthorizedUserTemplate, emailToUnAuthorizedUserTemplate } from '../templates/index.js'
+import { InviteStatus } from '../enums/invite.enum.js'
 
 @Injectable()
 export class OrganizationService {
   constructor(
     private readonly organizationRepository: OrganizationRepository,
     private readonly stripeCustomerService: StripeCustomerService,
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly inviteService: InviteService,
+    private readonly configService: ConfigService,
+    private readonly sendgridService: SendgridService
   ) {}
+
+  get basePath(): string {
+    const basePath = this.configService.get<string>('BASE_URL')
+
+    if (!basePath) {
+      throw new Error('Missing base path')
+    }
+
+    return basePath
+  }
 
   async createOrganization(params: ICreateOrganizationParams): Promise<IOrganization> {
     const { name, email, ownerId, quantity } = params
@@ -42,7 +63,7 @@ export class OrganizationService {
     })
   }
 
-  async getOrganizationById(id: number): Promise<IOrganization | null> {
+  getOrganizationById(id: number): Promise<IOrganization | null> {
     return this.organizationRepository.getOrganizationById(id)
   }
 
@@ -147,5 +168,97 @@ export class OrganizationService {
     }
 
     return updatedOrganization
+  }
+
+  async sendInviteToOrganization({
+    organizationId,
+    recipientEmail,
+    organizationName,
+    userId
+  }: ISendInviteToOrganization): Promise<boolean> {
+    // TODO (#1233): Nestjs Stripe-payment: wrap create, update and delete, send email operations with transaction
+
+    if (!userId) {
+      await this.sendgridService.sendEmail(emailToUnAuthorizedUserTemplate({ recipientEmail, organizationName }))
+      return true
+    }
+
+    const invite = await this.inviteService.createInvite({
+      organizationId,
+      userId,
+      email: recipientEmail
+    })
+    const acceptInviteLink = `${this.basePath}/organizations/${organizationId}/invites/${invite.id}/accept/${userId}`
+
+    await this.sendgridService.sendEmail(
+      emailToAuthorizedUserTemplate({ acceptInviteLink, recipientEmail, organizationName })
+    )
+
+    return true
+  }
+
+  async addUserToOrganization({ organizationId, userId }: IAddUserToOrganization): Promise<boolean> {
+    const organization = await this.getOrganizationById(organizationId)
+    if (!organization) {
+      throw new NotFoundError(`Organization with Id ${organizationId} does not exist`)
+    }
+    const doesUserExist = await this.userRepository.doesUserExist(userId)
+
+    if (!doesUserExist) {
+      throw new NotFoundError(`User with Id ${userId} does not exist`)
+    }
+
+    const users = await this.userRepository.getOrganizationUsers(organizationId)
+
+    if (users.some(({ id }) => id === userId)) {
+      throw new BadRequestException(`User with Id ${userId} already exists in organization ${organization.name}`)
+    }
+
+    if (organization.quantity < users.length + 1) {
+      throw new BadRequestException('Cannot add user to organization, increase your organization quantity')
+    }
+
+    await this.organizationRepository.addUser({ organizationId, userId })
+
+    return true
+  }
+
+  async acceptInvite({ inviteId, userId, organizationId }: IAcceptInvite): Promise<boolean> {
+    const invite = await this.inviteService.getInviteById(inviteId)
+
+    switch (invite?.status) {
+      case InviteStatus.Pending:
+        await this.addUserToOrganization({ organizationId, userId })
+        return this.inviteService.acceptInvite({ inviteId })
+      case InviteStatus.Accepted:
+        throw new BadRequestException(`Invite with Id ${inviteId} already accepted`)
+      case InviteStatus.Cancelled:
+        throw new BadRequestException(`Invite with Id ${inviteId} already cancelled, create new invite`)
+      default:
+        throw new NotFoundError(
+          `Invite with Id ${inviteId} to organization with Id ${organizationId} for user ${userId} not found`
+        )
+    }
+  }
+
+  async removeUserFromOrganization({ organizationId, userId }: IDeleteUser): Promise<boolean> {
+    const organization = await this.getOrganizationById(organizationId)
+    if (!organization) {
+      throw new NotFoundError(`Organization with Id ${organizationId} does not exist`)
+    }
+
+    const isUserExist = await this.userRepository.doesUserExist(userId)
+    if (!isUserExist) {
+      throw new NotFoundError(`User with Id ${userId} does not exist`)
+    }
+
+    const users = await this.userRepository.getOrganizationUsers(organizationId)
+    if (!users.some(({ id }) => id === userId)) {
+      throw new BadRequestException(`User with id ${userId} is not a member of organization`)
+    }
+
+    const removedRows = await this.organizationRepository.removeUserFromOrganization({ organizationId, userId })
+
+    return !!removedRows
   }
 }

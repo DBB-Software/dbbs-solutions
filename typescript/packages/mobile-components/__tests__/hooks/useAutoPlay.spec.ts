@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-hooks'
-import { useAutoPlay } from '../../src/hooks'
+import { useAutoPlay } from '../../src/shared/hooks'
 
 const BASE_AUTO_PLAY_INTERVAL = 1000
 

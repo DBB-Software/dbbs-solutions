@@ -222,9 +222,12 @@ infra/aws-cdk/**/*.d.ts
 #SQLite DB
 *.sqlite3
 
-#Django tests
+#Python tests
 .coverage
 coverage.xml
+
+#Python virtual environment
+**/.venv/
 
 # Android - iOS
 credentials.*

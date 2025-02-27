@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "fast-api-cloudwatch"
+version = "0.1.0"
+description = ""
+authors = ["Dmytro Tiurin <dtu@dbbsoftware.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.11.6"
+watchtower = "3.3.1"
+boto3 = "1.35.38"
+common = {path = "../../common"}
+colorlog = "6.8.2"
+pydantic-settings = "2.6.1"
+boto3-stubs = "^1.36.2"
+
+[tool.ruff]
+extend = "../../common/pyproject.toml"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
+import type { ComponentType } from 'react'
 import { AvatarGroup } from './AvatarGroup'
 import { Avatar } from '../avatar/Avatar'
 import { Box } from '../box/Box'
@@ -6,7 +7,7 @@ import { Box } from '../box/Box'
 const meta: Meta<typeof AvatarGroup> = {
   title: 'AvatarGroup',
   component: AvatarGroup,
-  subcomponents: { Avatar },
+  subcomponents: { Avatar: Avatar as ComponentType<unknown> },
   tags: ['autodocs'],
   argTypes: {
     total: {

@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from 'react'
+import { useState, SyntheticEvent, ComponentType } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { Box } from '../box/Box'
@@ -7,7 +7,7 @@ import { Tab, Tabs } from './Tab'
 const meta: Meta<typeof Tab> = {
   title: 'Tab',
   component: Tab,
-  subcomponents: { Box, Tabs },
+  subcomponents: { Box: Box as ComponentType<unknown>, Tabs: Tabs as ComponentType<unknown> },
   tags: ['autodocs']
 }
 export default meta

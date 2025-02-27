@@ -2,7 +2,7 @@
   "extends": "@dbbs/tsconfig/nextjs.json",
   "exclude": [],
   "include": [
-    ".next/types/**/*.ts",
+    ".next/types/**/*.ts"
   ],
   "compilerOptions": {
     "isolatedModules": true

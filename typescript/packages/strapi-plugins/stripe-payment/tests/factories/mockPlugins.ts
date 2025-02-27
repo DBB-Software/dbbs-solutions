@@ -1,6 +1,4 @@
-import { Strapi } from '@strapi/strapi'
-
-export function createMockPlugins(overrides: Partial<Record<string, any>> = {}) {
+export function createMockPlugins(overrides: Partial<Record<string, unknown>> = {}) {
   return {
     'users-permissions': {
       services: {

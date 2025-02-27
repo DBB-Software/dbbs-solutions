@@ -5,14 +5,18 @@ import { AnErrorOccurred } from '@strapi/helper-plugin'
 import OrganizationList from './pages/OrganizationList'
 import OrganizationDetail from './pages/OrganizationDetail'
 
-const Organizations = () => {
-  return (
-    <Switch>
-      <Route path="/settings/stripe-payment/organizations/:id" component={OrganizationDetail} exact />
-      <Route path="/settings/stripe-payment/organizations" component={OrganizationList} exact />
-      <Route path="" component={AnErrorOccurred} />
-    </Switch>
-  )
-}
+const Organizations = () => (
+  <Switch>
+    <Route path="/settings/stripe-payment/organizations/:id">
+      <OrganizationDetail />
+    </Route>
+    <Route path="/settings/stripe-payment/organizations">
+      <OrganizationList />
+    </Route>
+    <Route path="">
+      <AnErrorOccurred />
+    </Route>
+  </Switch>
+)
 
 export default Organizations

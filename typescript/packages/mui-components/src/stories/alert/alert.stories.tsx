@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { ComponentType } from 'react'
 import { Alert, AlertTitle } from './Alert'
 
 const meta: Meta<typeof Alert> = {
   title: 'Alert',
   component: Alert,
   tags: ['autodocs'],
-  subcomponents: { AlertTitle },
+  subcomponents: { AlertTitle: AlertTitle as ComponentType<unknown> },
   argTypes: {
     severity: {
       options: ['success', 'info', 'warning', 'error'],

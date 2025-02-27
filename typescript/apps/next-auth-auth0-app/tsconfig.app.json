@@ -7,10 +7,10 @@
     "include": [
         "next-env.d.ts",
         ".next/types/**/*.ts",
-        "**/*.ts",
+        "src/**/*.ts",
         "**/*.tsx",
-        "**/*.js",
-        "**/*.tsx",
+        "src/**/*.js",
+        "src/**/*.tsx",
       ],
       "exclude": [
         "dist/",

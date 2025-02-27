@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import { CommonActions, NavigationContainerRefWithCurrent } from '@react-navigation/native'
 
-const COMMON_NAVIGATION_ERROR = 'No navigationRef'
+export const COMMON_NAVIGATION_ERROR = 'No navigationRef'
 
 export interface NavigationParams extends Record<string, string | number | object | undefined> {
   slug?: string

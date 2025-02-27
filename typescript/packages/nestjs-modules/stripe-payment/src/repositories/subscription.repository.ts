@@ -2,7 +2,13 @@ import knex from 'knex'
 import { Injectable } from '@nestjs/common'
 import { InjectConnection } from 'nest-knexjs'
 import { SubscriptionEntity } from '../entites/index.js'
-import { PaginationOptions, ResubscribePayload, SubscriptionDbRecord } from '../types/index.js'
+import {
+  CreateSubscriptionPayload,
+  PaginationOptions,
+  ResubscribePayload,
+  SubscriptionDbRecord,
+  SubscriptionFieldsToUpdate
+} from '../types/index.js'
 import { PlanRepository } from './plan.repository.js'
 import { SubscriptionStatusId } from '../enums/index.js'
 import { OrganizationRepository } from './organization.repository.js'
@@ -29,7 +35,7 @@ export class SubscriptionRepository {
 
   private async updateSubscriptionField(
     id: number,
-    field: Partial<{ statusId: SubscriptionStatusId; quantity: number }>
+    field: SubscriptionFieldsToUpdate
   ): Promise<SubscriptionEntity | null> {
     const [updatedSubscription] = await this.knexConnection('subscriptions')
       .update(field)
@@ -148,10 +154,38 @@ export class SubscriptionRepository {
       : null
   }
 
+  async getSubscriptionByStripeId(stripeId: string, populate: boolean = true): Promise<SubscriptionEntity | null> {
+    const query = this.getSubscriptionBaseQuery(populate).where('subscriptions.stripeId', stripeId)
+
+    if (!populate) {
+      query.select(
+        'subscriptions.planId as plan',
+        'subscriptions.statusId as status',
+        'subscriptions.organizationId as organization'
+      )
+    }
+
+    const subscription = await query.first()
+
+    return subscription
+      ? SubscriptionRepository.toJSON({
+          ...subscription,
+          plan: JSON.parse(subscription.plan),
+          organization: JSON.parse(subscription.organization)
+        })
+      : null
+  }
+
   async getStatusIdByOrganizationId(organizationId: number): Promise<number | undefined> {
     const subscription = await this.knexConnection('subscriptions').select('statusId').where({ organizationId }).first()
 
     return subscription?.statusId
+  }
+
+  async createSubscription(payload: CreateSubscriptionPayload): Promise<number> {
+    const [subscriptionId] = await this.knexConnection('subscriptions').insert(payload)
+
+    return subscriptionId
   }
 
   async updateSubscriptionStatus(id: number, statusId: SubscriptionStatusId): Promise<SubscriptionEntity | null> {
@@ -160,6 +194,10 @@ export class SubscriptionRepository {
 
   async updateSubscriptionQuantity(id: number, quantity: number): Promise<SubscriptionEntity | null> {
     return this.updateSubscriptionField(id, { quantity })
+  }
+
+  async updateSubscriptionPlan(id: number, planId: number): Promise<SubscriptionEntity | null> {
+    return this.updateSubscriptionField(id, { planId })
   }
 
   async resubscribe(id: number, payload: ResubscribePayload): Promise<number> {

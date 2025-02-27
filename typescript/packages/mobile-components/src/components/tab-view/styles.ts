@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { AppTheme } from '../../core'
+import { AppTheme } from '../../shared/types'
 
 export const makeStyles = ({ colors }: AppTheme) => {
   const styles = StyleSheet.create({

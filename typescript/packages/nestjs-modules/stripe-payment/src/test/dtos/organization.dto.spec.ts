@@ -2,6 +2,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 
 import {
+  AcceptInviteDto,
   CreateOrganizationDto,
   UpdateOrganizationNameDto,
   UpdateOrganizationOwnerDto,
@@ -161,6 +162,42 @@ describe(UpdateOrganizationOwnerDto.name, () => {
     }
   ])('$description', async ({ updateInfo, expectedErrorsLength, expectedErrorMessage }) => {
     const dto = plainToInstance(UpdateOrganizationOwnerDto, updateInfo)
+    const errors = await validate(dto)
+
+    expect(errors.length).toBe(expectedErrorsLength)
+    if (expectedErrorsLength > 0 && expectedErrorMessage) {
+      expect(JSON.stringify(errors)).toContain(expectedErrorMessage)
+    }
+  })
+})
+
+describe(AcceptInviteDto.name, () => {
+  it.each([
+    {
+      description: 'should validate successfully with valid data',
+      updateInfo: {
+        userId: 10
+      },
+      expectedErrorsLength: 0
+    },
+    {
+      description: 'should fail validation if userId is negative',
+      updateInfo: {
+        userId: -1
+      },
+      expectedErrorsLength: 1,
+      expectedErrorMessage: 'userId must be a positive number'
+    },
+    {
+      description: 'should fail validation if userId is not a number',
+      updateInfo: {
+        userId: {}
+      },
+      expectedErrorsLength: 1,
+      expectedErrorMessage: 'userId must be a positive number'
+    }
+  ])('$description', async ({ updateInfo, expectedErrorsLength, expectedErrorMessage }) => {
+    const dto = plainToInstance(AcceptInviteDto, updateInfo)
     const errors = await validate(dto)
 
     expect(errors.length).toBe(expectedErrorsLength)

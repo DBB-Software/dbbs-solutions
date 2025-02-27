@@ -6,6 +6,10 @@
     ".env"
   ],
   "tasks": {
+    "install:deps": {
+      "outputs": [],
+      "dependsOn": []
+    },
     "lint": {
       "outputs": [],
       "dependsOn": [
@@ -23,6 +27,11 @@
       "dependsOn": [
         "build",
         "^test"
+      ]
+    },
+    "check-types": {
+      "dependsOn": [
+        "build"
       ]
     },
     "e2e": {

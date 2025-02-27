@@ -12,9 +12,9 @@ export type TransactionDbRecord = {
 }
 
 export type CreateTransactionPayload = {
-  subscriptionId: number
   organizationId: number
-  purchaseId: number
-  statusId: number
   stripeInvoiceId: string
+  statusId: number
+  subscriptionId?: number
+  purchaseId?: number
 }

@@ -1,12 +1,13 @@
 import knex from 'knex'
+
+import { TransactionRepository } from '../../repositories/index.js'
 import {
   createOrganizationsTable,
   createTransactionStatusesTable,
   createTransactionsTable,
   createPurchasesTable
 } from '../factories/database.js'
-import { dbOrganizationsList, dbPurchasesList, dbTransactionsList } from "../mocks/index.js"
-import { TransactionRepository } from '../../repositories/transaction.repository.js'
+import { dbOrganizationsList, dbPurchasesList, dbTransactionsList, defaultTransactionEntity } from '../mocks/index.js'
 import { TEST_DB_PATH } from '../../constants.js'
 
 describe('TransactionRepository', () => {
@@ -31,6 +32,27 @@ describe('TransactionRepository', () => {
     await createPurchasesTable(db, dbPurchasesList(baseId))
     await createTransactionStatusesTable(db)
     await createTransactionsTable(db, dbTransactionsList(baseId))
+  })
+
+  describe(TransactionRepository.prototype.getTransactionByStripeInvoiceId.name, () => {
+    const testCases = [
+      {
+        description: 'should return a transaction by Stripe Invoice ID',
+        repositoryMethodArgs: `inv_${getId(1)}`,
+        expectedResult: defaultTransactionEntity(baseId)
+      },
+      {
+        description: 'should return null if transaction with provided Stripe Invoice ID does not exist',
+        repositoryMethodArgs: `inv_${getId(999)}`,
+        expectedResult: null
+      }
+    ]
+
+    test.each(testCases)('$description', async ({ repositoryMethodArgs, expectedResult }) => {
+      const result = await transactionRepository.getTransactionByStripeInvoiceId(repositoryMethodArgs)
+
+      expect(result).toEqual(expectedResult)
+    })
   })
 
   describe(`${TransactionRepository.prototype.getOrganizationTransactions.name}`, () => {
@@ -76,7 +98,7 @@ describe('TransactionRepository', () => {
           organizationId: getId(1),
           purchaseId: getId(1),
           stripeInvoiceId: `inv_${getId(1)}`,
-          statusId: 2,
+          statusId: 2
         },
         expected: expect.any(Number)
       }

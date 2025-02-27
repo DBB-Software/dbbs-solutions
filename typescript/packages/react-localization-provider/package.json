@@ -8,7 +8,8 @@
   "scripts": {
     "clean": "npx rimraf .turbo node_modules dist bin",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
-    "test": "jest --coverage --verbose"
+    "test": "jest --coverage --verbose",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "i18next": "23.16.4",

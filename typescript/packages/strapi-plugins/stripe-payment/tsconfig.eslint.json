@@ -1,0 +1,5 @@
+{
+  "extends": ["./tsconfig.server.json", "./tsconfig.json"],
+  "include": ["server", "tests/**/*.ts", "__tests__/**/*.ts", "admin", "custom.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

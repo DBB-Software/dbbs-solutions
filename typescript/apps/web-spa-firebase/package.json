@@ -1,0 +1,28 @@
+{
+  "name": "@dbbs/web-spa-firebase",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "lint": "eslint . --ext ts,tsx --max-warnings 0",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit",
+    "dev": "npx vite",
+    "build": "npx tsc && vite build",
+    "test": "npx jest --coverage --verbose",
+    "cypress:open": "npx cypress open",
+    "cypress:run": "npx cypress run"
+  },
+  "dependencies": {
+    "@dbbs/firebase": "*",
+    "@dbbs/tailwind-components": "*",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@dbbs/cypress": "*",
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*"
+  }
+}

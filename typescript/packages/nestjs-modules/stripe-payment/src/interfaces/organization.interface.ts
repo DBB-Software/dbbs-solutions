@@ -42,3 +42,26 @@ export interface IUpdateOrganizationOwner {
   id: number
   ownerId: number
 }
+
+export interface ISendInviteToOrganization {
+  userId?: number
+  organizationName: string
+  organizationId: number
+  recipientEmail: string
+}
+
+export interface IAddUserToOrganization {
+  userId: number
+  organizationId: number
+}
+
+export interface IAcceptInvite {
+  userId: number
+  organizationId: number
+  inviteId: number
+}
+
+export interface IDeleteUser {
+  userId: number
+  organizationId: number
+}

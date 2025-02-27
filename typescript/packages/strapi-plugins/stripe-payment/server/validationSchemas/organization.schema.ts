@@ -6,6 +6,13 @@ export const createOrganizationSchema = yup.object().shape({
   quantity: yup.number().required().min(1)
 })
 
+export const createOrganizationByAdminSchema = yup.object().shape({
+  name: yup.string().required().min(3).max(50),
+  email: yup.string().email().required(),
+  ownerId: yup.number().required(),
+  quantity: yup.number().required().min(1)
+})
+
 export const updateOrganizationSchema = yup.object().shape({
   id: yup.number().required(),
   name: yup.string().required().min(3).max(50),

@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals'
 import { Test, TestingModule } from '@nestjs/testing'
 import { NotFoundError } from '@dbbs/common'
-import { PurchaseService } from '../../services/purchase.service.js'
-import { OrganizationRepository } from '../../repositories/organization.repository.js'
-import { PurchaseRepository } from '../../repositories/purchase.repository.js'
+
+import { PurchaseService } from '../../services/index.js'
+import { OrganizationRepository, PurchaseRepository } from '../../repositories/index.js'
 import { defaultPurchase } from '../mocks/index.js'
 
 describe('PurchaseService', () => {

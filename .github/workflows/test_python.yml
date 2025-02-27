@@ -17,6 +17,10 @@ on:
       - ready_for_review
     paths:
       - python/**
+      - .github/workflows/test_python.yml
+      - .github/actions/setup-python.yml
+      - .github/actions/setup-yarn.yml
+      - .github/actions/setup-node.yml
   push:
     branches:
       - main
@@ -59,14 +63,42 @@ jobs:
         run: |
           yarn install --immutable
 
-      - name: List affected projects
+      - name: List and extract affected projects
         run: |
           npx turbo ls --affected --output=json > affected.json
-          echo "Full projects list: $(cat affected.json)"
+
+          export AFFECTED_PATHS=$(jq -r '.packages.items 
+            | map(select(.path | startswith("python/")) | .path = "./" + .path) 
+            | map(.path) 
+            | join(" ")' affected.json)
+
+          if [ -z "$AFFECTED_PATHS" ] && [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then
+            AFFECTED_PATHS="./python/**/*"
+          fi
+
+          FILTER_ARGS=$(for path in $AFFECTED_PATHS; do echo "--filter=$path"; done | xargs)
+          
+          echo "FILTER_ARGS=$FILTER_ARGS" >> $GITHUB_ENV
+          echo "AFFECTED_PATHS=$AFFECTED_PATHS" >> $GITHUB_ENV
+          
+          echo $GITHUB_EVENT_NAME
+          echo $AFFECTED_PATHS
+        shell: bash
+
+      - name: Install Python deps
+        if: ${{ env.AFFECTED_PATHS != '' }}
+        run: |
+          npx turbo run install:deps
+
+      - name: Typecheck
+        if: ${{ env.AFFECTED_PATHS != '' }}
+        run: |
+          npx turbo check-types ${{ env.FILTER_ARGS }}
 
       - name: Test
+        if: ${{ env.AFFECTED_PATHS != '' }}
         run: |
-          npx turbo run test --affected
+          npx turbo run test ${{ env.FILTER_ARGS }}
 
       - name: Alert on main fail
         uses: slackapi/slack-github-action@v2.0.0

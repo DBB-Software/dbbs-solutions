@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Config from 'react-native-config'
-import { Screen, Text } from '@dbbs/mobile-components'
+import { Button, Screen, Text, useToast } from '@dbbs/mobile-components'
 import { useRemoteConfig } from '@dbbs/mobile-firebase'
 import { useTranslation } from '@dbbs/react-localization-provider'
 import { RemoteConfigValues } from '../app/remote/remote-config-values'
@@ -12,7 +12,7 @@ export const HomeComponent = () => {
   const [strapiTenants, setStrapiTenants] = useState<string[]>([])
   const { test, testNumber, testObject } = useRemoteConfig<RemoteConfigValues>()
   const { t } = useTranslation()
-
+  const { success } = useToast()
   const renderTenantContent = useCallback((tenant: string) => <Text key={tenant}>{tenant}</Text>, [])
 
   useEffect(() => {
@@ -41,6 +41,12 @@ export const HomeComponent = () => {
       <Text>
         {testObject?.value?.test} - {test?.source}
       </Text>
+      <Button onPress={() => success('Toast Top')} mode="contained">
+        <Text>Create Toast Top</Text>
+      </Button>
+      <Button onPress={() => success('Toast Bottom', { position: 'bottom' })} mode="contained">
+        <Text>Create Toast Bottom</Text>
+      </Button>
     </Screen>
   )
 }

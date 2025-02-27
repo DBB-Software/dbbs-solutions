@@ -1,8 +1,9 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common'
 import { InjectLogger, Logger } from '@dbbs/nestjs-module-logger'
 import { NotFoundError } from '@dbbs/common'
+
 import { CreatePlanDto, PlanDto } from '../dtos/index.js'
-import { PlanService } from '../services/plan.service.js'
+import { PlanService } from '../services/index.js'
 import { PlanType } from '../enums/index.js'
 
 @Controller('plans')

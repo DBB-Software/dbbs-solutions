@@ -149,11 +149,12 @@ const PaymentModal = ({ open, handleClose, planId }: PaymentModalProps) => {
                       value={newOrganizationForm.organizationId}
                       onChange={handleChangeSelect}
                     >
-                      {organizations.map((organization: Organization) => (
-                        <MenuItem key={organization.id} value={organization.id}>
-                          {organization.name}
-                        </MenuItem>
-                      ))}
+                      {organizations &&
+                        organizations.map((organization: Organization) => (
+                          <MenuItem key={organization.id} value={organization.id}>
+                            {organization.name}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                 )}

@@ -8,6 +8,7 @@
     "build": "poetry build",
     "lint": "poetry run ruff check .",
     "test": "poetry run coverage run -m pytest && poetry run coverage xml",
-    "preinstall": "poetry install"
+    "install:deps": "poetry install",
+    "check-types": "poetry run mypy --strict ."
   }
 }

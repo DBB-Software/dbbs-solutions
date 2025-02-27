@@ -1,6 +1,6 @@
+import createHttpError from 'http-errors'
 import { Context } from 'koa'
 import { Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import subscriptionController from '../../server/controllers/subscription'
 import { strapiSubscriptionControllerMock } from '../mocks/default.mock'
 import { createMockContext, createMockStrapi } from '../factories'
@@ -60,7 +60,7 @@ describe('Subscription Controller', () => {
         name: 'should throw an error if subscription not found',
         ctxOverrides: { params: { id: 1 }, state: { user: { id: 1 } } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
@@ -125,7 +125,7 @@ describe('Subscription Controller', () => {
         name: 'should throw an error if subscription to cancel is not found',
         ctxOverrides: { params: { id: 1 }, state: { user: { id: 1 } } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
@@ -154,7 +154,7 @@ describe('Subscription Controller', () => {
         name: 'should throw an error if subscription to pause is not found',
         ctxOverrides: { params: { id: 1 }, state: { user: { id: 1 } } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
@@ -183,7 +183,7 @@ describe('Subscription Controller', () => {
         name: 'should throw an error if subscription to resume is not found',
         ctxOverrides: { params: { id: 1 }, state: { user: { id: 1 } } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
@@ -212,7 +212,7 @@ describe('Subscription Controller', () => {
         name: 'should throw an error if stripe subscription update fails',
         ctxOverrides: { params: { id: 1 }, request: { body: { quantity: 1, planId: 1 } }, state: { user: { id: 1 } } },
         serviceMethodArgs: { id: 1, quantity: 1, planId: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as unknown as Partial<Context>)
@@ -241,7 +241,7 @@ describe('Subscription Controller', () => {
         name: 'should throw an error if resubscribe fails',
         ctxOverrides: { params: { id: 1 }, state: { user: { id: 1 } } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)

@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common'
 import { InjectLogger, Logger } from '@dbbs/nestjs-module-logger'
 import { NotFoundError } from '@dbbs/common'
-import { ProductService } from '../services/product.service.js'
+
+import { ProductService } from '../services/index.js'
 import {
   CreateProductDto,
   PaginatedResponseDto,

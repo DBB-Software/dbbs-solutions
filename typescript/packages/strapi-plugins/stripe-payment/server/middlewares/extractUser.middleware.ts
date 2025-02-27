@@ -1,17 +1,16 @@
-import { Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
+import createHttpError from 'http-errors'
 
 const extractUserMiddleware = async (ctx, next) => {
   try {
     const user = await strapi.plugins['users-permissions'].services.jwt.getToken(ctx)
 
     if (!user) {
-      throw new errors.UnauthorizedError('User not authenticated')
+      throw new createHttpError.Unauthorized('User not authenticated')
     }
 
     ctx.state.user = user
   } catch (err) {
-    throw new errors.UnauthorizedError('Invalid token')
+    throw new createHttpError.Unauthorized('Invalid token')
   }
 
   await next()

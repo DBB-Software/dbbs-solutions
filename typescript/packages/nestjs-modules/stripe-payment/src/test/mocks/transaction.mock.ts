@@ -1,6 +1,7 @@
+import { StripeInvoice, StripePaymentIntent, StripeResponse } from '@dbbs/nestjs-module-stripe'
 import { defaultDate, defaultDateISOString } from './date.mock.js'
-import { TransactionEntity } from '../../entites/index.js'
 import { TransactionStatus } from '../../enums/index.js'
+import { ITransaction } from '../../interfaces/index.js'
 
 export const dbTransactionsList = (baseId: number) => [
   ...Array.from({ length: 14 }, (_, index) => ({
@@ -25,7 +26,18 @@ export const dbTransactionsList = (baseId: number) => [
   }
 ]
 
-export const defaultTransaction: TransactionEntity = {
+export const defaultTransactionEntity = (baseId: number) => ({
+  id: baseId + 1,
+  subscriptionId: baseId + 1,
+  organizationId: baseId + 1,
+  purchaseId: baseId + 1,
+  stripeInvoiceId: `inv_${baseId + 1}`,
+  status: TransactionStatus.PENDING,
+  createdAt: defaultDate,
+  updatedAt: defaultDate
+})
+
+export const defaultTransaction: ITransaction = {
   id: 1,
   subscriptionId: 1,
   organizationId: 1,
@@ -35,3 +47,11 @@ export const defaultTransaction: TransactionEntity = {
   createdAt: defaultDate,
   updatedAt: defaultDate
 }
+
+export const defaultStripeInvoice = {
+  id: 'inv_test'
+} as StripeResponse<StripeInvoice>
+
+export const defaultStripePaymentIntent = {
+  id: 'pi_test'
+} as StripeResponse<StripePaymentIntent>

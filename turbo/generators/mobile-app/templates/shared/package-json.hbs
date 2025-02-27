@@ -13,6 +13,7 @@
     "test": "npx jest --coverage --verbose",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
     "build": "yarn sorybook-generate",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit",
     {{#if isReactNative}}
     "start": "npx react-native start",
     "start:clean": "yarn watchman-refresh && npx react-native start --reset-cache",

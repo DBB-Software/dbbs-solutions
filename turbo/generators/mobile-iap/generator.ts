@@ -40,18 +40,33 @@ function generate(answers: Parameters<PlopTypes.DynamicActionsFunction>[0]) {
           path: `${basePath}/android/build.gradle`,
           pattern: /ext {/,
           template: 'ext {\n        androidXAnnotation = "1.1.0"\n        androidXBrowser = "1.0.0"'
+        },
+        {
+          type: 'modify',
+          path: `${basePath}/android/app/src/main/AndroidManifest.xml`,
+          pattern: /<uses-permission android:name="android.permission.INTERNET" \/>/,
+          template:
+            '<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="com.android.vending.BILLING" />'
         }
       ] satisfies PlopTypes.ActionType[])
     )
   }
 
   if (appType === AppTypes.EXPO) {
-    actions.push({
-      type: 'modify',
-      path: `${basePath}/extended-expo-plugins.json`,
-      pattern: /"iapPluginEnabled":\s*false/,
-      template: '"iapPluginEnabled": true'
-    })
+    actions.push(
+      {
+        type: 'modify',
+        path: `${basePath}/extended-expo-plugins.json`,
+        pattern: /"iapPluginEnabled":\s*false/,
+        template: '"iapPluginEnabled": true'
+      },
+      {
+        type: 'modify',
+        path: `${basePath}/app.json`,
+        pattern: /"permissions":\s*\[\s*"android.permission.INTERNET"\s*\]/,
+        template: '"permissions": ["android.permission.INTERNET", "com.android.vending.BILLING"]'
+      }
+    )
   }
 
   return actions

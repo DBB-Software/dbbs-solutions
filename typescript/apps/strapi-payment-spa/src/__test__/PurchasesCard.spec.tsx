@@ -14,17 +14,22 @@ const purchasesMock = {
 }
 
 describe('<PurchasesCard />', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+    jest.clearAllTimers()
+  })
+
   it('should render default', async () => {
     render(<PurchasesCard {...purchasesMock} />)
 
-    expect(screen.getByText(purchasesMock.orhanizatioName)).toBeVisible()
+    expect(await screen.findByText(purchasesMock.orhanizatioName)).toBeVisible()
   })
 
   it('should render by default', async () => {
     const mockName = `${purchasesMock.orhanizatioName}a`
-    render(<PurchasesCard {...purchasesMock} orhanizatioName={mockName} />)
 
-    expect(screen.getByText(`${purchasesMock.orhanizatioName}...`)).toBeVisible()
+    render(<PurchasesCard {...purchasesMock} orhanizatioName={mockName} />)
+    expect(await screen.findByText(`${purchasesMock.orhanizatioName}...`)).toBeVisible()
   })
 
   it('should render modal', async () => {
@@ -32,6 +37,6 @@ describe('<PurchasesCard />', () => {
 
     await user.click(screen.getByText('Buy'))
 
-    expect(screen.getByText('Select Type Commpany')).toBeVisible()
+    expect(await screen.findByText('Select Type Commpany')).toBeVisible()
   })
 })

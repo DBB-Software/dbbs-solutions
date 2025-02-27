@@ -1,5 +1,9 @@
-import extractUserMiddleware from '../../middlewares/extractUser.middleware'
+/**
+ * TODO: Add logic to conditionally choose the middleware based on the selected authorization method.
+ * If Auth0 is selected, use `auth0AuthMiddleware`, otherwise use `extractUserMiddleware`.
+ */
 import checkSubscriptionOwnerMiddleware from '../../middlewares/checkSubscriptionOwner.middleware'
+import extractUserMiddleware from '../../middlewares/extractUser.middleware'
 
 export default [
   {
@@ -13,7 +17,7 @@ export default [
   },
   {
     method: 'GET',
-    path: '/api/subscriptions/my',
+    path: '/api/subscriptions',
     handler: 'subscription.getMySubscription',
     config: {
       auth: false,
@@ -76,7 +80,7 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/api/subscriptions/:id/update',
+    path: '/api/subscriptions/:id',
     handler: 'subscription.updateStripeSubscription',
     config: {
       auth: false,

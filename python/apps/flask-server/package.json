@@ -1,0 +1,14 @@
+{
+  "name": "@dbbs/flask-server",
+  "version": "1.0.0",
+  "description": "DBBs Flask Server",
+  "type": "module",
+  "main": "../flask-server/src/main.py",
+  "private": true,
+  "scripts": {
+    "dev": "poetry run python -m src",
+    "lint": "poetry run ruff check .",
+    "test": "poetry run coverage run -m pytest && poetry run coverage xml",
+    "install:deps": "poetry install"
+  }
+}

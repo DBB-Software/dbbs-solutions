@@ -5,8 +5,9 @@
   },
   "include": [
       "src",
-      "src/**/*.json",
-      ".ondevice/**/*"
+      ".ondevice/**/*"{{#if isExpo}},
+      "./app.config.ts"{{/if}}{{#if storybook}},
+      "AppEntryPoint.tsx"{{/if}}
     ],
     "exclude": [
       "dist/",
@@ -14,9 +15,6 @@
       "**/*.test.ts",
       "**/*.spec.ts",
       "**/*.test.tsx",
-      "**/*.spec.tsx",
-      "./src/stories/*.ts",
-      "./src/stories/*.tsx",
-      "./src/testUtils/**/*"
+      "**/*.spec.tsx"
     ]
 }

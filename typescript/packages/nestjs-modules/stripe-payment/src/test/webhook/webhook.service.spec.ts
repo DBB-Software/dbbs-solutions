@@ -1,68 +1,125 @@
-import { jest } from '@jest/globals'
 import { Test, TestingModule } from '@nestjs/testing'
+import { mockDeep, mockReset } from 'jest-mock-extended'
 import { WebhookService } from '../../webhook/webhook.service.js'
 import { ProductRepository } from '../../repositories/product.repository.js'
 import {
+  canceledCustomerSubscriptionUpdatedEvent,
+  defaultCheckoutSessionMetadata,
+  defaultCustomerSubscriptionUpdatedEvent,
+  defaultOrganization,
   defaultProduct,
   defaultRecurringPlan,
+  defaultStripeInvoice,
+  defaultStripePaymentIntent,
+  defaultSubscription,
+  defaultTransaction,
+  invalidCheckoutSessionMetadata,
+  noSubscriptionInvoicePaymentFailedEvent,
+  noSubscriptionInvoicePaymentSucceededEvent,
+  paymentCheckoutSessionCompletedEvent,
   priceCreatedStripeEvent,
   priceDeletedStripeEvent,
   priceUpdatedStripeEvent,
   productCreatedStripeEvent,
   productDeletedStripeEvent,
   productUpdatedStripeEvent,
-  stripeProduct
+  setupCheckoutSessionCompletedEvent,
+  stripeProduct,
+  subscriptionCheckoutSessionCompletedEvent,
+  subscriptionCreateInvoicePaymentSucceededEvent,
+  subscriptionInvoicePaymentFailedEvent,
+  subscriptionInvoicePaymentSucceededEvent,
+  trialingCustomerSubscriptionUpdatedEvent
 } from '../mocks/index.js'
-import { BillingPeriod, PlanType } from '../../enums/index.js'
+import {
+  InvoiceService as StripeInvoiceService,
+  PaymentIntentService as StripePaymentIntentsService,
+  ProductService as StripeProductService
+} from '@dbbs/nestjs-module-stripe'
+import { BillingPeriod, PlanType, SubscriptionStatusId, TransactionStatusId } from '../../enums/index.js'
 import { PlanRepository } from '../../repositories/plan.repository.js'
-import { ProductService as StripeProductService } from '@dbbs/nestjs-module-stripe'
+import { SubscriptionRepository } from '../../repositories/subscription.repository.js'
+import { OrganizationRepository } from '../../repositories/organization.repository.js'
+import { TransactionRepository } from '../../repositories/transaction.repository.js'
+import { PurchaseRepository } from '../../repositories/purchase.repository.js'
+import { CheckoutSessionMetadataRepository } from '../../repositories/checkoutSessionMetadata.repository.js'
+import { CheckoutSessionMetadataService } from '../../services/index.js'
+import { LoggerModule } from '@dbbs/nestjs-module-logger'
 
-describe('WebhookService', () => {
+describe(WebhookService.name, () => {
   let service: WebhookService
-  let productRepository: jest.Mocked<ProductRepository>
-  let planRepository: jest.Mocked<PlanRepository>
-  let stripeProductService: jest.Mocked<StripeProductService>
 
-  beforeEach(async () => {
+  const mockProductRepository = mockDeep<ProductRepository>()
+  const mockPlanRepository = mockDeep<PlanRepository>()
+  const mockSubscriptionRepository = mockDeep<SubscriptionRepository>()
+  const mockOrganizationRepository = mockDeep<OrganizationRepository>()
+  const mockTransactionRepository = mockDeep<TransactionRepository>()
+  const mockPurchaseRepository = mockDeep<PurchaseRepository>()
+  const mockStripeProductService = mockDeep<StripeProductService>()
+  const mockStripeInvoiceService = mockDeep<StripeInvoiceService>()
+  const mockStripePaymentIntentService = mockDeep<StripePaymentIntentsService>()
+  const mockCheckoutSessionMetadataRepository = mockDeep<CheckoutSessionMetadataRepository>()
+  const mockCheckoutSessionMetadataService = mockDeep<CheckoutSessionMetadataService>()
+
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot({})],
       providers: [
         WebhookService,
-        {
-          provide: ProductRepository,
-          useValue: {
-            productExistsByStripeId: jest.fn(),
-            getProductByStripeId: jest.fn(),
-            createProduct: jest.fn(),
-            updateProduct: jest.fn(),
-            deleteProduct: jest.fn()
-          }
-        },
-        {
-          provide: PlanRepository,
-          useValue: {
-            planExistsByStripeId: jest.fn(),
-            getPlanByStripeId: jest.fn(),
-            createPlan: jest.fn(),
-            deletePlan: jest.fn(),
-            updatePlan: jest.fn()
-          }
-        },
-        {
-          provide: StripeProductService,
-          useValue: {
-            getProductById: jest.fn()
-          }
-        }
+        ProductRepository,
+        PlanRepository,
+        SubscriptionRepository,
+        OrganizationRepository,
+        TransactionRepository,
+        PurchaseRepository,
+        StripeProductService,
+        StripeInvoiceService,
+        StripePaymentIntentsService,
+        CheckoutSessionMetadataRepository,
+        CheckoutSessionMetadataService
       ]
-    }).compile()
+    })
+      .overrideProvider(ProductRepository)
+      .useValue(mockProductRepository)
+      .overrideProvider(PlanRepository)
+      .useValue(mockPlanRepository)
+      .overrideProvider(SubscriptionRepository)
+      .useValue(mockSubscriptionRepository)
+      .overrideProvider(OrganizationRepository)
+      .useValue(mockOrganizationRepository)
+      .overrideProvider(TransactionRepository)
+      .useValue(mockTransactionRepository)
+      .overrideProvider(PurchaseRepository)
+      .useValue(mockPurchaseRepository)
+      .overrideProvider(StripeProductService)
+      .useValue(mockStripeProductService)
+      .overrideProvider(StripeInvoiceService)
+      .useValue(mockStripeInvoiceService)
+      .overrideProvider(StripePaymentIntentsService)
+      .useValue(mockStripePaymentIntentService)
+      .overrideProvider(CheckoutSessionMetadataRepository)
+      .useValue(mockCheckoutSessionMetadataRepository)
+      .overrideProvider(CheckoutSessionMetadataService)
+      .useValue(mockCheckoutSessionMetadataService)
+      .compile()
 
     service = module.get<WebhookService>(WebhookService)
-    productRepository = module.get(ProductRepository)
-    planRepository = module.get(PlanRepository)
-    stripeProductService = module.get(StripeProductService)
   })
 
-  describe('handleProductCreated', () => {
+  beforeEach(() => {
+    mockReset(mockProductRepository)
+    mockReset(mockPlanRepository)
+    mockReset(mockSubscriptionRepository)
+    mockReset(mockOrganizationRepository)
+    mockReset(mockTransactionRepository)
+    mockReset(mockStripeProductService)
+    mockReset(mockStripeInvoiceService)
+    mockReset(mockStripePaymentIntentService)
+    mockReset(mockCheckoutSessionMetadataRepository)
+    mockReset(mockCheckoutSessionMetadataService)
+  })
+
+  describe(WebhookService.prototype.handleProductCreated.name, () => {
     it.each([
       {
         name: 'should not create product and return null if product already exists',
@@ -72,7 +129,7 @@ describe('WebhookService', () => {
         },
         expectedResult: null,
         setupMocks: () => {
-          productRepository.createProduct.mockRejectedValue({
+          mockProductRepository.createProduct.mockRejectedValue({
             code: 'SQLITE_CONSTRAINT',
             message: 'UNIQUE CONSTRAINT FAILED'
           })
@@ -86,7 +143,7 @@ describe('WebhookService', () => {
         },
         expectedResult: defaultProduct,
         setupMocks: () => {
-          productRepository.createProduct.mockResolvedValue(defaultProduct)
+          mockProductRepository.createProduct.mockResolvedValue(defaultProduct)
         }
       },
       {
@@ -97,7 +154,7 @@ describe('WebhookService', () => {
         },
         expectedError: { name: 'error', code: 'SOME_ANOTHER_ERROR', message: 'ERROR OCCURRED' },
         setupMocks: () => {
-          productRepository.createProduct.mockRejectedValue({
+          mockProductRepository.createProduct.mockRejectedValue({
             name: 'error',
             code: 'SOME_ANOTHER_ERROR',
             message: 'ERROR OCCURRED'
@@ -114,11 +171,11 @@ describe('WebhookService', () => {
         await expect(pendingResult).rejects.toMatchObject(expectedError)
       }
 
-      expect(productRepository.createProduct).toHaveBeenCalledWith(expectedParams.createProduct)
+      expect(mockProductRepository.createProduct).toHaveBeenCalledWith(expectedParams.createProduct)
     })
   })
 
-  describe('handleProductUpdated', () => {
+  describe(WebhookService.prototype.handleProductUpdated.name, () => {
     it.each([
       {
         name: 'should not update product if it does not exist',
@@ -127,7 +184,7 @@ describe('WebhookService', () => {
           getProductByStripeId: 'prod_1'
         },
         setupMocks: () => {
-          productRepository.getProductByStripeId.mockResolvedValue(null)
+          mockProductRepository.getProductByStripeId.mockResolvedValue(null)
         }
       },
       {
@@ -138,7 +195,7 @@ describe('WebhookService', () => {
           updateProduct: { id: 1, name: 'Updated Product Name' }
         },
         setupMocks: () => {
-          productRepository.getProductByStripeId.mockResolvedValue({
+          mockProductRepository.getProductByStripeId.mockResolvedValue({
             ...defaultProduct,
             id: 1,
             name: 'Old Product Name'
@@ -150,15 +207,15 @@ describe('WebhookService', () => {
 
       await service.handleProductUpdated(serviceMethodArgs)
 
-      expect(productRepository.getProductByStripeId).toHaveBeenCalledWith(expectedParams.getProductByStripeId)
+      expect(mockProductRepository.getProductByStripeId).toHaveBeenCalledWith(expectedParams.getProductByStripeId)
 
       if (expectedParams.updateProduct) {
-        expect(productRepository.updateProduct).toHaveBeenCalledWith(expectedParams.updateProduct)
+        expect(mockProductRepository.updateProduct).toHaveBeenCalledWith(expectedParams.updateProduct)
       }
     })
   })
 
-  describe('handleProductDeleted', () => {
+  describe(WebhookService.prototype.handleProductDeleted.name, () => {
     it.each([
       {
         name: 'should not delete product if it is already deleted',
@@ -167,7 +224,7 @@ describe('WebhookService', () => {
           getProductByStripeId: 'prod_1'
         },
         setupMocks: () => {
-          productRepository.getProductByStripeId.mockResolvedValue(null)
+          mockProductRepository.getProductByStripeId.mockResolvedValue(null)
         }
       },
       {
@@ -178,7 +235,7 @@ describe('WebhookService', () => {
           deleteProduct: 1
         },
         setupMocks: () => {
-          productRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
+          mockProductRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
         }
       }
     ])('$name', async ({ serviceMethodArgs, expectedParams, setupMocks }) => {
@@ -186,14 +243,14 @@ describe('WebhookService', () => {
 
       await service.handleProductDeleted(serviceMethodArgs)
 
-      expect(productRepository.getProductByStripeId).toHaveBeenCalledWith(expectedParams.getProductByStripeId)
+      expect(mockProductRepository.getProductByStripeId).toHaveBeenCalledWith(expectedParams.getProductByStripeId)
       if (expectedParams.deleteProduct) {
-        expect(productRepository.deleteProduct).toHaveBeenCalledWith(expectedParams.deleteProduct)
+        expect(mockProductRepository.deleteProduct).toHaveBeenCalledWith(expectedParams.deleteProduct)
       }
     })
   })
 
-  describe('handlePriceCreated', () => {
+  describe(WebhookService.prototype.handlePriceCreated.name, () => {
     it.each([
       {
         name: 'should not create plan if it already exists and a product exists',
@@ -211,12 +268,12 @@ describe('WebhookService', () => {
         },
         expectedResult: null,
         setupMocks: () => {
-          planRepository.createPlan.mockRejectedValue({
+          mockPlanRepository.createPlan.mockRejectedValue({
             name: 'error',
             code: 'SQLITE_CONSTRAINT',
             message: 'UNIQUE CONSTRAINT FAILED'
           })
-          productRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
+          mockProductRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
         }
       },
       {
@@ -236,10 +293,10 @@ describe('WebhookService', () => {
         },
         expectedResult: defaultRecurringPlan,
         setupMocks: () => {
-          productRepository.getProductByStripeId.mockResolvedValue(null)
-          productRepository.createProduct.mockResolvedValue(defaultProduct)
-          stripeProductService.getProductById.mockResolvedValue(stripeProduct)
-          planRepository.createPlan.mockResolvedValue(defaultRecurringPlan)
+          mockProductRepository.getProductByStripeId.mockResolvedValue(null)
+          mockProductRepository.createProduct.mockResolvedValue(defaultProduct)
+          mockStripeProductService.getProductById.mockResolvedValue(stripeProduct)
+          mockPlanRepository.createPlan.mockResolvedValue(defaultRecurringPlan)
         }
       },
       {
@@ -258,8 +315,8 @@ describe('WebhookService', () => {
         },
         expectedResult: defaultRecurringPlan,
         setupMocks: () => {
-          planRepository.createPlan.mockResolvedValue(defaultRecurringPlan)
-          productRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
+          mockPlanRepository.createPlan.mockResolvedValue(defaultRecurringPlan)
+          mockProductRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
         }
       },
       {
@@ -278,12 +335,12 @@ describe('WebhookService', () => {
         },
         expectedError: { name: 'error', code: 'SOME_ANOTHER_ERROR', message: 'ERROR OCCURRED' },
         setupMocks: () => {
-          planRepository.createPlan.mockRejectedValue({
+          mockPlanRepository.createPlan.mockRejectedValue({
             name: 'error',
             code: 'SOME_ANOTHER_ERROR',
             message: 'ERROR OCCURRED'
           })
-          productRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
+          mockProductRepository.getProductByStripeId.mockResolvedValue(defaultProduct)
         }
       }
     ])('$name', async ({ serviceMethodArgs, expectedParams, expectedResult, expectedError, setupMocks }) => {
@@ -296,16 +353,16 @@ describe('WebhookService', () => {
         await expect(pendingResult).rejects.toMatchObject(expectedError)
       }
 
-      expect(planRepository.createPlan).toHaveBeenCalledWith(expectedParams.createPlan)
-      expect(productRepository.getProductByStripeId).toHaveBeenCalledWith(expectedParams.getProductByStripeId)
+      expect(mockPlanRepository.createPlan).toHaveBeenCalledWith(expectedParams.createPlan)
+      expect(mockProductRepository.getProductByStripeId).toHaveBeenCalledWith(expectedParams.getProductByStripeId)
 
       if (expectedParams.createProduct) {
-        expect(productRepository.createProduct).toHaveBeenCalledWith(expectedParams.createProduct)
+        expect(mockProductRepository.createProduct).toHaveBeenCalledWith(expectedParams.createProduct)
       }
     })
   })
 
-  describe('handlePlanUpdated', () => {
+  describe(WebhookService.prototype.handlePriceUpdated.name, () => {
     it.each([
       {
         name: 'should not update plan if it does not exist',
@@ -315,7 +372,7 @@ describe('WebhookService', () => {
         },
         expectedResult: null,
         setupMocks: () => {
-          planRepository.getPlanByStripeId.mockResolvedValue(null)
+          mockPlanRepository.getPlanByStripeId.mockResolvedValue(null)
         }
       },
       {
@@ -337,7 +394,7 @@ describe('WebhookService', () => {
           price: 1500
         },
         setupMocks: () => {
-          planRepository.getPlanByStripeId.mockResolvedValue(defaultRecurringPlan)
+          mockPlanRepository.getPlanByStripeId.mockResolvedValue(defaultRecurringPlan)
         }
       }
     ])('$name', async ({ serviceMethodArgs, expectedParams, setupMocks }) => {
@@ -345,15 +402,15 @@ describe('WebhookService', () => {
 
       await service.handlePriceUpdated(serviceMethodArgs)
 
-      expect(planRepository.getPlanByStripeId).toHaveBeenCalledWith(expectedParams.getPlanByStripeId)
+      expect(mockPlanRepository.getPlanByStripeId).toHaveBeenCalledWith(expectedParams.getPlanByStripeId)
 
       if (expectedParams.updatePlan) {
-        expect(planRepository.updatePlan).toHaveBeenCalledWith(expectedParams.updatePlan)
+        expect(mockPlanRepository.updatePlan).toHaveBeenCalledWith(expectedParams.updatePlan)
       }
     })
   })
 
-  describe('handlePlanDeleted', () => {
+  describe(WebhookService.prototype.handlePriceDeleted.name, () => {
     it.each([
       {
         name: 'should not delete plan if it is already deleted',
@@ -362,7 +419,7 @@ describe('WebhookService', () => {
           getPlanByStripeId: 'plan_1'
         },
         setupMocks: () => {
-          planRepository.getPlanByStripeId.mockResolvedValue(null)
+          mockPlanRepository.getPlanByStripeId.mockResolvedValue(null)
         }
       },
       {
@@ -373,7 +430,7 @@ describe('WebhookService', () => {
           deletePlan: 1
         },
         setupMocks: () => {
-          planRepository.getPlanByStripeId.mockResolvedValue(defaultRecurringPlan)
+          mockPlanRepository.getPlanByStripeId.mockResolvedValue(defaultRecurringPlan)
         }
       }
     ])('$name', async ({ serviceMethodArgs, expectedParams, setupMocks }) => {
@@ -381,9 +438,407 @@ describe('WebhookService', () => {
 
       await service.handlePriceDeleted(serviceMethodArgs)
 
-      expect(planRepository.getPlanByStripeId).toHaveBeenCalledWith(expectedParams.getPlanByStripeId)
+      expect(mockPlanRepository.getPlanByStripeId).toHaveBeenCalledWith(expectedParams.getPlanByStripeId)
       if (expectedParams.deletePlan) {
-        expect(planRepository.deletePlan).toHaveBeenCalledWith(expectedParams.deletePlan)
+        expect(mockPlanRepository.deletePlan).toHaveBeenCalledWith(expectedParams.deletePlan)
+      }
+    })
+  })
+
+  describe(WebhookService.prototype.handleCheckoutSessionCompleted.name, () => {
+    it.each([
+      {
+        name: 'should skip handling if mode is setup',
+        serviceMethodArgs: setupCheckoutSessionCompletedEvent,
+        setupMocks: () => {}
+      },
+      {
+        name: 'should skip handling if metadata is not found',
+        serviceMethodArgs: paymentCheckoutSessionCompletedEvent,
+        setupMocks: () => {
+          mockCheckoutSessionMetadataRepository.getMetadataByCheckoutSessionStripeId.mockResolvedValue(null)
+        }
+      },
+      {
+        name: 'should skip handling if metadata is in the wrong format',
+        serviceMethodArgs: paymentCheckoutSessionCompletedEvent,
+        setupMocks: () => {
+          mockCheckoutSessionMetadataRepository.getMetadataByCheckoutSessionStripeId.mockResolvedValue(
+            invalidCheckoutSessionMetadata
+          )
+        }
+      },
+      {
+        name: 'should handle subscription and create a transaction',
+        serviceMethodArgs: subscriptionCheckoutSessionCompletedEvent,
+        expectedParams: {
+          transactionCreate: {
+            organizationId: 1,
+            subscriptionId: 1,
+            stripeInvoiceId: 'inv_test',
+            statusId: TransactionStatusId.COMPLETED
+          }
+        },
+        setupMocks: () => {
+          mockCheckoutSessionMetadataRepository.getMetadataByCheckoutSessionStripeId.mockResolvedValue(
+            defaultCheckoutSessionMetadata
+          )
+          mockOrganizationRepository.getOrganizationById.mockResolvedValue(defaultOrganization)
+          mockStripeInvoiceService.getInvoiceById.mockResolvedValue(defaultStripeInvoice)
+          mockTransactionRepository.getTransactionByStripeInvoiceId.mockResolvedValue(null)
+          mockSubscriptionRepository.createSubscription.mockResolvedValue(1)
+        }
+      },
+      {
+        name: 'should handle one-time purchase and create a transaction',
+        serviceMethodArgs: paymentCheckoutSessionCompletedEvent,
+        expectedParams: {
+          transactionCreate: {
+            organizationId: 1,
+            purchaseId: 1,
+            stripeInvoiceId: 'pi_test',
+            statusId: TransactionStatusId.COMPLETED
+          }
+        },
+        setupMocks: () => {
+          mockCheckoutSessionMetadataRepository.getMetadataByCheckoutSessionStripeId.mockResolvedValue(
+            defaultCheckoutSessionMetadata
+          )
+          mockOrganizationRepository.getOrganizationById.mockResolvedValue(defaultOrganization)
+          mockStripePaymentIntentService.getPaymentIntentById.mockResolvedValue(defaultStripePaymentIntent)
+          mockTransactionRepository.getTransactionByStripeInvoiceId.mockResolvedValue(null)
+          mockPurchaseRepository.createPurchase.mockResolvedValue(1)
+        }
+      },
+      {
+        name: 'should not create transaction if it already exists',
+        serviceMethodArgs: paymentCheckoutSessionCompletedEvent,
+        setupMocks: () => {
+          mockCheckoutSessionMetadataRepository.getMetadataByCheckoutSessionStripeId.mockResolvedValue(
+            defaultCheckoutSessionMetadata
+          )
+          mockOrganizationRepository.getOrganizationById.mockResolvedValue(defaultOrganization)
+          mockStripePaymentIntentService.getPaymentIntentById.mockResolvedValue(defaultStripePaymentIntent)
+          mockTransactionRepository.getTransactionByStripeInvoiceId.mockResolvedValue(defaultTransaction)
+        }
+      }
+    ])('$name', async ({ serviceMethodArgs, expectedParams, setupMocks }) => {
+      setupMocks()
+
+      await expect(service.handleCheckoutSessionCompleted(serviceMethodArgs)).resolves.not.toThrow()
+
+      if (expectedParams) {
+        expect(mockTransactionRepository.createTransaction).toHaveBeenCalledWith(expectedParams.transactionCreate)
+      } else {
+        expect(mockTransactionRepository.createTransaction).not.toHaveBeenCalled()
+      }
+    })
+  })
+
+  describe(WebhookService.prototype.handleInvoicePaymentSucceeded.name, () => {
+    it.each([
+      {
+        name: 'should skip handling if billing reason is subscription create',
+        serviceMethodArgs: subscriptionCreateInvoicePaymentSucceededEvent,
+        setupMocks: () => {}
+      },
+      {
+        name: 'should skip handling if subscription is not found in the event',
+        serviceMethodArgs: noSubscriptionInvoicePaymentSucceededEvent,
+        setupMocks: () => {}
+      },
+      {
+        name: 'should skip handling if subscription is not found in the repository',
+        serviceMethodArgs: subscriptionInvoicePaymentSucceededEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue(null)
+        }
+      },
+      {
+        name: 'should skip handling if subscription is already active',
+        serviceMethodArgs: subscriptionInvoicePaymentSucceededEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue({
+            ...defaultSubscription,
+            status: SubscriptionStatusId.ACTIVE
+          })
+        }
+      },
+      {
+        name: 'should create a transaction and update subscription status if not already active',
+        serviceMethodArgs: subscriptionInvoicePaymentSucceededEvent,
+        expectedParams: {
+          transactionCreate: {
+            subscriptionId: 1,
+            organizationId: 1,
+            statusId: TransactionStatusId.COMPLETED,
+            stripeInvoiceId: 'inv_test'
+          },
+          subscriptionUpdate: {
+            subscriptionId: 1,
+            statusId: SubscriptionStatusId.ACTIVE
+          }
+        },
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue({
+            ...defaultSubscription,
+            status: SubscriptionStatusId.TRIALING
+          })
+          mockTransactionRepository.getTransactionByStripeInvoiceId.mockResolvedValue(null)
+          mockTransactionRepository.createTransaction.mockResolvedValue(1)
+        }
+      },
+      {
+        name: 'should not create transaction if it already exists',
+        serviceMethodArgs: subscriptionInvoicePaymentSucceededEvent,
+        expectedParams: {
+          subscriptionUpdate: {
+            subscriptionId: 1,
+            statusId: SubscriptionStatusId.ACTIVE
+          }
+        },
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue({
+            ...defaultSubscription,
+            status: SubscriptionStatusId.TRIALING
+          })
+          mockTransactionRepository.getTransactionByStripeInvoiceId.mockResolvedValue(defaultTransaction)
+        }
+      },
+      {
+        name: 'should log and rethrow error if an exception occurs',
+        serviceMethodArgs: subscriptionInvoicePaymentSucceededEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockRejectedValue(new Error('Test error'))
+        },
+        expectedError: new Error('Test error')
+      }
+    ])('$name', async ({ serviceMethodArgs, expectedParams, expectedError, setupMocks }) => {
+      setupMocks()
+
+      const pendingResult = service.handleInvoicePaymentSucceeded(serviceMethodArgs)
+
+      if (expectedError) {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      } else {
+        await expect(pendingResult).resolves.not.toThrow()
+      }
+
+      if (expectedParams) {
+        if (expectedParams.transactionCreate) {
+          expect(mockTransactionRepository.createTransaction).toHaveBeenCalledWith(expectedParams.transactionCreate)
+        }
+        if (expectedParams.subscriptionUpdate) {
+          expect(mockSubscriptionRepository.updateSubscriptionStatus).toHaveBeenCalledWith(
+            expectedParams.subscriptionUpdate.subscriptionId,
+            expectedParams.subscriptionUpdate.statusId
+          )
+        }
+      } else {
+        expect(mockTransactionRepository.createTransaction).not.toHaveBeenCalled()
+        expect(mockSubscriptionRepository.updateSubscriptionStatus).not.toHaveBeenCalled()
+      }
+    })
+  })
+
+  describe(WebhookService.prototype.handleInvoicePaymentFailed.name, () => {
+    it.each([
+      {
+        name: 'should skip handling if subscription is not found in the event',
+        serviceMethodArgs: noSubscriptionInvoicePaymentFailedEvent,
+        setupMocks: () => {}
+      },
+      {
+        name: 'should skip handling if subscription is not found in the repository',
+        serviceMethodArgs: subscriptionInvoicePaymentFailedEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue(null)
+        }
+      },
+      {
+        name: 'should skip handling if subscription is already active',
+        serviceMethodArgs: subscriptionInvoicePaymentFailedEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue({
+            ...defaultSubscription,
+            status: SubscriptionStatusId.UNPAID
+          })
+        }
+      },
+      {
+        name: 'should create a transaction and update subscription status if not UNPAID',
+        serviceMethodArgs: subscriptionInvoicePaymentFailedEvent,
+        expectedParams: {
+          transactionCreate: {
+            subscriptionId: 1,
+            organizationId: 1,
+            statusId: TransactionStatusId.COMPLETED,
+            stripeInvoiceId: 'inv_test'
+          },
+          subscriptionUpdate: {
+            subscriptionId: 1,
+            statusId: SubscriptionStatusId.UNPAID
+          }
+        },
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue({
+            ...defaultSubscription,
+            status: SubscriptionStatusId.TRIALING
+          })
+          mockTransactionRepository.getTransactionByStripeInvoiceId.mockResolvedValue(null)
+          mockTransactionRepository.createTransaction.mockResolvedValue(1)
+        }
+      },
+      {
+        name: 'should not create transaction if it already exists',
+        serviceMethodArgs: subscriptionInvoicePaymentFailedEvent,
+        expectedParams: {
+          subscriptionUpdate: {
+            subscriptionId: 1,
+            statusId: SubscriptionStatusId.UNPAID
+          }
+        },
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue(defaultSubscription)
+          mockTransactionRepository.getTransactionByStripeInvoiceId.mockResolvedValue(defaultTransaction)
+        }
+      },
+      {
+        name: 'should log and rethrow error if an exception occurs',
+        serviceMethodArgs: subscriptionInvoicePaymentFailedEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockRejectedValue(new Error('Test error'))
+        },
+        expectedError: new Error('Test error')
+      }
+    ])('$name', async ({ serviceMethodArgs, expectedParams, expectedError, setupMocks }) => {
+      setupMocks()
+
+      const pendingResult = service.handleInvoicePaymentFailed(serviceMethodArgs)
+
+      if (expectedError) {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      } else {
+        await expect(pendingResult).resolves.not.toThrow()
+      }
+
+      if (expectedParams) {
+        if (expectedParams.transactionCreate) {
+          expect(mockTransactionRepository.createTransaction).toHaveBeenCalledWith(expectedParams.transactionCreate)
+        }
+        if (expectedParams.subscriptionUpdate) {
+          expect(mockSubscriptionRepository.updateSubscriptionStatus).toHaveBeenCalledWith(
+            expectedParams.subscriptionUpdate.subscriptionId,
+            expectedParams.subscriptionUpdate.statusId
+          )
+        }
+      } else {
+        expect(mockTransactionRepository.createTransaction).not.toHaveBeenCalled()
+        expect(mockSubscriptionRepository.updateSubscriptionStatus).not.toHaveBeenCalled()
+      }
+    })
+  })
+
+  describe(WebhookService.prototype.handleSubscriptionUpdated.name, () => {
+    it.each([
+      {
+        name: 'should skip handling if subscription status is TRIALING',
+        serviceMethodArgs: trialingCustomerSubscriptionUpdatedEvent,
+        setupMocks: () => {}
+      },
+      {
+        name: 'should skip handling if subscription is not found in the repository',
+        serviceMethodArgs: defaultCustomerSubscriptionUpdatedEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue(null)
+        }
+      },
+      {
+        name: 'should skip handling if organization is not found',
+        serviceMethodArgs: defaultCustomerSubscriptionUpdatedEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue(defaultSubscription)
+          mockOrganizationRepository.getOrganizationByStripeCustomerId.mockResolvedValue(null)
+        }
+      },
+      {
+        name: 'should update organization quantity if quantity exceeds current quantity',
+        serviceMethodArgs: defaultCustomerSubscriptionUpdatedEvent,
+        expectedParams: {
+          organizationUpdate: { id: 1, quantity: 15 }
+        },
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue(defaultSubscription)
+          mockOrganizationRepository.getOrganizationByStripeCustomerId.mockResolvedValue(defaultOrganization)
+          mockPlanRepository.getPlanByStripeId.mockResolvedValue(null)
+        }
+      },
+      {
+        name: 'should update subscription status and plan',
+        serviceMethodArgs: canceledCustomerSubscriptionUpdatedEvent,
+        expectedParams: {
+          organizationUpdate: { id: 1, quantity: 15 },
+          subscriptionUpdateStatus: { subscriptionId: 1, statusId: SubscriptionStatusId.CANCELED },
+          subscriptionUpdatePlan: { subscriptionId: 1, planId: 1 }
+        },
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue(defaultSubscription)
+          mockOrganizationRepository.getOrganizationByStripeCustomerId.mockResolvedValue(defaultOrganization)
+          mockPlanRepository.getPlanByStripeId.mockResolvedValue(defaultRecurringPlan)
+        }
+      },
+      {
+        name: 'should update subscription plan and keep status unchanged',
+        serviceMethodArgs: defaultCustomerSubscriptionUpdatedEvent,
+        expectedParams: {
+          organizationUpdate: { id: 1, quantity: 15 },
+          subscriptionUpdatePlan: { subscriptionId: 1, planId: 1 }
+        },
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockResolvedValue(defaultSubscription)
+          mockOrganizationRepository.getOrganizationByStripeCustomerId.mockResolvedValue(defaultOrganization)
+          mockPlanRepository.getPlanByStripeId.mockResolvedValue(defaultRecurringPlan)
+        }
+      },
+      {
+        name: 'should log and rethrow error if an exception occurs',
+        serviceMethodArgs: defaultCustomerSubscriptionUpdatedEvent,
+        setupMocks: () => {
+          mockSubscriptionRepository.getSubscriptionByStripeId.mockRejectedValue(new Error('Test error'))
+        },
+        expectedError: new Error('Test error')
+      }
+    ])('$name', async ({ serviceMethodArgs, expectedParams, expectedError, setupMocks }) => {
+      setupMocks()
+
+      const pendingResult = service.handleSubscriptionUpdated(serviceMethodArgs)
+
+      if (expectedError) {
+        await expect(pendingResult).rejects.toThrow(expectedError)
+      } else {
+        await expect(pendingResult).resolves.not.toThrow()
+      }
+
+      if (expectedParams?.organizationUpdate) {
+        expect(mockOrganizationRepository.updateOrganization).toHaveBeenCalledWith(expectedParams.organizationUpdate)
+      } else {
+        expect(mockOrganizationRepository.updateOrganization).not.toHaveBeenCalled()
+      }
+      if (expectedParams?.subscriptionUpdateStatus) {
+        expect(mockSubscriptionRepository.updateSubscriptionStatus).toHaveBeenCalledWith(
+          expectedParams.subscriptionUpdateStatus.subscriptionId,
+          expectedParams.subscriptionUpdateStatus.statusId
+        )
+      } else {
+        expect(mockSubscriptionRepository.updateSubscriptionQuantity).not.toHaveBeenCalled()
+      }
+      if (expectedParams?.subscriptionUpdatePlan) {
+        expect(mockSubscriptionRepository.updateSubscriptionPlan).toHaveBeenCalledWith(
+          expectedParams.subscriptionUpdatePlan.subscriptionId,
+          expectedParams.subscriptionUpdatePlan.planId
+        )
+      } else {
+        expect(mockSubscriptionRepository.updateSubscriptionPlan).not.toHaveBeenCalled()
       }
     })
   })

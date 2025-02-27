@@ -10,8 +10,8 @@ import Animated, {
   withRepeat,
   withTiming
 } from 'react-native-reanimated'
-import { useAutoPlay } from '../../hooks'
-import { clamp, isPositiveNumber } from '../../utils'
+import { useAutoPlay } from '../../shared/hooks'
+import { clamp, isPositiveNumber } from '../../shared/utils'
 import { styles } from './styles'
 
 const BASE_DURATION_OF_ANIMATION_ON_SWIPE = 100

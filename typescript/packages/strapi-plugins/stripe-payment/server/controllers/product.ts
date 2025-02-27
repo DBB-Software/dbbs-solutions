@@ -1,5 +1,5 @@
+import createHttpError from 'http-errors'
 import { factories, Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import { CreateProductParams, DeleteProductParams, GetProductByIdParams, UpdateProductParams } from '../interfaces'
 import {
   createProductSchema,
@@ -13,25 +13,23 @@ export default factories.createCoreController('plugin::stripe-payment.product', 
   async create(ctx) {
     const { name } = ctx.request.body as CreateProductParams
 
-    await validateWithYupSchema(createProductSchema, {
+    const validatedParams = await validateWithYupSchema(createProductSchema, {
       name
     })
 
-    const product = await strapi.plugin('stripe-payment').service('product').create({
-      name
-    })
+    const product = await strapi.plugin('stripe-payment').service('product').create(validatedParams)
     ctx.send(product)
   },
 
   async getProductById(ctx) {
     const { id } = ctx.params as GetProductByIdParams
 
-    await validateWithYupSchema(getProductByIdSchema, { id })
+    const validatedParams = await validateWithYupSchema(getProductByIdSchema, { id })
 
-    const product = await strapi.plugin('stripe-payment').service('product').getProductById({ id })
+    const product = await strapi.plugin('stripe-payment').service('product').getProductById(validatedParams)
 
     if (!product) {
-      throw new errors.NotFoundError(`Product with ID ${id} not found`)
+      throw new createHttpError.NotFound(`Product with ID ${id} not found`)
     }
 
     ctx.send(product)
@@ -46,15 +44,12 @@ export default factories.createCoreController('plugin::stripe-payment.product', 
     const { id } = ctx.params
     const { name } = ctx.request.body as Omit<UpdateProductParams, 'id'>
 
-    await validateWithYupSchema(updateProductSchema, { id, name })
+    const validatedParams = await validateWithYupSchema(updateProductSchema, { id, name })
 
-    const product = await strapi.plugin('stripe-payment').service('product').update({
-      id,
-      name
-    })
+    const product = await strapi.plugin('stripe-payment').service('product').update(validatedParams)
 
     if (!product) {
-      throw new errors.NotFoundError(`Product with ID ${id} not found`)
+      throw new createHttpError.NotFound(`Product with ID ${id} not found`)
     }
 
     ctx.send(product)
@@ -63,12 +58,12 @@ export default factories.createCoreController('plugin::stripe-payment.product', 
   async delete(ctx) {
     const { id } = ctx.params as DeleteProductParams
 
-    await validateWithYupSchema(deleteProductSchema, { id })
+    const validatedParams = await validateWithYupSchema(deleteProductSchema, { id })
 
-    const result = await strapi.plugin('stripe-payment').service('product').delete({ id })
+    const result = await strapi.plugin('stripe-payment').service('product').delete(validatedParams)
 
     if (!result) {
-      throw new errors.NotFoundError(`Product with ID ${id} not found`)
+      throw new createHttpError.NotFound(`Product with ID ${id} not found`)
     }
 
     ctx.send(result)

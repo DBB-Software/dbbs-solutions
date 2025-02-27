@@ -1,11 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { ComponentType } from 'react'
 import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody } from './Tables'
 import { Paper } from '../paper/Paper'
 
 const meta: Meta<typeof Table> = {
   title: 'Table',
   component: Table,
-  subcomponents: { TableContainer, Paper, TableHead, TableRow, TableCell, TableBody },
+  subcomponents: {
+    TableContainer: TableContainer as ComponentType<unknown>,
+    Paper: Paper as ComponentType<unknown>,
+    TableHead: TableHead as ComponentType<unknown>,
+    TableRow: TableRow as ComponentType<unknown>,
+    TableCell: TableCell as ComponentType<unknown>,
+    TableBody: TableBody as ComponentType<unknown>
+  },
   tags: ['autodocs'],
   argTypes: {}
 }

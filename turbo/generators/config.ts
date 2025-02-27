@@ -2,6 +2,7 @@ import { PlopTypes } from '@turbo/gen'
 import webSpaGenerators from './web-spa/generators'
 import webSsrGenerators from './web-ssr/generators'
 import webSsrRemixGenerators from './web-ssr-remix/generators'
+import webSpaVueGenerators from './web-spa-vue/generators'
 import serverApiGenerators from './server-api/generators'
 import serverlessApiGenerators from './serverless-api/generators'
 import serverlessServiceGenerators from './serverless-service/generators'
@@ -16,6 +17,7 @@ import helpers from './hbsHelpers'
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
   webSpaGenerators(plop)
+  webSpaVueGenerators(plop)
   webSsrGenerators(plop)
   webSsrRemixGenerators(plop)
   serverlessApiGenerators(plop)

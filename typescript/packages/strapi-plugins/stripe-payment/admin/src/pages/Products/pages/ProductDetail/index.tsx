@@ -14,13 +14,12 @@ import Plus from '@strapi/icons/Plus'
 
 import AddPlanModal from '../../../../components/modals/AddPlanModal'
 import DeleteConfirmModal from '../../../../components/modals/DeleteConfirmModal'
-import { CreatePlanRequestParams, Plan, PlanType, Product } from '../../../../types'
+import { CreatePlanRequestParams, Plan, PlanType } from '../../../../types'
 import { BillingPeriod } from '../../../../../../server/enums'
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
-  const [product, setProduct] = useState<Product | null>(null)
   const [name, setName] = useState('')
   const [plans, setPlans] = useState<Plan[]>([])
   const [showAddPlanModal, setShowAddPlanModal] = useState(false)
@@ -36,7 +35,6 @@ const ProductDetail: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       const productData = await request(`/stripe-payment/admin/products/${id}`, { method: 'GET' })
-      setProduct(productData)
       setName(productData.name)
       setPlans(productData.plans || [])
     }
@@ -69,7 +67,7 @@ const ProductDetail: React.FC = () => {
   }
 
   const validatePrice = () => {
-    if (isNaN(Number(newPlanPrice)) || Number(newPlanPrice) <= 0) {
+    if (Number.isNaN(Number(newPlanPrice)) || Number(newPlanPrice) <= 0) {
       setPriceError('Price must be a positive number.')
       return false
     }
@@ -82,7 +80,7 @@ const ProductDetail: React.FC = () => {
   }
 
   const handleSavePlan = async () => {
-    if (!validatePlan() || !validatePrice()) {
+    if (!validatePlan() || !validatePrice() || !id) {
       return
     }
 
@@ -133,8 +131,8 @@ const ProductDetail: React.FC = () => {
     setShowAddPlanModal(false)
   }
 
-  const handleShowDeleteConfirm = (id: string) => {
-    setDeletePlanId(id)
+  const handleShowDeleteConfirm = (planId: string) => {
+    setDeletePlanId(planId)
     setShowDeleteConfirm(true)
   }
 

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { ComponentType } from 'react'
 import { RadioGroup } from './RadioGroup'
 import { Radio } from '../radio/Radio'
 import { Box } from '../box/Box'
@@ -7,7 +8,7 @@ import { Box } from '../box/Box'
 const meta: Meta<typeof RadioGroup> = {
   title: 'RadioGroup',
   component: RadioGroup,
-  subcomponents: { Radio },
+  subcomponents: { Radio: Radio as ComponentType<unknown> },
   tags: ['autodocs'],
   argTypes: {
     row: {

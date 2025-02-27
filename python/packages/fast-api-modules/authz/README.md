@@ -27,7 +27,7 @@ from dbbs_fastapi_authz import VerifyToken
 
 api_router = APIRouter()
 auth = VerifyToken(settings)
-api_router.include_router(example.router, prefix="/examples", tags=["example"], dependencies=[Security(auth.verify)])
+api_router.include_router(example.router, prefix="/examples", tags=["example"], dependencies=[Security(auth.verify, ["test:permission"])])
 ```
 
 ## Audience Claim (aud)
@@ -46,6 +46,10 @@ graph TD;
 ```
 
 Each error which will be raised during token validation will raise HTTPError with 401 status code
+
+## Permissions
+This package uses _permissions_ token`s scope to validate user permissions. 
+For access to requested resource user should have all required permission in token.
 
 ## Features
 

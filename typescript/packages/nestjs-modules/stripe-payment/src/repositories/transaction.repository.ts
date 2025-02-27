@@ -30,6 +30,25 @@ export class TransactionRepository {
     }
   }
 
+  async getTransactionByStripeInvoiceId(stripeInvoiceId: string): Promise<TransactionEntity | null> {
+    const transaction = await this.knexConnection('transactions')
+      .select(
+        'transactions.id',
+        'transactions.subscriptionId',
+        'transactions.organizationId',
+        'transactions.purchaseId',
+        'transactions.stripeInvoiceId',
+        'transaction_statuses.status',
+        'transactions.createdAt',
+        'transactions.updatedAt'
+      )
+      .join('transaction_statuses', 'transactions.statusId', '=', 'transaction_statuses.id')
+      .where({ stripeInvoiceId })
+      .first()
+
+    return transaction ? TransactionRepository.toJSON(transaction) : null
+  }
+
   async getOrganizationTransactions(
     organizationId: number,
     paginationOptions: PaginationOptions = { skip: 0, limit: 10 }

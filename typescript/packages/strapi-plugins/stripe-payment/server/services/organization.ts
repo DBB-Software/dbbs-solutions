@@ -21,6 +21,11 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
   async create(params: CreateOrganizationParams) {
     const { name, ownerId, email, quantity } = params
 
+    const owner = await strapi.query('plugin::users-permissions.user').findOne({ where: { id: ownerId } })
+    if (!owner) {
+      return null
+    }
+
     const customer = await strapi.plugin('stripe-payment').service('stripe').customers.create({
       name,
       email
@@ -137,6 +142,9 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
     const { id } = params
 
     const organization = await strapi.query('plugin::stripe-payment.organization').findOne({ where: { id } })
+    if (!organization) {
+      return null
+    }
 
     await strapi.plugin('stripe-payment').service('stripe').customers.del(organization.customer_id)
 
@@ -148,10 +156,19 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
   async updateOwner(params: UpdateOwnerParams) {
     const { id, ownerId } = params
 
-    const organization = await strapi.query('plugin::stripe-payment.organization').findOne({ where: { id } })
+    const organization = await strapi.query('plugin::stripe-payment.organization').findOne({
+      where: { id },
+      populate: ['users']
+    })
 
     if (!organization) {
       return null
+    }
+
+    if (!organization.users.find((user) => user.id === ownerId)) {
+      throw new createHttpError.BadRequest(
+        `Cannot update owner of the organization since the user with ID ${ownerId} is not a member of the organization`
+      )
     }
 
     return strapi.query('plugin::stripe-payment.organization').update({
@@ -254,11 +271,16 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
       return null
     }
 
-    const organizationUsers = organization.users.filter((user) => user.id !== Number(userId))
-
-    if (!organizationUsers.length || organizationUsers.length === 0) {
-      return null
+    if (userId === Number(organization.owner_id)) {
+      throw new createHttpError.BadRequest('Cannot remove an organization owner')
     }
+
+    const userToRemove = organization.users.find((user) => user.id === userId)
+    if (!userToRemove) {
+      throw new createHttpError.BadRequest(`User with ID ${userId} is not a member of the organization`)
+    }
+
+    const organizationUsers = organization.users.filter((user) => user.id !== Number(userId))
 
     return strapi.query('plugin::stripe-payment.organization').update({
       where: { id: organizationId },
@@ -346,7 +368,6 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
 
   async sendOrganizationInviteEmail(params: SendOrganizationInviteNotificationParams) {
     const { organizationName, organizationId, recipientEmail, inviteToken } = params
-    const sesSenderEmail: string = strapi.config.get('server.stripe.sesSenderEmail')
     const domainUrl = strapi.config.get('server.stripe.domainUrl')
     const acceptInviteLink = `${domainUrl}/organization/${organizationId}/accept-invite?token=${inviteToken}`
 
@@ -354,8 +375,8 @@ export default factories.createCoreService('plugin::stripe-payment.organization'
       .plugin('stripe-payment')
       .service('notification')
       .sendEmail({
+        subject: `Invite to organization ${organizationName}`,
         recipientsEmails: [recipientEmail],
-        senderEmail: sesSenderEmail,
         message: getSendOrganizationInviteTemplate({ organizationName, recipientEmail, acceptInviteLink })
       })
   }

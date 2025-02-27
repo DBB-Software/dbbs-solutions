@@ -3,6 +3,7 @@ import { InjectLogger, Logger } from '@dbbs/nestjs-module-logger'
 import { NotFoundError } from '@dbbs/common'
 
 import {
+  AcceptInviteDto,
   CreateOrganizationDto,
   OrganizationDto,
   PaginatedResponseDto,
@@ -13,9 +14,7 @@ import {
   UpdateOrganizationOwnerDto,
   UpdateOrganizationQuantityDto
 } from '../dtos/index.js'
-import { OrganizationService } from '../services/organization.service.js'
-import { PurchaseService } from '../services/purchase.service.js'
-import { TransactionService } from '../services/transaction.service.js'
+import { OrganizationService, PurchaseService, TransactionService } from '../services/index.js'
 
 @Controller('organizations')
 export class OrganizationController {
@@ -137,6 +136,33 @@ export class OrganizationController {
   ): Promise<OrganizationDto> {
     try {
       return await this.organizationService.updateOrganizationOwner({ id, ownerId })
+    } catch (error) {
+      this.logger.error((error as Error).message)
+      throw error
+    }
+  }
+
+  @Patch(':id/invites/:inviteId/accept')
+  async acceptInvite(
+    @Param('id', ParseIntPipe) organizationId: number,
+    @Param('inviteId', ParseIntPipe) inviteId: number,
+    @Body() { userId }: AcceptInviteDto
+  ): Promise<boolean> {
+    try {
+      return await this.organizationService.acceptInvite({ organizationId, inviteId, userId })
+    } catch (error) {
+      this.logger.error((error as Error).message)
+      throw error
+    }
+  }
+
+  @Delete(':id/users/:userId')
+  async removeUserFromOrganization(
+    @Param('id', ParseIntPipe) organizationId: number,
+    @Param('userId', ParseIntPipe) userId: number
+  ): Promise<boolean> {
+    try {
+      return await this.organizationService.removeUserFromOrganization({ organizationId, userId })
     } catch (error) {
       this.logger.error((error as Error).message)
       throw error

@@ -1,12 +1,12 @@
 import { jest } from '@jest/globals'
 import { Test, TestingModule } from '@nestjs/testing'
 import { PlanService as StripePriceService } from '@dbbs/nestjs-module-stripe'
-import { PlanService } from '../../services/plan.service.js'
-import { PlanRepository } from '../../repositories/plan.repository.js'
-import { defaultRecurringPlan, defaultProduct, stripePrice, defaultOneTimePlan } from '../mocks/index.js'
-import { ProductRepository } from '../../repositories/product.repository.js'
-import { BillingPeriod, Currency, PlanType } from '../../enums/index.js'
 import { ArgumentError, NotFoundError } from '@dbbs/common'
+
+import { PlanService } from '../../services/index.js'
+import { PlanRepository, ProductRepository } from '../../repositories/index.js'
+import { BillingPeriod, Currency, PlanType } from '../../enums/index.js'
+import { defaultRecurringPlan, defaultProduct, stripePrice, defaultOneTimePlan } from '../mocks/index.js'
 
 describe('PlanService', () => {
   let service: PlanService

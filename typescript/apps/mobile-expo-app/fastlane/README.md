@@ -13,17 +13,6 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
-### check_env
-
-```sh
-[bundle exec] fastlane check_env
-```
-
-
-
-----
-
-
 ## iOS
 
 ### ios increment_build
@@ -34,14 +23,6 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Increment Build number
 
-### ios increment_build_testflight
-
-```sh
-[bundle exec] fastlane ios increment_build_testflight
-```
-
-Increment Build number in TestFlight
-
 ### ios certificates
 
 ```sh
@@ -49,14 +30,6 @@ Increment Build number in TestFlight
 ```
 
 Fetch certificates and provisioning profiles
-
-### ios build
-
-```sh
-[bundle exec] fastlane ios build
-```
-
-Prepare new IOS build!
 
 ### ios nuke
 
@@ -66,18 +39,26 @@ Prepare new IOS build!
 
 Nuke expired certificates and profiles
 
-### ios distribution
+### ios build
 
 ```sh
-[bundle exec] fastlane ios distribution
+[bundle exec] fastlane ios build
+```
+
+Prepare new IOS build!
+
+### ios firebase
+
+```sh
+[bundle exec] fastlane ios firebase
 ```
 
 Firebase distribution of iOS
 
-### ios beta
+### ios testing
 
 ```sh
-[bundle exec] fastlane ios beta
+[bundle exec] fastlane ios testing
 ```
 
 Upload to Test Flight
@@ -119,21 +100,21 @@ Increment Build number
 
 Build a Release artifact (.aab and .apk)
 
-### android distribution
+### android firebase
 
 ```sh
-[bundle exec] fastlane android distribution
+[bundle exec] fastlane android firebase
 ```
 
 Firebase distribution of Android
 
-### android beta
+### android testing
 
 ```sh
-[bundle exec] fastlane android beta
+[bundle exec] fastlane android testing
 ```
 
-Upload to Play Store beta
+Upload to Play Store testing
 
 ### android release
 

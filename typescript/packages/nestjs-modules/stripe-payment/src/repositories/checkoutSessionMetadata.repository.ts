@@ -8,20 +8,18 @@ import { CheckoutSessionMetadataEntity } from '../entites/checkoutSessionMetadat
 export class CheckoutSessionMetadataRepository {
   static toJSON({
     id,
+    organizationId,
     checkoutSessionStripeId,
-    organizationName,
     planId,
-    userId,
     quantity,
     createdAt,
     updatedAt
   }: CheckoutSessionMetadataDbRecord): CheckoutSessionMetadataEntity {
     return {
       id,
+      organizationId,
       checkoutSessionStripeId,
-      organizationName,
       planId,
-      userId,
       quantity,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt)

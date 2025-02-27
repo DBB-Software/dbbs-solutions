@@ -1,16 +1,17 @@
 import { beforeEach, expect, jest } from '@jest/globals'
 import { Test, TestingModule } from '@nestjs/testing'
 import { LoggerModule } from '@dbbs/nestjs-module-logger'
-import { PlanController } from '../../controllers/plan.controller.js'
-import { PlanService } from '../../services/plan.service.js'
+import { NotFoundError } from '@dbbs/common'
+
+import { PlanController } from '../../controllers/index.js'
+import { PlanService } from '../../services/index.js'
+import { BillingPeriod } from '../../enums/index.js'
 import {
   createOneTimePlanDto,
   createRecurringPlanDto,
   defaultOneTimePlan,
   defaultRecurringPlan
 } from '../mocks/index.js'
-import { NotFoundError } from '@dbbs/common'
-import { BillingPeriod } from '../../enums/index.js'
 
 describe('PlanController', () => {
   let controller: PlanController

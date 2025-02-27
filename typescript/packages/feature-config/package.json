@@ -11,7 +11,8 @@
         "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
         "build": "npx tsc --build tsconfig.json",
         "docs:generate": "npx compodoc -p tsconfig.json",
-        "docs:serve": "yarn docs:generate -s"
+        "docs:serve": "yarn docs:generate -s",
+        "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
     },
     "publishConfig": {
         "access": "public"

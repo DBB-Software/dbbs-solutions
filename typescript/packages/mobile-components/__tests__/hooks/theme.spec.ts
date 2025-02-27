@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks'
 import { useColorScheme } from 'react-native'
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
-import { useDefinedTheme } from '../../src/hooks'
+import { useDefinedTheme } from '../../src/shared/hooks'
 
 const mockUseColorScheme = useColorScheme as jest.Mock
 

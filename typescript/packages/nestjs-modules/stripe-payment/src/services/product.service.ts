@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { ProductService as StripeProductService } from '@dbbs/nestjs-module-stripe'
 import { ArgumentError, NotFoundError } from '@dbbs/common'
-import { ProductRepository } from '../repositories/product.repository.js'
+
+import { ProductRepository } from '../repositories/index.js'
 import {
   ICreateProductParams,
   IDeleteProductParams,

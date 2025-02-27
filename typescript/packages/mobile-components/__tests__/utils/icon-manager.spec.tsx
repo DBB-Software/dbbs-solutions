@@ -1,4 +1,4 @@
-import { ExistedSvg, IconManager } from '../../src/utils'
+import { ExistedSvg, IconManager } from '../../src'
 
 describe('IconManager', () => {
   test('contains SVG components for each key in ExistedSvg', () => {

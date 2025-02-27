@@ -1,11 +1,5 @@
 export default [
   {
-    method: 'GET',
-    path: '/admin/products/:id',
-    handler: 'product.getProductById',
-    config: {}
-  },
-  {
     method: 'POST',
     path: '/admin/products',
     handler: 'product.create',

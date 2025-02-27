@@ -13,7 +13,8 @@
     "start": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032",
     "test": "npx jest --coverage --verbose",
     "watch": "npx tsc -w --preserveWatchOutput",
-    "start:localstack": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032"
+    "start:localstack": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@dbbs/common": "*",
@@ -26,6 +27,6 @@
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "@types/aws-lambda": "8.10.145"
+    "@types/aws-lambda": "8.10.147"
   }
 }

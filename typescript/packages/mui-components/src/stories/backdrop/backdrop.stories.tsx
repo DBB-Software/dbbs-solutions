@@ -7,7 +7,6 @@ import { CircularProgress } from '../circularProgress/CircularProgress'
 const meta: Meta<typeof Backdrop> = {
   title: 'Backdrop',
   component: Backdrop,
-  subcomponents: { Button, CircularProgress },
   tags: ['autodocs'],
   argTypes: {}
 }

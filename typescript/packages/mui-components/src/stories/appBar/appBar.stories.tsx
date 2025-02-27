@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { ComponentType } from 'react'
 import { AppBar } from './AppBar'
 import { Toolbar } from './ToolBar'
 import { Typography } from '../typography/Typography'
@@ -8,7 +9,12 @@ import { Button, IconButton } from '../buttons/Button'
 const meta: Meta<typeof AppBar> = {
   title: 'AppBar',
   component: AppBar,
-  subcomponents: { Toolbar, IconButton, Typography, Button },
+  subcomponents: {
+    Toolbar: Toolbar as ComponentType<unknown>,
+    IconButton: IconButton as ComponentType<unknown>,
+    Typography: Typography as ComponentType<unknown>,
+    Button: Button as ComponentType<unknown>
+  },
   tags: ['autodocs']
 }
 export default meta

@@ -3,7 +3,7 @@
  */
 
 import { factories, Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
+import createHttpError from 'http-errors'
 
 export default factories.createCoreController('plugin::stripe-payment.purchase', ({ strapi }: { strapi: Strapi }) => ({
   async getAllPurchases(ctx) {
@@ -14,7 +14,7 @@ export default factories.createCoreController('plugin::stripe-payment.purchase',
     })
 
     if (!purchases) {
-      throw new errors.NotFoundError(`Purchases are not found`)
+      throw new createHttpError.NotFound(`Purchases are not found`)
     }
 
     ctx.send(purchases)

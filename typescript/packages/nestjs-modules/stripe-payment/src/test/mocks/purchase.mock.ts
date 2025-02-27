@@ -1,6 +1,7 @@
 import { defaultDate, defaultDateISOString } from './date.mock.js'
 import { defaultRecurringPlan } from './plan.mock.js'
 import { PurchaseEntity } from '../../entites/index.js'
+import { CreatePurchasePayload } from '../../types/index.js'
 
 export const dbPurchasesList = (baseId: number) => [
   ...Array.from({ length: 14 }, (_, index) => ({
@@ -29,3 +30,9 @@ export const defaultPurchase: PurchaseEntity = {
   createdAt: defaultDate,
   updatedAt: defaultDate
 }
+
+export const mockCreatePurchasePayload = (baseId: number): CreatePurchasePayload => ({
+  stripeId: `purch_${baseId + 16}`,
+  planId: baseId + 1,
+  organizationId: baseId + 9
+})

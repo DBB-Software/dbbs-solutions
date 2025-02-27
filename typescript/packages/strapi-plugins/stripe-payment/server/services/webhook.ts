@@ -1,7 +1,7 @@
 import Stripe from 'stripe'
 import { Strapi } from '@strapi/strapi'
 import createHttpError from 'http-errors'
-import { errors } from '@strapi/utils'
+
 import { BillingReason, PaymentMode, PaymentTransactionStatus, StripeEventType, SubscriptionStatus } from '../enums'
 import { Plan } from '../interfaces'
 
@@ -69,7 +69,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const stripeInvoiceId = checkoutSession.invoice
       const stripePaymentIntentId = checkoutSession.payment_intent
 
-      let stripeCustomer, stripeTransaction, paymentTransaction
+      let stripeCustomer
+      let stripeTransaction
 
       if (isSubscription) {
         stripeTransaction = await strapi.plugin('stripe-payment').service('stripe').invoices.retrieve(stripeInvoiceId)
@@ -80,13 +81,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           .paymentIntents.retrieve(stripePaymentIntentId)
       }
 
-      paymentTransaction = await strapi.query('plugin::stripe-payment.transaction').create({
+      const paymentTransaction = await strapi.query('plugin::stripe-payment.transaction').create({
         data: {
           status: PaymentTransactionStatus.COMPLETED,
           externalTransaction: stripeTransaction
         }
       })
-
       let organization = await strapi.query('plugin::stripe-payment.organization').findOne({
         where: stripeCustomerId ? { customer_id: stripeCustomerId } : { name: organizationName },
         populate: {
@@ -142,7 +142,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           data: {
             subscription: subscription.id,
             transactions: organization.transactions
-              ? [...organization?.transactions, paymentTransaction.id]
+              ? [...organization.transactions, paymentTransaction.id]
               : [paymentTransaction.id]
           }
         })
@@ -204,7 +204,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (!subscription) {
-      throw new errors.NotFoundError(`Subscription with stripe id ${event.data.object.subscription} are not found`)
+      throw new createHttpError.NotFound(`Subscription with stripe id ${event.data.object.subscription} are not found`)
     }
 
     if (subscription.status === SubscriptionStatus.ACTIVE) {
@@ -243,7 +243,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (!subscription) {
-      throw new errors.NotFoundError(`Subscription with stripe id ${event.data.object.subscription} are not found`)
+      throw new createHttpError.NotFound(`Subscription with stripe id ${event.data.object.subscription} are not found`)
     }
 
     if (subscription.status === SubscriptionStatus.UNPAID) {
@@ -267,9 +267,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
   },
 
-  async handleSubscriptionUpdated(event: Stripe.CustomerSubscriptionUpdatedEvent) {
+  async handleSubscriptionUpdated(event: Stripe.CustomerSubscriptionUpdatedEvent): Promise<void> {
     if (event.data.object.status === SubscriptionStatus.TRIALING) {
-      return null
+      return
     }
 
     const organization = await strapi.query('plugin::stripe-payment.organization').findOne({
@@ -281,7 +281,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const { quantity, price } = event.data.object.items.data[0]
 
     if (!organization) {
-      return null
+      return
     }
 
     if (quantity && quantity > organization.quantity) {
@@ -316,7 +316,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     }
   },
 
-  async handlePaymentMethodAttached(event: Stripe.PaymentMethodAttachedEvent) {
+  async handlePaymentMethodAttached(event: Stripe.PaymentMethodAttachedEvent): Promise<void> {
     const customerId = event.data.object.customer
     const paymentMethodId = event.data.object.id
 
@@ -360,7 +360,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (!plan) {
-      throw new errors.NotFoundError(`Plan with stripe id ${event.data.object.id} are not found`)
+      throw new createHttpError.NotFound(`Plan with stripe id ${event.data.object.id} are not found`)
     }
 
     await strapi.query('plugin::stripe-payment.plan').delete({
@@ -371,14 +371,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 
   async handlePriceUpdated(event: Stripe.PriceUpdatedEvent) {
-    const plan = await strapi.query('plugin::stripe-payment.plan').findOne({
+    const existedPlan = await strapi.query('plugin::stripe-payment.plan').findOne({
       where: {
         stripe_id: event.data.object.id
       }
     })
 
-    if (!plan) {
-      throw new errors.NotFoundError(`Plan with stripe id ${event.data.object.id} are not found`)
+    if (!existedPlan) {
+      throw new createHttpError.NotFound(`Plan with stripe id ${event.data.object.id} are not found`)
     }
 
     const product = await strapi.query('plugin::stripe-payment.product').findOne({
@@ -391,11 +391,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (!product) {
-      throw new errors.NotFoundError(`Product with stripe id ${event.data.object.product} are not found`)
+      throw new createHttpError.NotFound(`Product with stripe id ${event.data.object.product} are not found`)
     }
 
     const updatedPlans = event.data.object.active
-      ? [...product.plans, plan]
+      ? [...product.plans, existedPlan]
       : product.plans.filter((plan: Plan) => plan.stripe_id !== event.data.object.id)
 
     await strapi.query('plugin::stripe-payment.product').update({
@@ -408,7 +408,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
   },
 
-  async handlePriceCreated(event: Stripe.PriceCreatedEvent) {
+  async handlePriceCreated(event: Stripe.PriceCreatedEvent): Promise<void> {
     const plan = await strapi.query('plugin::stripe-payment.plan').findOne({
       where: {
         stripe_id: event.data.object.id
@@ -416,7 +416,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (plan) {
-      return null
+      return
     }
 
     const product = await strapi.query('plugin::stripe-payment.product').findOne({
@@ -429,7 +429,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (!product) {
-      throw new errors.NotFoundError(`Product with stripe id ${event.data.object.product} are not found`)
+      throw new createHttpError.NotFound(`Product with stripe id ${event.data.object.product} are not found`)
     }
 
     const savedPlan = await strapi.query('plugin::stripe-payment.plan').create({
@@ -451,7 +451,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
   },
 
-  async handleProductCreated(event: Stripe.ProductCreatedEvent) {
+  async handleProductCreated(event: Stripe.ProductCreatedEvent): Promise<void> {
     const product = await strapi.query('plugin::stripe-payment.product').findOne({
       where: {
         stripe_id: event.data.object.id
@@ -459,7 +459,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (product) {
-      return null
+      return
     }
 
     const savedProduct = await strapi.query('plugin::stripe-payment.product').create({
@@ -506,7 +506,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (!product) {
-      throw new errors.NotFoundError(`Product with stripe id ${event.data.object.id} not found`)
+      throw new createHttpError.NotFound(`Product with stripe id ${event.data.object.id} not found`)
     }
 
     const prices = await strapi
@@ -568,7 +568,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     })
 
     if (!product) {
-      throw new errors.NotFoundError(`Product with stripe id ${event.data.object.id} not found`)
+      throw new createHttpError.NotFound(`Product with stripe id ${event.data.object.id} not found`)
     }
 
     const planStripeIds = product.plans.map((plan: Plan) => plan.stripe_id)

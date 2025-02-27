@@ -1,9 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { PlanService as StripePriceService } from '@dbbs/nestjs-module-stripe'
 import { ArgumentError, NotFoundError } from '@dbbs/common'
-import { PlanRepository } from '../repositories/plan.repository.js'
+
+import { PlanRepository, ProductRepository } from '../repositories/index.js'
 import { ICreatePlanParams, IDeletePlanParams, IPlan } from '../interfaces/index.js'
-import { ProductRepository } from '../repositories/product.repository.js'
 import { PlanType } from '../enums/index.js'
 
 @Injectable()

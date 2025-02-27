@@ -10,6 +10,7 @@
     "lint": "poetry run ruff check .",
     "test": "poetry run coverage run -m pytest && poetry run coverage xml",
     "build": "echo \"no build specified\" && exit 0",
-    "preinstall": "poetry install"
+    "install:deps": "poetry install",
+    "check-types": "poetry run mypy --strict ."
   }
 }

@@ -1,0 +1,8 @@
+{
+  "root": true,
+  "extends": ["@dbbs/eslint-config/react"],
+  "rules": {
+    "import/no-cycle": [2, { "maxDepth": 1 }],
+    "no-param-reassign": "off"
+  }
+}

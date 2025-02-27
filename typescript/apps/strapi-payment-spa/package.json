@@ -10,7 +10,8 @@
     "build": "npx tsc && vite build",
     "test": "npx jest --coverage --verbose",
     "cypress:open": "npx cypress open",
-    "cypress:run": "npx cypress run"
+    "cypress:run": "npx cypress run",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@dbbs/mui-components": "*",

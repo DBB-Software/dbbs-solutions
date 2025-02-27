@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
 
 from src.api.router import api_router
+from src.lifespan import lifespan_setup
 
 
 def get_app() -> FastAPI:
@@ -18,6 +19,7 @@ def get_app() -> FastAPI:
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",
         default_response_class=UJSONResponse,
+        lifespan=lifespan_setup,
     )
 
     # Main router for the API.

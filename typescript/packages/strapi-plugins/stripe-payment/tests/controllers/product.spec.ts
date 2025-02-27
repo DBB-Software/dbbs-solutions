@@ -1,6 +1,6 @@
+import createHttpError from 'http-errors'
 import { Context } from 'koa'
 import { Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
 import productController from '../../server/controllers/product'
 import { defaultProduct, strapiProductControllerMock, updatedProduct } from '../mocks'
 import { createMockContext, createMockStrapi } from '../factories'
@@ -40,7 +40,7 @@ describe('Product Controller', () => {
         name: 'should throw an error if product not found',
         ctxOverrides: { params: { id: 1 } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)
@@ -83,7 +83,7 @@ describe('Product Controller', () => {
         name: 'should throw an error if updated product not found',
         ctxOverrides: { params: { id: 1 }, request: { body: { name: 'Updated Product' } } },
         serviceMethodArgs: { id: 1, name: 'Updated Product' },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as unknown as Partial<Context>)
@@ -110,7 +110,7 @@ describe('Product Controller', () => {
         name: 'should throw an error if deleted product not found',
         ctxOverrides: { params: { id: 1 } },
         serviceMethodArgs: { id: 1 },
-        error: errors.NotFoundError
+        error: createHttpError.NotFound
       }
     ])('$name', async ({ ctxOverrides, serviceMethodArgs, expectedResult, error }) => {
       const ctx = createMockContext(ctxOverrides as Partial<Context>)

@@ -1,5 +1,4 @@
-import { Strapi } from '@strapi/strapi'
-import { errors } from '@strapi/utils'
+import createHttpError from 'http-errors'
 
 const checkSubscriptionOwnerMiddleware = async (ctx, next) => {
   const userId = ctx.state.user.id
@@ -11,11 +10,11 @@ const checkSubscriptionOwnerMiddleware = async (ctx, next) => {
   })
 
   if (!subscription) {
-    throw new errors.NotFoundError(`Subscription with ID ${subscriptionId} not found`)
+    throw new createHttpError.NotFound(`Subscription with ID ${subscriptionId} not found`)
   }
 
   if (subscription.organization.owner_id !== userId.toString()) {
-    throw new errors.ForbiddenError('User is not the owner of the organization related to this subscription')
+    throw new createHttpError.Forbidden('User is not the owner of the organization related to this subscription')
   }
 
   await next()

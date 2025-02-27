@@ -18,6 +18,5 @@ export interface ICreateCheckoutSessionParams {
   planId: number
   userId: number
   successUrl: string
-  organizationName?: string
-  organizationId?: number
+  organizationId: number
 }

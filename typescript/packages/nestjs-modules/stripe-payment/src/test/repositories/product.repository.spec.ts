@@ -1,5 +1,6 @@
 import knex from 'knex'
-import { ProductRepository } from '../../repositories/product.repository.js'
+
+import { ProductRepository } from '../../repositories/index.js'
 import {
   dbPlansList,
   dbProductsList,
