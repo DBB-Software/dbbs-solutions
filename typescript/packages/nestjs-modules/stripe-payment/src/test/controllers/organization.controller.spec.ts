@@ -417,7 +417,7 @@ describe(OrganizationController.name, () => {
       expect(mockOrganizationService.updateOrganizationOwner).toHaveBeenCalledWith(expectedParams.organizationUpdate)
     })
   })
-  
+
   describe(OrganizationController.prototype.acceptInvite.name, () => {
     it.each<{
       name: string
@@ -428,7 +428,7 @@ describe(OrganizationController.name, () => {
     }>([
       {
         name: 'should accept an invite',
-        params: [1, 2, {userId: 3}],
+        params: [1, 2, { userId: 3 }],
         setupMocks: () => {
           mockOrganizationService.acceptInvite.mockResolvedValueOnce(true)
         },
@@ -436,13 +436,13 @@ describe(OrganizationController.name, () => {
       },
       {
         name: 'should throw an error if failed to accept an invite',
-        params: [1, 2, {userId: 3}],
+        params: [1, 2, { userId: 3 }],
         setupMocks: () => {
           mockOrganizationService.acceptInvite.mockRejectedValueOnce(new Error('Failed to accept invite'))
         },
         expectedError: new Error('Failed to accept invite')
       }
-    ])('$name', async ({params, setupMocks, expectedResult, expectedError }) => {
+    ])('$name', async ({ params, setupMocks, expectedResult, expectedError }) => {
       setupMocks()
 
       const pendingResult = controller.acceptInvite(...params)

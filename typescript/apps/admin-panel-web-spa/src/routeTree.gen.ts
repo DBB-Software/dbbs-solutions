@@ -22,31 +22,31 @@ import { Route as GeoGeoIdEditImport } from './routes/geo/$geoId/edit'
 const MeetingTypeRoute = MeetingTypeImport.update({
   id: '/meeting-type',
   path: '/meeting-type',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 const GeoIndexRoute = GeoIndexImport.update({
   id: '/geo/',
   path: '/geo/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 const GeoCreateRoute = GeoCreateImport.update({
   id: '/geo/create',
   path: '/geo/create',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 const GeoGeoIdEditRoute = GeoGeoIdEditImport.update({
   id: '/geo/$geoId/edit',
   path: '/geo/$geoId/edit',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -123,13 +123,7 @@ export interface FileRouteTypes {
   fullPaths: '/' | '/meeting-type' | '/geo/create' | '/geo' | '/geo/$geoId/edit'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/meeting-type' | '/geo/create' | '/geo' | '/geo/$geoId/edit'
-  id:
-    | '__root__'
-    | '/'
-    | '/meeting-type'
-    | '/geo/create'
-    | '/geo/'
-    | '/geo/$geoId/edit'
+  id: '__root__' | '/' | '/meeting-type' | '/geo/create' | '/geo/' | '/geo/$geoId/edit'
   fileRoutesById: FileRoutesById
 }
 
@@ -146,12 +140,10 @@ const rootRouteChildren: RootRouteChildren = {
   MeetingTypeRoute: MeetingTypeRoute,
   GeoCreateRoute: GeoCreateRoute,
   GeoIndexRoute: GeoIndexRoute,
-  GeoGeoIdEditRoute: GeoGeoIdEditRoute,
+  GeoGeoIdEditRoute: GeoGeoIdEditRoute
 }
 
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {

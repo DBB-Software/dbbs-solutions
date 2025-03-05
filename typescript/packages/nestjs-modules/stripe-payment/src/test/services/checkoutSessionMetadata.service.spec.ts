@@ -20,22 +20,18 @@ describe('CheckoutSessionMetadataService', () => {
       { field: 'checkoutSessionStripeId', value: null, error: 'checkoutSessionStripeId must be a non-empty string' },
       { field: 'organizationId', value: 0, error: 'organizationId must be a positive number' },
       { field: 'planId', value: -5, error: 'planId must be a positive number' },
-      { field: 'quantity', value: 0, error: 'quantity must be a positive number' },
-    ])(
-      'should throw an error if $field is invalid',
-      ({ field, value, error }) => {
-        const metadata: any= {
-          ...defaultCheckoutSessionMetadata
-        }
-
-        metadata[field] = value
-
-        expect(() => service.validateMetadata(metadata)).toThrow(error)
+      { field: 'quantity', value: 0, error: 'quantity must be a positive number' }
+    ])('should throw an error if $field is invalid', ({ field, value, error }) => {
+      const metadata: any = {
+        ...defaultCheckoutSessionMetadata
       }
-    )
+
+      metadata[field] = value
+
+      expect(() => service.validateMetadata(metadata)).toThrow(error)
+    })
 
     it('should throw an error with multiple invalid fields', () => {
-
       expect(() => service.validateMetadata(invalidCheckoutSessionMetadata)).toThrow(
         'Invalid metadata: id must be a positive number, checkoutSessionStripeId must be a non-empty string, organizationId must be a positive number, planId must be a positive number, quantity must be a positive number'
       )

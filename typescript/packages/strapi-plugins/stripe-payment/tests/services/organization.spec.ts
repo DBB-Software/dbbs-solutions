@@ -30,9 +30,7 @@ describe('Organization Service', () => {
         serviceMethodArgs: { name: 'Test Organization', ownerId: '1', quantity: 1, email: 'example@gmail.com' },
         expectedResult: defaultOrganization,
         setupMocks: () => {
-          jest
-            .spyOn(strapi.query('plugin::users-permissions.user'), 'findOne')
-            .mockResolvedValue({ id: 2 })
+          jest.spyOn(strapi.query('plugin::users-permissions.user'), 'findOne').mockResolvedValue({ id: 2 })
           jest
             .spyOn(strapi.query('plugin::stripe-payment.organization'), 'create')
             .mockResolvedValue(defaultOrganization)
@@ -53,9 +51,7 @@ describe('Organization Service', () => {
         serviceMethodArgs: { name: 'Test Organization', ownerId: '1', quantity: 1, email: 'example@gmail.com' },
         expectedResult: null,
         setupMocks: () => {
-          jest
-            .spyOn(strapi.query('plugin::users-permissions.user'), 'findOne')
-            .mockResolvedValue(null)
+          jest.spyOn(strapi.query('plugin::users-permissions.user'), 'findOne').mockResolvedValue(null)
         }
       }
     ])(

@@ -19,10 +19,7 @@ describe(SendgridService.name, () => {
     }
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        SendgridService,
-        { provide: ConfigService, useValue: mockConfigService }
-      ]
+      providers: [SendgridService, { provide: ConfigService, useValue: mockConfigService }]
     }).compile()
 
     service = module.get<SendgridService>(SendgridService)
@@ -38,24 +35,23 @@ describe(SendgridService.name, () => {
       {
         name: 'should send email with correct input params',
         params: MOCK_SEND_EMAIL_PAYLOAD,
-        expectedResult: MOCK_SEND_RESPONSE,
+        expectedResult: MOCK_SEND_RESPONSE
       },
       {
         name: 'should throw validation error for missing subject',
         params: { ...MOCK_SEND_EMAIL_PAYLOAD, subject: '' },
-        expectedError: new ValidationError('Missing required fields: subject'),
+        expectedError: new ValidationError('Missing required fields: subject')
       },
       {
         name: 'should throw validation error for missing text or html',
         params: { ...MOCK_SEND_EMAIL_PAYLOAD, text: '', html: '' },
-        expectedError: new ValidationError('Missing required fields: text or html must be provided'),
-      },
-    ])('$name', async ({params, expectedResult, expectedError})=>{
-
-      if(expectedResult){
+        expectedError: new ValidationError('Missing required fields: text or html must be provided')
+      }
+    ])('$name', async ({ params, expectedResult, expectedError }) => {
+      if (expectedResult) {
         await expect(service.sendEmail(params)).resolves.toEqual(expectedResult)
       } else {
-        expect(()=>service.sendEmail(params)).toThrow(expectedError)
+        expect(() => service.sendEmail(params)).toThrow(expectedError)
       }
     })
   })

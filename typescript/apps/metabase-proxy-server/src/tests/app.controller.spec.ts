@@ -146,7 +146,7 @@ describe('AppController', () => {
 
   describe('getParamValues', () => {
     it('should call proxyRequest with correct parameters', async () => {
-      const params  = createMockParams({ dashboardId: '1', id: '123' } ) as {dashboardId: string, id: string}
+      const params = createMockParams({ dashboardId: '1', id: '123' }) as { dashboardId: string; id: string }
 
       await appController.getParamValues(params)
 
@@ -177,7 +177,7 @@ describe('AppController', () => {
     it('should call getOrganizationsNamesByUserEmail and getCollectionsByOrganizationsNames with correct organization name', async () => {
       const mockOrganizationNames = ['Test Organization']
 
-      mockAppService.getOrganizationsNamesByUserEmail.mockReturnValue(Promise.resolve((mockOrganizationNames)))
+      mockAppService.getOrganizationsNamesByUserEmail.mockReturnValue(Promise.resolve(mockOrganizationNames))
 
       await appController.getCollections(mockRequest)
 
