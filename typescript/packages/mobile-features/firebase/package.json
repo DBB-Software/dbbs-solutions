@@ -18,7 +18,7 @@
   "peerDependencies": {
     "@react-native-firebase/messaging": "21.0.0",
     "@react-native-firebase/remote-config": "21.0.0",
-    "react-native": "0.75.3"
+    "react-native": "0.75.4"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

@@ -16,5 +16,8 @@
     },
     "publishConfig": {
         "access": "public"
+    },
+    "devDependencies": {
+        "@compodoc/compodoc": "1.1.26"
     }
 }

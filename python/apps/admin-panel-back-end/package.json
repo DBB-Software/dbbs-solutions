@@ -1,0 +1,14 @@
+{
+  "name": "@dbbs/admin-panel-back-end",
+  "version": "1.0.0",
+  "description": "DBBs FastAPI Server for admin panel",
+  "type": "module",
+  "main": "../admin-panel-back-end/src/main.py",
+  "private": true,
+  "scripts": {
+    "dev": "poetry run python -m src",
+    "lint": "poetry run ruff check .",
+    "build": "echo \"no build specified\" && exit 0",
+    "install:deps": "poetry install"
+  }
+}

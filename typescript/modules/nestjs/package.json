@@ -27,6 +27,7 @@
     "mongoose": "8.9.1"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "1.1.26",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*"
