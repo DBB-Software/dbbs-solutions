@@ -601,13 +601,15 @@ describe(OrganizationService.name, () => {
           mockUserRepository.doesUserExist.mockResolvedValueOnce(true)
           mockUserRepository.getOrganizationUsers.mockResolvedValueOnce([defaultUserEntity(1)])
         },
-        expectedError: new BadRequestException(`User with Id 1 already exists in organization ${defaultOrganization.name}`)
+        expectedError: new BadRequestException(
+          `User with Id 1 already exists in organization ${defaultOrganization.name}`
+        )
       },
       {
         name: 'should throw error if organization quantity is exceeded',
         params: [{ organizationId: 1, userId: 1 }],
         setupMocks: () => {
-          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce({...defaultOrganization, quantity:1})
+          mockOrganizationRepository.getOrganizationById.mockResolvedValueOnce({ ...defaultOrganization, quantity: 1 })
           mockUserRepository.doesUserExist.mockResolvedValueOnce(true)
           mockUserRepository.getOrganizationUsers.mockResolvedValueOnce([defaultUserEntity(2)])
         },
@@ -652,15 +654,16 @@ describe(OrganizationService.name, () => {
         setupMocks: () => {
           mockInviteService.getInviteById.mockResolvedValueOnce(null)
         },
-        expectedError: new NotFoundError(
-          `Invite with Id 1 to organization with Id 1 for user 1 not found`
-        )
+        expectedError: new NotFoundError(`Invite with Id 1 to organization with Id 1 for user 1 not found`)
       },
       {
         name: 'should throw error if invite already been accepted',
         params: [{ inviteId: 1, userId: 1, organizationId: 1 }],
         setupMocks: () => {
-          mockInviteService.getInviteById.mockResolvedValueOnce({...defaultInviteEntity(1), status: InviteStatus.Accepted})
+          mockInviteService.getInviteById.mockResolvedValueOnce({
+            ...defaultInviteEntity(1),
+            status: InviteStatus.Accepted
+          })
         },
         expectedError: new BadRequestException(`Invite with Id 1 already accepted`)
       },
@@ -668,7 +671,10 @@ describe(OrganizationService.name, () => {
         name: 'should throw error if invite already been cancelled',
         params: [{ inviteId: 1, userId: 1, organizationId: 1 }],
         setupMocks: () => {
-          mockInviteService.getInviteById.mockResolvedValueOnce({...defaultInviteEntity(1), status: InviteStatus.Cancelled})
+          mockInviteService.getInviteById.mockResolvedValueOnce({
+            ...defaultInviteEntity(1),
+            status: InviteStatus.Cancelled
+          })
         },
         expectedError: new BadRequestException(`Invite with Id 1 already cancelled, create new invite`)
       }
@@ -730,7 +736,7 @@ describe(OrganizationService.name, () => {
           mockUserRepository.doesUserExist.mockResolvedValueOnce(false)
         },
         expectedError: new NotFoundError('User with Id 1 does not exist')
-      } 
+      }
     ])('$name', async ({ params, setupMocks, expectedResult, expectedError }) => {
       setupMocks()
 

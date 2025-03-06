@@ -26,6 +26,7 @@
     "nestjs-cls": "4.4.1"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "1.1.26",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*"

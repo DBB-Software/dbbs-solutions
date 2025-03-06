@@ -11,14 +11,42 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as MeetingTypeImport } from './routes/meeting-type'
 import { Route as IndexImport } from './routes/index'
+import { Route as GeoIndexImport } from './routes/geo/index'
+import { Route as GeoCreateImport } from './routes/geo/create'
+import { Route as GeoGeoIdEditImport } from './routes/geo/$geoId/edit'
 
 // Create/Update Routes
+
+const MeetingTypeRoute = MeetingTypeImport.update({
+  id: '/meeting-type',
+  path: '/meeting-type',
+  getParentRoute: () => rootRoute
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
+} as any)
+
+const GeoIndexRoute = GeoIndexImport.update({
+  id: '/geo/',
+  path: '/geo/',
+  getParentRoute: () => rootRoute
+} as any)
+
+const GeoCreateRoute = GeoCreateImport.update({
+  id: '/geo/create',
+  path: '/geo/create',
+  getParentRoute: () => rootRoute
+} as any)
+
+const GeoGeoIdEditRoute = GeoGeoIdEditImport.update({
+  id: '/geo/$geoId/edit',
+  path: '/geo/$geoId/edit',
+  getParentRoute: () => rootRoute
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -32,6 +60,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/meeting-type': {
+      id: '/meeting-type'
+      path: '/meeting-type'
+      fullPath: '/meeting-type'
+      preLoaderRoute: typeof MeetingTypeImport
+      parentRoute: typeof rootRoute
+    }
+    '/geo/create': {
+      id: '/geo/create'
+      path: '/geo/create'
+      fullPath: '/geo/create'
+      preLoaderRoute: typeof GeoCreateImport
+      parentRoute: typeof rootRoute
+    }
+    '/geo/': {
+      id: '/geo/'
+      path: '/geo'
+      fullPath: '/geo'
+      preLoaderRoute: typeof GeoIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/geo/$geoId/edit': {
+      id: '/geo/$geoId/edit'
+      path: '/geo/$geoId/edit'
+      fullPath: '/geo/$geoId/edit'
+      preLoaderRoute: typeof GeoGeoIdEditImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,37 +95,55 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/meeting-type': typeof MeetingTypeRoute
+  '/geo/create': typeof GeoCreateRoute
+  '/geo': typeof GeoIndexRoute
+  '/geo/$geoId/edit': typeof GeoGeoIdEditRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/meeting-type': typeof MeetingTypeRoute
+  '/geo/create': typeof GeoCreateRoute
+  '/geo': typeof GeoIndexRoute
+  '/geo/$geoId/edit': typeof GeoGeoIdEditRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/meeting-type': typeof MeetingTypeRoute
+  '/geo/create': typeof GeoCreateRoute
+  '/geo/': typeof GeoIndexRoute
+  '/geo/$geoId/edit': typeof GeoGeoIdEditRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/meeting-type' | '/geo/create' | '/geo' | '/geo/$geoId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/meeting-type' | '/geo/create' | '/geo' | '/geo/$geoId/edit'
+  id: '__root__' | '/' | '/meeting-type' | '/geo/create' | '/geo/' | '/geo/$geoId/edit'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MeetingTypeRoute: typeof MeetingTypeRoute
+  GeoCreateRoute: typeof GeoCreateRoute
+  GeoIndexRoute: typeof GeoIndexRoute
+  GeoGeoIdEditRoute: typeof GeoGeoIdEditRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MeetingTypeRoute: MeetingTypeRoute,
+  GeoCreateRoute: GeoCreateRoute,
+  GeoIndexRoute: GeoIndexRoute,
+  GeoGeoIdEditRoute: GeoGeoIdEditRoute
 }
 
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -77,11 +151,27 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/meeting-type",
+        "/geo/create",
+        "/geo/",
+        "/geo/$geoId/edit"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/meeting-type": {
+      "filePath": "meeting-type.tsx"
+    },
+    "/geo/create": {
+      "filePath": "geo/create.tsx"
+    },
+    "/geo/": {
+      "filePath": "geo/index.tsx"
+    },
+    "/geo/$geoId/edit": {
+      "filePath": "geo/$geoId/edit.tsx"
     }
   }
 }

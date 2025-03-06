@@ -52,6 +52,7 @@ android {
         versionName "1.0.0"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        manifestPlaceholders = [auth0Domain: project.env.get('AUTH0_DOMAIN'), auth0Scheme: "${applicationId}.app.auth0"]
     }
     productFlavors {
         prod {

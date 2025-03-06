@@ -23,6 +23,7 @@
     "@nestjs/common": "11.0.10"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "1.1.26",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*"

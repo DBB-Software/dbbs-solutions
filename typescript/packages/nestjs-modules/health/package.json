@@ -25,6 +25,7 @@
     "@nestjs/terminus": "11.0.0"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "1.1.26",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*"

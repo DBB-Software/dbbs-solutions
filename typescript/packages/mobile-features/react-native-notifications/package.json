@@ -18,7 +18,7 @@
   "peerDependencies": {
     "@notifee/react-native": "9.1.2",
     "@react-native-firebase/messaging": "21.0.0",
-    "react-native": "0.75.3"
+    "react-native": "0.75.4"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

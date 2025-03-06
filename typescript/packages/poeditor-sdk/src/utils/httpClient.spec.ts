@@ -45,9 +45,7 @@ describe('httpClient', () => {
   it('should throw an error on API-level failure', async () => {
     const mockErrorMessage = 'API request failed'
     fetchMock.mockRejectedValueOnce(new Error(mockErrorMessage))
-  
-    await expect(
-      httpClient({ body: { api_token: mockToken }, url: endpoint })
-    ).rejects.toThrow(mockErrorMessage)
+
+    await expect(httpClient({ body: { api_token: mockToken }, url: endpoint })).rejects.toThrow(mockErrorMessage)
   })
 })
