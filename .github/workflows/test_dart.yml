@@ -27,7 +27,7 @@ on:
 
 jobs:
   test-and-build:
-    runs-on: [self-hosted]
+    runs-on: [ubuntu-24.04]
     environment: development
     steps:
       - name: Checkout

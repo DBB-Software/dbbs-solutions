@@ -35,7 +35,7 @@ on:
 
 jobs:
   test-and-build:
-    runs-on: [self-hosted]
+    runs-on: [ubuntu-24.04]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
