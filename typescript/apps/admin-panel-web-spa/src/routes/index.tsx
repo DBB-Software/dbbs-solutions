@@ -1,6 +1,7 @@
 import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { GeoList } from '../feature'
 
 export const Route = createFileRoute('/')({
-  component: () => <div>ROOT</div>
+  component: () => <GeoList />
 })

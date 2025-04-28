@@ -111,7 +111,7 @@ runs:
     - name: Run build and prebuild step for workspace
       run: |
         npx turbo run build --filter=./typescript/apps/${{ inputs.workspace }}
-        yarn workspace @dbbs/${{ inputs.workspace }} prebuild
+        yarn workspace @dbbs/${{ inputs.workspace }} prebuild:dev
       shell: bash
 
     - name: Start metro server

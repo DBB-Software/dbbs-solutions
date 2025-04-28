@@ -27,8 +27,6 @@ dbbs-django-logger = {path = "../../packages/django-modules/dbbs_django_logger"}
 psycopg2-binary = "2.9.10"
 
 [tool.coverage.run]
-branch = true
-relative_files = true
 omit = ["*/migrations/*", "*/tests/*", "manage.py", "core/settings/*", "*/__init__.py"]
 
 [tool.coverage.report]

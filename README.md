@@ -1,4 +1,6 @@
 # DBBS Pre-Built Solutions
+[![Test Typescript](https://github.com/DBB-Software/platform/actions/workflows/test_typescript.yml/badge.svg?event=push)](https://github.com/DBB-Software/platform/actions/workflows/test_typescript.yml)
+[![Test Python](https://github.com/DBB-Software/platform/actions/workflows/test_python.yml/badge.svg?event=push)](https://github.com/DBB-Software/platform/actions/workflows/test_python.yml)
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -356,7 +358,8 @@ This directory encompasses a diverse array of applications, spanning web, server
 - Server Django App
 
 #### Mobile applications
-- React Native cross-platform mobile app, can be presented using react-native-cli and expo.
+- React Native cross-platform mobile app, can be presented using react-native-cli and expo
+- Flutter cross-platform mobile app, integrated with turborepo for unified command execution
 
 For each application, a predefined set of initial configurations is supplied. These include:
 - ESLint Configuration
@@ -519,6 +522,8 @@ The DBBS Pre-Built Solutions utilizes a diverse and modern technology stack to o
 - **[Firebase](https://firebase.google.com/): A comprehensive app development platform that offers a variety of tools and services such as authentication, real-time databases, cloud storage, and analytics, facilitating the development of high-quality apps.
 - **[Fastlane](https://fastlane.tools/): An open-source platform aimed at simplifying Android and iOS deployment, automating every aspect of building and releasing mobile applications.
 - **[Detox](https://wix.github.io/Detox/): A gray-box end-to-end testing and automation library for mobile apps, designed to test your mobile application from the perspective of a real user.
+- **[Flutter](https://flutter.dev/)**: Google's UI toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase, offering high performance and expressive design capabilities.
+- **[Dart](https://dart.dev/)**: A client-optimized language for fast apps on any platform, used as the programming language for Flutter development.
 
 Our technology stack is carefully selected to ensure the platform remains at the forefront of development innovation, offering a powerful combination of speed, efficiency, and scalability.
 

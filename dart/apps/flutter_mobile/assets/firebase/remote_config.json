@@ -1,0 +1,44 @@
+{
+  "parameters": {
+    "double": {
+      "defaultValue": {
+        "value": "1.0"
+      },
+      "description": "Double type, must be DOUBLE in the remote json configuration in flutter",
+      "valueType": "DOUBLE"
+    },
+    "bool": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "valueType": "BOOLEAN"
+    },
+    "map": {
+      "defaultValue": {
+        "value": "{\"test\":\"test\"}"
+      },
+      "valueType": "JSON"
+    },
+    "string": {
+      "defaultValue": {
+        "value": "string"
+      },
+      "valueType": "STRING"
+    },
+    "int": {
+      "defaultValue": {
+        "value": "1"
+      },
+      "valueType": "NUMBER"
+    }
+  },
+  "version": {
+    "versionNumber": "2",
+    "updateTime": "2025-03-22T10:39:18.312358Z",
+    "updateUser": {
+      "email": "vlad.khomenko@dbbsoftware.com"
+    },
+    "updateOrigin": "CONSOLE",
+    "updateType": "INCREMENTAL_UPDATE"
+  }
+}

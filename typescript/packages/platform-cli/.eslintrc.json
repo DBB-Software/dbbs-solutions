@@ -1,0 +1,5 @@
+{
+  "root": true,
+  "ignorePatterns": ["plopfile.ts"],
+  "extends": ["@dbbs/eslint-config/node"]
+}

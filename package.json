@@ -15,13 +15,15 @@
       "python/packages/fast-api-modules/*",
       "python/packages/*",
       "python/apps/*",
+      "dart/apps/*",
+      "dart/packages/*",
       "infra/aws-cdk"
     ]
   },
   "scripts": {
     "build": "dotenv -- npx turbo run build --filter @dbbs/${target:-\"*\"}",
     "clean:all": "npx turbo run clean && npm run clean:modules",
-    "clean:modules": "npx rimraf node_modules .yarn .turbo .idea",
+    "clean:modules": "npx rimraf node_modules .yarn .turbo .idea .venv",
     "cypress:open": "dotenv -- npx turbo run cypress:open --filter @dbbs/${target:-\"*\"}",
     "cypress:run": "dotenv -- npx turbo run cypress:run --filter @dbbs/${target:-\"*\"}",
     "dev": "dotenv -- npx turbo run dev --concurrency=99 --filter @dbbs/${target:-\"*\"}",
@@ -38,7 +40,7 @@
     "upload:settings": "./scripts/upload-settings.sh",
     "migrate": "dotenv -- npx turbo run migrate --concurrency=99 --filter @dbbs/${target:-\"*\"}",
     "test:cov": "dotenv -- npx turbo run test:cov --concurrency=99 --filter @dbbs/${target:-\"*\"}",
-    "prepare": "husky",
+    "postinstall": "husky",
     "check-types": "npx turbo run check-types"
   },
   "devDependencies": {

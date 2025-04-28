@@ -1,0 +1,38 @@
+{
+  "name": "@dbbs/cli",
+  "version": "0.1.7",
+  "private": true,
+  "type": "module",
+  "description": "DBBs CLI for code generation",
+  "main": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "dbbs-cli": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "npx tsc --build tsconfig.json",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "clean": "npx rimraf .turbo node_modules dist bin coverage *.tsbuildinfo || exit 0",
+    "test": "echo \"Error: no test specified\"",
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "plop": "cross-env NODE_OPTIONS='--import tsx' plop --plopfile=plopfile.ts",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*",
+    "cross-env": "7.0.3",
+    "tsx": "4.19.2"
+  },
+  "dependencies": {
+    "@types/yargs": "17.0.33",
+    "node-plop": "0.32.0",
+    "path": "0.12.7",
+    "plop": "4.0.1",
+    "yargs": "17.7.2"
+  }
+}

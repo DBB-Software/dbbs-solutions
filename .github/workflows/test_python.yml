@@ -27,7 +27,7 @@ on:
 
 jobs:
   test-and-build:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -88,7 +88,7 @@ jobs:
       - name: Install Python deps
         if: ${{ env.AFFECTED_PATHS != '' }}
         run: |
-          npx turbo run install:deps
+          npx turbo run install:deps ${{ env.FILTER_ARGS }}
 
       - name: Typecheck
         if: ${{ env.AFFECTED_PATHS != '' }}
@@ -99,6 +99,13 @@ jobs:
         if: ${{ env.AFFECTED_PATHS != '' }}
         run: |
           npx turbo run test ${{ env.FILTER_ARGS }}
+
+      - name: Sonarcloud Scan
+        uses: sonarsource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONARCLOUD_URL: "https://sonarcloud.io"
+          # RUNNER_DEBUG: "1" # Enable runner debug logging for more verbose output (useful for troubleshooting, remove for normal runs)
 
       - name: Alert on main fail
         uses: slackapi/slack-github-action@v2.0.0
