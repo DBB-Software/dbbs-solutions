@@ -1,5 +1,5 @@
 {
-  "name": "@dbbs/fast-api-cloudwatch",
+  "name": "@dbbs/fastapi-cloudwatch",
   "version": "1.0.0",
   "private": true,
   "description": "FastAPI cloudwatch module",

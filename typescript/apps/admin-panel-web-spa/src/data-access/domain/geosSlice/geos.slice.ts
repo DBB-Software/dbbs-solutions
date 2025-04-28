@@ -1,4 +1,4 @@
-import { Geo, GeoProperties, ListPayload, ListResponse, UpdatePayload } from '../../../types'
+import { Geo, ListPayload, ListResponse, UpdatePayload } from '../../../types'
 import { buildQueryParams } from '../../../utils'
 import { apiSlice, ApiSliceTag } from '../apiSlice'
 
@@ -48,9 +48,6 @@ export const geoSlice = apiSlice.injectEndpoints({
     }),
     getGeoById: builder.query<Geo, string>({
       query: buildGeosIdPath
-    }),
-    getGeoProperties: builder.query<GeoProperties, void>({
-      query: buildGeosPropertiesPath
     })
   })
 })
@@ -59,7 +56,6 @@ export const selectDomainGetGeoList = geoSlice.endpoints.getGeoList.select
 
 export const {
   useGetGeoListQuery,
-  useGetGeoPropertiesQuery,
   useCreateGeoMutation,
   useUpdateGeoMutation,
   useDeleteGeoMutation,

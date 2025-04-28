@@ -23,37 +23,37 @@ import { Route as IndexImport } from './routes/index'
 
 const SubscriptionsRoute = SubscriptionsImport.update({
   path: '/subscriptions',
-  getParentRoute: () => rootRoute
+  getParentRoute: () => rootRoute,
 } as any)
 
 const PurchasesRoute = PurchasesImport.update({
   path: '/purchases',
-  getParentRoute: () => rootRoute
+  getParentRoute: () => rootRoute,
 } as any)
 
 const ProfileRoute = ProfileImport.update({
   path: '/profile',
-  getParentRoute: () => rootRoute
+  getParentRoute: () => rootRoute,
 } as any)
 
 const OrganizationRoute = OrganizationImport.update({
   path: '/organization',
-  getParentRoute: () => rootRoute
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthenticatedRoute = AuthenticatedImport.update({
   path: '/authenticated',
-  getParentRoute: () => rootRoute
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthRoute = AuthImport.update({
   path: '/auth',
-  getParentRoute: () => rootRoute
+  getParentRoute: () => rootRoute,
 } as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
-  getParentRoute: () => rootRoute
+  getParentRoute: () => rootRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -121,7 +121,7 @@ export const routeTree = rootRoute.addChildren({
   OrganizationRoute,
   ProfileRoute,
   PurchasesRoute,
-  SubscriptionsRoute
+  SubscriptionsRoute,
 })
 
 /* prettier-ignore-end */

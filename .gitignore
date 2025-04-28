@@ -74,6 +74,9 @@ typings/
 .env.development
 .env.stagigng
 .env.production
+.env.*
+!.env.example
+*.env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -108,16 +111,9 @@ dist
 
 .idea
 .build
-.DS_Store
 node_modules
 
-.env
-.env.*
-!.env.example
-*.env
 *.db
-dist
-coverage
 layer
 
 
@@ -146,7 +142,6 @@ documentation
 
 # Xcode
 #
-build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -167,8 +162,6 @@ DerivedData
 
 # Android/IntelliJ
 #
-build/
-.idea
 .gradle
 local.properties
 *.iml
@@ -209,6 +202,7 @@ docker-compose/volume/*
 # AWS CDK
 .cdk.staging
 cdk.out
+infra/aws-cdk/stacks/**/cdk.json
 infra/aws-cdk/**/*.js
 infra/aws-cdk/**/*.d.ts
 
@@ -250,3 +244,117 @@ typescript/packages/**/lib
 /dotnet/apps/aspnet-server/package-lock.json
 /dotnet/apps/aspnet-server/DBBS.AspnetServer/weather.sqlite
 /dotnet/apps/aspnet-server/DBBS.AspnetServer/weather.sqlite*
+
+# Dart & Flutter
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+**/dgph
+.fvm/
+**/firepit-log.txt
+dart/**/firebase.json
+dart/**/google-services.json
+dart/**/GoogleService-Info.plist
+
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/*.keystore
+**/*.jks
+
+# iOS/XCode related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/**/.generated/
+**/ios/**/Flutter/App.framework
+**/ios/**/Flutter/Flutter.framework
+**/ios/**/Flutter/Flutter.podspec
+**/ios/**/Flutter/Generated.xcconfig
+**/ios/**/Flutter/ephemeral/
+**/ios/**/Flutter/app.flx
+**/ios/**/Flutter/app.zip
+**/ios/**/Flutter/flutter_assets/
+**/ios/**/Flutter/flutter_export_environment.sh
+**/ios/**/ServiceDefinitions.json
+**/ios/**/Runner/GeneratedPluginRegistrant.*
+
+# macOS related
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+**/macos/**/xcuserdata/
+
+# Linux related
+**/linux/flutter/ephemeral/
+
+# Windows related
+**/windows/flutter/ephemeral/
+**/windows/**/*.suo
+**/windows/**/*.user
+**/windows/**/*.userosscache
+**/windows/**/*.sln.docstates
+**/windows/**/x64/
+**/windows/**/x86/
+**/windows/**/*.[Cc]ache
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# Exceptions
+!**/ios/**/default.mode1v3
+!**/ios/**/default.mode2v3
+!**/ios/**/default.pbxuser
+!**/ios/**/default.perspectivev3
+!**/windows/**/*.[Cc]ache/
+/.scannerwork/

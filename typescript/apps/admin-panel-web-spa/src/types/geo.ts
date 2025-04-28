@@ -1,4 +1,4 @@
-import { LinkField } from './common'
+import { MeetingType } from './meetingType'
 
 export type Geo = {
   id: string
@@ -8,15 +8,16 @@ export type Geo = {
   createdBy?: string
   name: string
   scheduleUrl: string
-  geoType: string
+  meetingType?: MeetingType
   timezone?: string
   captureScheduleFlag?: boolean
   captureStreamFlag?: boolean
   scheduleFormat?: string
   streamType?: string
   jurisdiction?: boolean
-  parent?: LinkField
+  parent?: Geo
   geoParentId?: number
+  meetingTypeId?: number
   channelUrl?: string
   statusSchedule?: string
   detectStartMethod: string
@@ -31,12 +32,4 @@ export type Geo = {
   demo?: boolean
   scheduleRefreshFrequency?: number
   streamTypeId?: number
-}
-export type GeoProperties = {
-  geoTypes: string[]
-  detectMethods: string[]
-  statuses: string[]
-  timezones: string[]
-  scheduleFormats: string[]
-  streamTypes: string[]
 }

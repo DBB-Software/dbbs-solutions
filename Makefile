@@ -1,11 +1,12 @@
 SHELL := /bin/bash
 
-all: setup run-build run-dev
+all: setup run-build run-test
 
 # Main target for setting up dependencies
 setup: check-brew install-asdf
 	make -C typescript setup
 	make -C python setup
+	make -C dart setup
 	make install-aws install-docker check-versions download-env
 
 # Target for setting up dependencies for typescript

@@ -10,9 +10,9 @@ setup:
 
 # Installs dependencies via asdf
 asdf-install:
-	asdf plugin-list | grep -q nodejs || asdf plugin-add nodejs
-	asdf plugin-list | grep -q ruby || asdf plugin-add ruby
-	asdf plugin-list | grep -q cocoapods || asdf plugin-add cocoapods
+	asdf plugin list | grep -q nodejs || asdf plugin add nodejs
+	asdf plugin list | grep -q ruby || asdf plugin add ruby
+	asdf plugin list | grep -q cocoapods || asdf plugin add cocoapods
 
 	asdf plugin update --all
 

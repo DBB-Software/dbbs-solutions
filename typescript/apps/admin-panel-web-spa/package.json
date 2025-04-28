@@ -9,7 +9,7 @@
     "dev": "npx vite",
     "lint": "npx eslint . --ext ts,tsx --max-warnings 999 --fix",
     "preview": "npx vite preview",
-    "test": "npx jest --coverage --verbose"
+    "test": "npx jest --coverage --verbose --runInBand"
   },
   "dependencies": {
     "@dbbs/mui-components": "*",

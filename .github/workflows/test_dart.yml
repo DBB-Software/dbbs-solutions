@@ -1,0 +1,123 @@
+name: Test Dart
+
+run-name: Test Dart ${{ github.head_ref || github.ref }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    paths:
+      - dart/**
+      - .github/workflows/test_dart.yml
+      - .github/actions/setup-flutter.yml
+      - .github/actions/setup-yarn.yml
+      - .github/actions/setup-node.yml
+  push:
+    branches:
+      - main
+
+jobs:
+  test-and-build:
+    runs-on: [ubuntu-24.04]
+    environment: development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Fetch main branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          git fetch origin main:main
+
+      - name: Cache turbo setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Use Setup Yarn action
+        uses: ./.github/actions/setup-yarn
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.tool-versions'
+          cache: 'yarn'   
+
+      - name: Setup Flutter
+        uses: ./.github/actions/setup-flutter
+      
+      - name: Build dependencies
+        run: |
+          yarn install --immutable
+
+      - name: List and extract affected projects
+        run: |
+          npx turbo ls --affected --output=json > affected.json
+
+          export AFFECTED_PATHS=$(jq -r '.packages.items 
+            | map(select(.path | startswith("dart/")) | .path = "./" + .path) 
+            | map(.path) 
+            | join(" ")' affected.json)
+
+          if [ -z "$AFFECTED_PATHS" ] && [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then
+            AFFECTED_PATHS="./dart/**/*"
+          fi
+
+          FILTER_ARGS=$(for path in $AFFECTED_PATHS; do echo "--filter=$path"; done | xargs)
+          
+          echo "FILTER_ARGS=$FILTER_ARGS" >> $GITHUB_ENV
+          echo "AFFECTED_PATHS=$AFFECTED_PATHS" >> $GITHUB_ENV
+          
+          echo $GITHUB_EVENT_NAME
+          echo $AFFECTED_PATHS
+        shell: bash
+
+      - name: Install Flutter deps
+        if: ${{ env.AFFECTED_PATHS != '' }}
+        run: |
+          npx turbo run install:deps ${{ env.FILTER_ARGS }}
+
+      - name: Create secret files
+        run: |
+          echo -n "${{ secrets.FLUTTER_ENV_DEVELOPMENT }}" | base64 --decode > ./dart/apps/flutter_mobile/.env.development
+          echo -n "${{ secrets.FLUTTER_ENV_PRODUCTION }}" | base64 --decode > ./dart/apps/flutter_mobile/.env.production
+          echo -n "${{ secrets.FLUTTER_FIREBASE_CREDENTIALS }}" | base64 --decode > ./dart/apps/flutter_mobile/firebase.json
+          echo -n "${{ secrets.FLUTTER_GOOGLE_SERVICE_ACCOUNT_ANDROID }}" | base64 --decode > ./dart/apps/flutter_mobile/android/app/google-service-account.json
+          echo -n "${{ secrets.FLUTTER_GOOGLE_SERVICE_ACCOUNT_IOS }}" | base64 --decode > ./dart/apps/flutter_mobile/ios/Runner/google-service-account.json
+        shell: bash
+
+      - name: Typecheck
+        if: ${{ env.AFFECTED_PATHS != '' }}
+        run: |
+          npx turbo check-types ${{ env.FILTER_ARGS }}
+
+      - name: Test
+        if: ${{ env.AFFECTED_PATHS != '' }}
+        run: |
+          npx turbo run test ${{ env.FILTER_ARGS }}
+
+      - name: Alert on main fail
+        uses: slackapi/slack-github-action@v2.0.0
+        if: failure() && github.ref == 'refs/heads/main'
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          payload: |
+            channel: ${{ vars.SLACK_ALERTS_CHANNEL_ID }}
+            text: ":this-is-fine-fire: *GitHub Action Job auto-run-test-jobs.yml Failed*\n
+            *Job*: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n
+            *Author*: https://github.com/${{ github.actor }}"

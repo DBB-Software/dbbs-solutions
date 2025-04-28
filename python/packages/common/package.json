@@ -1,0 +1,13 @@
+{
+  "name": "@dbbs/python-common",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Common for dbbs python project",
+  "type": "module",
+  "scripts": {
+    "build": "poetry build",
+    "lint": "echo \"no lint specified\" && exit 0",
+    "test": "echo \"no test specified\" && exit 0",
+    "install:deps": "poetry install"
+  }
+}

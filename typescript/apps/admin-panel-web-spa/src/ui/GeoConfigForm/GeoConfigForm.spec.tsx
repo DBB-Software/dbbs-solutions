@@ -4,27 +4,21 @@ import { FieldValues, useForm } from 'react-hook-form'
 import { GeoConfigForm, GeoConfigFormProps } from './GeoConfigForm'
 import { Geo } from '../../types'
 
-const mockOnSubmit = jest.fn()
-
 const FormWithControl = () => {
   const { control } = useForm<FieldValues, Geo>({
     defaultValues: {}
   })
   const defaultProps: GeoConfigFormProps = {
-    geoTypes: ['Type1', 'Type2'],
     isUpdateLoading: false,
     handleSubmit: jest.fn(),
     errors: {},
-    onSubmit: mockOnSubmit,
     control,
     onParentSearch: jest.fn(),
     parentSearchLoading: false,
     parentOptions: [],
-    streamTypeOptions: [],
-    detectMethods: [],
-    statuses: [],
-    timezones: [],
-    scheduleFormats: []
+    onMeetingTypeSearch: jest.fn(),
+    meetingTypeSearchLoading: false,
+    meetingTypeOptions: []
   }
 
   return <GeoConfigForm {...defaultProps} />

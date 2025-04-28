@@ -17,7 +17,6 @@
     "watch": "npx tsc -w --preserveWatchOutput"
   },
   "dependencies": {
-    "@dbbs/nestjs-modules": "*",
     "@nestjs-modules/ioredis": "2.0.2",
     "@nestjs/common": "10.4.15",
     "@nestjs/config": "4.0.0",

@@ -7,7 +7,6 @@ export const mockGeo: Geo = {
   createdBy: 'admin_user_tutorial-99246_test',
   name: 'Onslow County School Board',
   scheduleUrl: 'https://go.boarddocs.com/nc/onslow/Board.nsf/public',
-  geoType: 'School board',
   timezone: 'America/New_York',
   captureScheduleFlag: true,
   captureStreamFlag: false,
@@ -17,7 +16,10 @@ export const mockGeo: Geo = {
   parent: {
     id: '1',
     name: 'Geo',
-    fullName: 'Geo (Other) in The Universe'
+    bubbleId: '',
+    scheduleUrl: '',
+    detectStartMethod: '',
+    detectEndMethod: ''
   },
 
   channelUrl: 'https://www.youtube.com/@OCSMultimedia/streams',

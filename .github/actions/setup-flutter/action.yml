@@ -1,0 +1,24 @@
+name: 'Setup flutter'
+description: 'Setup flutter with specified version from dart/.tool-versions'
+
+inputs:
+  ref:
+    description: Ref for checkout. Use the github.ref
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Extract flutter version from dart/.tool-versions
+      id: flutter_version
+      run: |
+        FLUTTER_VERSION="$(grep -v '#' dart/.tool-versions | grep flutter | awk '{print $2}')"
+        echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ steps.flutter_version.outputs.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true

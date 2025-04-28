@@ -10133,18 +10133,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dbbs/fast-api-cloudwatch@workspace:python/packages/fast-api-modules/cloudwatch":
-  version: 0.0.0-use.local
-  resolution: "@dbbs/fast-api-cloudwatch@workspace:python/packages/fast-api-modules/cloudwatch"
-  languageName: unknown
-  linkType: soft
-
-"@dbbs/fast-api-db@workspace:python/packages/fast-api-modules/sqlalchemy":
-  version: 0.0.0-use.local
-  resolution: "@dbbs/fast-api-db@workspace:python/packages/fast-api-modules/sqlalchemy"
-  languageName: unknown
-  linkType: soft
-
 "@dbbs/fast-api-server@workspace:python/apps/fast-api-server":
   version: 0.0.0-use.local
   resolution: "@dbbs/fast-api-server@workspace:python/apps/fast-api-server"
@@ -10154,6 +10142,18 @@ __metadata:
 "@dbbs/fastapi-authz@workspace:python/packages/fast-api-modules/authz":
   version: 0.0.0-use.local
   resolution: "@dbbs/fastapi-authz@workspace:python/packages/fast-api-modules/authz"
+  languageName: unknown
+  linkType: soft
+
+"@dbbs/fastapi-cloudwatch@workspace:python/packages/fast-api-modules/cloudwatch":
+  version: 0.0.0-use.local
+  resolution: "@dbbs/fastapi-cloudwatch@workspace:python/packages/fast-api-modules/cloudwatch"
+  languageName: unknown
+  linkType: soft
+
+"@dbbs/fastapi-db@workspace:python/packages/fast-api-modules/sqlalchemy":
+  version: 0.0.0-use.local
+  resolution: "@dbbs/fastapi-db@workspace:python/packages/fast-api-modules/sqlalchemy"
   languageName: unknown
   linkType: soft
 
@@ -10180,6 +10180,20 @@ __metadata:
 "@dbbs/flask-server@workspace:python/apps/flask-server":
   version: 0.0.0-use.local
   resolution: "@dbbs/flask-server@workspace:python/apps/flask-server"
+  languageName: unknown
+  linkType: soft
+
+"@dbbs/flutter-firebase@npm:*, @dbbs/flutter-firebase@workspace:dart/packages/firebase":
+  version: 0.0.0-use.local
+  resolution: "@dbbs/flutter-firebase@workspace:dart/packages/firebase"
+  languageName: unknown
+  linkType: soft
+
+"@dbbs/flutter-mobile@workspace:dart/apps/flutter_mobile":
+  version: 0.0.0-use.local
+  resolution: "@dbbs/flutter-mobile@workspace:dart/apps/flutter_mobile"
+  dependencies:
+    "@dbbs/flutter-firebase": "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -10658,7 +10672,6 @@ __metadata:
   dependencies:
     "@dbbs/eslint-config": "npm:*"
     "@dbbs/jest-config": "npm:*"
-    "@dbbs/nestjs-modules": "npm:*"
     "@dbbs/tsconfig": "npm:*"
     "@nestjs-modules/ioredis": "npm:2.0.2"
     "@nestjs/common": "npm:10.4.15"
@@ -10681,18 +10694,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dbbs/nestjs-module-decorators@npm:*, @dbbs/nestjs-module-decorators@workspace:typescript/packages/nestjs-modules/decorators":
-  version: 0.0.0-use.local
-  resolution: "@dbbs/nestjs-module-decorators@workspace:typescript/packages/nestjs-modules/decorators"
-  dependencies:
-    "@compodoc/compodoc": "npm:1.1.26"
-    "@dbbs/eslint-config": "npm:*"
-    "@dbbs/jest-config": "npm:*"
-    "@dbbs/tsconfig": "npm:*"
-    "@nestjs/common": "npm:11.0.10"
-  languageName: unknown
-  linkType: soft
-
 "@dbbs/nestjs-module-health@npm:*, @dbbs/nestjs-module-health@workspace:typescript/packages/nestjs-modules/health":
   version: 0.0.0-use.local
   resolution: "@dbbs/nestjs-module-health@workspace:typescript/packages/nestjs-modules/health"
@@ -10704,19 +10705,6 @@ __metadata:
     "@nestjs/axios": "npm:4.0.0"
     "@nestjs/common": "npm:11.0.10"
     "@nestjs/terminus": "npm:11.0.0"
-  languageName: unknown
-  linkType: soft
-
-"@dbbs/nestjs-module-healthcheck@workspace:typescript/packages/nestjs-modules/healthcheck":
-  version: 0.0.0-use.local
-  resolution: "@dbbs/nestjs-module-healthcheck@workspace:typescript/packages/nestjs-modules/healthcheck"
-  dependencies:
-    "@compodoc/compodoc": "npm:1.1.26"
-    "@dbbs/eslint-config": "npm:*"
-    "@dbbs/jest-config": "npm:*"
-    "@dbbs/nestjs-module-decorators": "npm:*"
-    "@dbbs/tsconfig": "npm:*"
-    "@nestjs/common": "npm:11.0.10"
   languageName: unknown
   linkType: soft
 
@@ -10828,7 +10816,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dbbs/nestjs-modules@npm:*, @dbbs/nestjs-modules@workspace:typescript/modules/nestjs":
+"@dbbs/nestjs-modules@workspace:typescript/modules/nestjs":
   version: 0.0.0-use.local
   resolution: "@dbbs/nestjs-modules@workspace:typescript/modules/nestjs"
   dependencies:
@@ -10999,6 +10987,12 @@ __metadata:
     "@dbbs/jest-config": "npm:*"
     "@dbbs/tsconfig": "npm:*"
     jest-fetch-mock: "npm:3.0.3"
+  languageName: unknown
+  linkType: soft
+
+"@dbbs/python-common@workspace:python/packages/common":
+  version: 0.0.0-use.local
+  resolution: "@dbbs/python-common@workspace:python/packages/common"
   languageName: unknown
   linkType: soft
 

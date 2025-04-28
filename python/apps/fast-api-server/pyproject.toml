@@ -28,8 +28,6 @@ fast-api-db = {path = "../../packages/fast-api-modules/sqlalchemy", extras = ["p
 fast-api-cloudwatch = {path = "../../packages/fast-api-modules/cloudwatch"}
 
 [tool.coverage.run]
-branch = true
-relative_files = true
 omit = ["*/__init__.py"]
 
 [build-system]

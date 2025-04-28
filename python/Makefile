@@ -6,11 +6,13 @@ all: setup
 setup:
 	make asdf-install
 	make check-versions
+	make modify-poetry-config
+	make install-python-deps
 
 # Installs dependencies via asdf
 asdf-install:
-	asdf plugin-list | grep -q python || asdf plugin-add python
-	asdf plugin-list | grep -q poetry || asdf plugin-add poetry
+	asdf plugin list | grep -q python || asdf plugin add python
+	asdf plugin list | grep -q poetry || asdf plugin add poetry
 
 	asdf plugin update --all
 
@@ -30,3 +32,11 @@ check-versions:
 		echo "Poetry version:"; \
 		asdf current poetry | awk '{print $$2}' || echo "Poetry not installed"; \
 	) || echo "Skipping version checks for Python and Poetry"
+
+# Modify poetry config
+modify-poetry-config:
+	poetry config virtualenvs.in-project true
+
+# Install python dependencies
+install-python-deps:
+	npx turbo run install:deps

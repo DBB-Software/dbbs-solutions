@@ -6,6 +6,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+# Disabled until self-hosted mac runner issues are resolved
 # on:
 #   schedule:
 #     - cron: '0 0 * * *'
@@ -13,7 +14,7 @@ concurrency:
 jobs:
   test-dev:
     if: ${{ github.ref || 'refs/heads/main' }}
-    runs-on: self-hosted
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     environment: ${{ format('{0}_{1}', 'mobile-app', 'development') }}
     steps:

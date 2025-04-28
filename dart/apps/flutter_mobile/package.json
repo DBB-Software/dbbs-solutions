@@ -1,0 +1,27 @@
+{
+  "name": "@dbbs/flutter-mobile",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "install:deps": "flutter pub get",
+    "build": "flutter pub run build_runner build && yarn bundle",
+    "test": "flutter test",
+    "lint": "dart fix --apply && flutter pub run import_sorter:main",
+    "lint:show": "dart fix --dry-run",
+    "check-types": "flutter analyze",
+    "clean": "flutter clean",
+    "aar": "flutter build aar",
+    "apk": "flutter build apk",
+    "appbundle": "flutter build appbundle",
+    "ios": "flutter build ios",
+    "ipa": "flutter build ipa",
+    "bundle": "flutter build bundle",
+    "ios:dev": "flutter run -d 'iPhone 16 Pro' --dart-define-from-file=.env.development",
+    "ios:dev:prod": "flutter run -d 'iPhone 16 Pro' --dart-define-from-file=.env.production",
+    "android:dev": "flutter run -d 'emulator-5554' --dart-define-from-file=.env.development",
+    "android:dev:prod": "flutter run -d 'emulator-5554' --dart-define-from-file=.env.production"
+  },
+  "devDependencies": {
+    "@dbbs/flutter-firebase": "*"
+  }
+}

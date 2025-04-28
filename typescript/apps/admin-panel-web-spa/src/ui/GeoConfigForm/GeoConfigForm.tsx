@@ -1,63 +1,42 @@
-import React, { FC } from 'react'
-import { Controller, Control, FieldErrors, UseFormHandleSubmit, FieldValues } from 'react-hook-form'
-import {
-  TextField,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormControlLabel,
-  Checkbox,
-  Button,
-  Grid
-} from '@dbbs/mui-components'
-import { CustomAutocomplete } from '../CustomAutocomplete'
+import React, { FormEventHandler, FC } from 'react'
+import { Controller, Control, FieldErrors, FieldValues } from 'react-hook-form'
+import { TextField, Typography, FormControl, FormControlLabel, Checkbox, Button, Grid } from '@dbbs/mui-components'
+import { CustomAutocomplete, Option } from '../CustomAutocomplete'
 import { DEFAULT_CONFIG_PAGE_GRID_SIZE } from '../../utils'
 import { GEO_CONFIG_FORM_TEST_IDS } from './testIds'
-import { Geo, LinkField } from '../../types'
 
 export interface GeoConfigFormProps {
-  geoTypes: string[]
   isUpdateLoading: boolean
-  control?: Control<FieldValues, Geo>
-  handleSubmit: UseFormHandleSubmit<Geo>
+  control?: Control<FieldValues>
+  handleSubmit: FormEventHandler<HTMLFormElement>
   errors: FieldErrors
-  onSubmit: (data: Geo) => void
-
   onParentSearch: (searchTerm: string) => void
   parentSearchLoading: boolean
-  parentOptions: LinkField[]
-  streamTypeOptions: string[]
-  detectMethods: string[]
-  statuses: string[]
-  timezones: string[]
-  scheduleFormats: string[]
+  parentOptions: Option[]
+  onMeetingTypeSearch: (searchTerm: string) => void
+  meetingTypeSearchLoading: boolean
+  meetingTypeOptions: Option[]
 }
 
 export const GeoConfigForm: FC<GeoConfigFormProps> = ({
-  geoTypes,
   isUpdateLoading,
   control,
   handleSubmit,
   errors,
-  onSubmit,
   onParentSearch,
   parentSearchLoading,
   parentOptions,
-  detectMethods,
-  statuses,
-  timezones,
-  scheduleFormats,
-  streamTypeOptions
+  onMeetingTypeSearch,
+  meetingTypeSearchLoading,
+  meetingTypeOptions
 }) => (
-  <form onSubmit={handleSubmit(onSubmit)} data-testid={GEO_CONFIG_FORM_TEST_IDS.FORM}>
+  <form onSubmit={handleSubmit} data-testid={GEO_CONFIG_FORM_TEST_IDS.FORM}>
     <Grid container spacing={2}>
-      <Grid xs={12}>
+      <Grid xs={12} item>
         <Typography variant="h4">Geo Configuration</Typography>
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="name"
           control={control}
@@ -74,47 +53,33 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
-        <Controller
-          name="geoType"
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
+        <CustomAutocomplete
+          name="meetingType"
           control={control}
-          rules={{ required: 'Geo Type is required' }}
-          render={({ field }) => (
-            <FormControl fullWidth error={!!errors.geoType} data-testid={GEO_CONFIG_FORM_TEST_IDS.GEO_TYPE}>
-              <InputLabel id="geo-type-label">Geo Type</InputLabel>
-              <Select {...field} label="Geo Type" fullWidth error={!!errors.geoType}>
-                {geoTypes?.map((type) => (
-                  <MenuItem key={type} value={type}>
-                    {type}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
+          label="Meeting Type"
+          options={meetingTypeOptions}
+          data-testid={GEO_CONFIG_FORM_TEST_IDS.GEO_TYPE}
+          onSearch={onMeetingTypeSearch}
+          loading={meetingTypeSearchLoading}
+          idKey="id"
+          labelKey="name"
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="timezone"
           control={control}
-          rules={{ required: 'Time Zone is required' }}
           render={({ field }) => (
-            <FormControl fullWidth error={!!errors.timezone} data-testid={GEO_CONFIG_FORM_TEST_IDS.TIMEZONE}>
-              <InputLabel id="timezone-label">Time Zone</InputLabel>
-              <Select {...field} labelId="timezone-label" label="Time Zone" fullWidth>
-                {timezones.map((tz) => (
-                  <MenuItem key={tz} value={tz}>
-                    {tz}
-                  </MenuItem>
-                ))}
-              </Select>
+            <FormControl fullWidth data-testid={GEO_CONFIG_FORM_TEST_IDS.TIMEZONE}>
+              <TextField {...field} label="Time Zone" fullWidth />
             </FormControl>
           )}
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="scheduleUrl"
           control={control}
@@ -126,7 +91,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <FormControlLabel
           control={
             <Controller
@@ -145,7 +110,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <FormControlLabel
           control={
             <Controller
@@ -160,7 +125,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <FormControlLabel
           control={
             <Controller
@@ -179,7 +144,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <FormControlLabel
           control={
             <Controller
@@ -194,7 +159,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <FormControlLabel
           control={
             <Controller
@@ -209,7 +174,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <FormControlLabel
           control={
             <Controller
@@ -224,7 +189,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <FormControlLabel
           control={
             <Controller
@@ -239,7 +204,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <FormControlLabel
           control={
             <Controller
@@ -254,41 +219,21 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
-        <Controller
-          name="streamType"
-          control={control}
-          render={({ field }) => (
-            <FormControl fullWidth error={!!errors.statusStream} data-testid={GEO_CONFIG_FORM_TEST_IDS.STREAM_TYPE}>
-              <InputLabel>Stream Type</InputLabel>
-              <Select {...field} label="Stream Type" fullWidth>
-                {streamTypeOptions.map((type) => (
-                  <MenuItem key={type} value={type}>
-                    {type}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        />
-      </Grid>
-
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <CustomAutocomplete
           name="parent"
           control={control}
-          rules={{ required: 'Parent is required' }}
           label="Parent"
           options={parentOptions}
           data-testid={GEO_CONFIG_FORM_TEST_IDS.PARENT}
           onSearch={onParentSearch}
           loading={parentSearchLoading}
           idKey="id"
-          labelKey="fullName"
+          labelKey="name"
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="channelUrl"
           control={control}
@@ -300,97 +245,55 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="statusSchedule"
           control={control}
           render={({ field }) => (
-            <FormControl
-              fullWidth
-              error={!!errors.statusSchedule}
-              data-testid={GEO_CONFIG_FORM_TEST_IDS.STATUS_SCHEDULE}
-            >
-              <InputLabel>Schedule Status</InputLabel>
-              <Select {...field} label="Schedule Status" fullWidth>
-                {statuses.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
+            <FormControl fullWidth data-testid={GEO_CONFIG_FORM_TEST_IDS.STATUS_SCHEDULE}>
+              <TextField {...field} label="Schedule Status" fullWidth />
             </FormControl>
           )}
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="statusStream"
           control={control}
           render={({ field }) => (
-            <FormControl fullWidth error={!!errors.statusStream} data-testid={GEO_CONFIG_FORM_TEST_IDS.STATUS_STREAM}>
-              <InputLabel>Stream Status</InputLabel>
-              <Select {...field} label="Stream Status" fullWidth>
-                {statuses.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
+            <FormControl fullWidth data-testid={GEO_CONFIG_FORM_TEST_IDS.STATUS_STREAM}>
+              <TextField {...field} label="Stream Status" fullWidth />
             </FormControl>
           )}
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="detectStartMethod"
           control={control}
-          rules={{ required: 'Detect Start Method is required' }}
           render={({ field }) => (
-            <FormControl
-              fullWidth
-              error={!!errors.detectStartMethod}
-              data-testid={GEO_CONFIG_FORM_TEST_IDS.DETECT_START_METHOD}
-            >
-              <InputLabel id="detect-start-method-label">Detect Start Method</InputLabel>
-              <Select {...field} label="Detect Start Method" fullWidth>
-                {detectMethods.map((method) => (
-                  <MenuItem key={method} value={method}>
-                    {method}
-                  </MenuItem>
-                ))}
-              </Select>
+            <FormControl fullWidth data-testid={GEO_CONFIG_FORM_TEST_IDS.DETECT_START_METHOD}>
+              <TextField {...field} label="Detect Start Method" fullWidth />
             </FormControl>
           )}
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="detectEndMethod"
           control={control}
-          rules={{ required: 'Detect End Method is required' }}
           render={({ field }) => (
-            <FormControl
-              fullWidth
-              error={!!errors.detectEndMethod}
-              data-testid={GEO_CONFIG_FORM_TEST_IDS.DETECT_END_METHOD}
-            >
-              <InputLabel id="detect-end-method-label">Detect End Method</InputLabel>
-              <Select {...field} label="Detect End Method" fullWidth>
-                {detectMethods.map((method) => (
-                  <MenuItem key={method} value={method}>
-                    {method}
-                  </MenuItem>
-                ))}
-              </Select>
+            <FormControl fullWidth data-testid={GEO_CONFIG_FORM_TEST_IDS.DETECT_END_METHOD}>
+              <TextField {...field} label="Detect End Method" fullWidth />
             </FormControl>
           )}
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="scheduleRefreshFrequency"
           control={control}
@@ -408,7 +311,7 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="detectEndOcrString"
           control={control}
@@ -420,38 +323,19 @@ export const GeoConfigForm: FC<GeoConfigFormProps> = ({
         />
       </Grid>
 
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
-        <Controller
-          name="singlePlayerUrl"
-          control={control}
-          render={({ field }) => (
-            <FormControl fullWidth data-testid={GEO_CONFIG_FORM_TEST_IDS.SINGLE_PLAYER_URL}>
-              <TextField label="Single player URL" {...field} fullWidth />
-            </FormControl>
-          )}
-        />
-      </Grid>
-
-      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE}>
+      <Grid {...DEFAULT_CONFIG_PAGE_GRID_SIZE} item>
         <Controller
           name="scheduleFormat"
           control={control}
           render={({ field }) => (
             <FormControl fullWidth data-testid={GEO_CONFIG_FORM_TEST_IDS.SCHEDULE_FORMAT}>
-              <InputLabel>Schedule Format</InputLabel>
-              <Select {...field} label="Schedule Format" fullWidth>
-                {scheduleFormats.map((format) => (
-                  <MenuItem key={format} value={format}>
-                    {format}
-                  </MenuItem>
-                ))}
-              </Select>
+              <TextField {...field} label="Schedule Format" fullWidth />
             </FormControl>
           )}
         />
       </Grid>
 
-      <Grid xs={12}>
+      <Grid xs={12} item>
         <Button
           type="submit"
           variant="contained"

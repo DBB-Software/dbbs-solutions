@@ -35,7 +35,7 @@ on:
 
 jobs:
   test-and-build:
-    runs-on: ubuntu-24.04
+    runs-on: [ubuntu-24.04]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,7 +89,6 @@ jobs:
           echo $GITHUB_EVENT_NAME
           echo $AFFECTED_PATHS
         shell: bash
-       
 
       - name: Configure AWS Credentials
         run: |
@@ -110,11 +109,18 @@ jobs:
         if: ${{ env.AFFECTED_PATHS != '' }}
         run: |
           npx turbo check-types ${{ env.FILTER_ARGS }}
-          
+
       - name: Test
         if: ${{ env.AFFECTED_PATHS != '' }}
         run: |
           npx turbo run test ${{ env.FILTER_ARGS }}
+
+      - name: Sonarcloud Scan
+        uses: sonarsource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONARCLOUD_URL: "https://sonarcloud.io"
+          # RUNNER_DEBUG: "1" # Enable runner debug logging for more verbose output (useful for troubleshooting, remove for normal runs)
 
       - name: Alert on main fail
         uses: slackapi/slack-github-action@v2.0.0

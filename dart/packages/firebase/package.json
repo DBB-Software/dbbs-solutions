@@ -1,0 +1,14 @@
+{
+  "name": "@dbbs/flutter-firebase",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "install:deps": "flutter pub get",
+    "build": "flutter pub run build_runner build",
+    "test": "flutter test",
+    "lint": "dart fix --apply && flutter pub run import_sorter:main",
+    "lint:show": "dart fix --dry-run",
+    "check-types": "flutter analyze",
+    "clean": "flutter clean"
+  }
+}
