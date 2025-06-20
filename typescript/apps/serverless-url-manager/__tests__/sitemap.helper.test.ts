@@ -21,11 +21,14 @@ describe('SitemapHelper', () => {
     const testSitemapUrl = 'https://example.com/sitemap.xml'
 
     beforeEach(() => {
-      helper = new SitemapHelper({
-        siteUrl: mockSiteUrl,
-        proxyUrl: mockProxyUrl,
-        tenants: defaultTenants
-      }, mockSitemapper as any)
+      helper = new SitemapHelper(
+        {
+          siteUrl: mockSiteUrl,
+          proxyUrl: mockProxyUrl,
+          tenants: defaultTenants
+        },
+        mockSitemapper as any
+      )
     })
 
     it('should successfully fetch and filter sitemap URLs', async () => {
@@ -36,7 +39,7 @@ describe('SitemapHelper', () => {
           'https://example.com/de/page2',
           'https://example.com/at/page3',
           'https://example.com/fr/page4', // Should be filtered out
-          'https://example.com/us/page5'  // Should be filtered out
+          'https://example.com/us/page5' // Should be filtered out
         ],
         errors: []
       }
@@ -69,7 +72,7 @@ describe('SitemapHelper', () => {
 
     it('should log errors when sitemap fetch has errors', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
-      
+
       const mockResponse: SitemapperResponse = {
         url: testSitemapUrl,
         sites: ['https://example.com/uk/page1'],
@@ -85,21 +88,18 @@ describe('SitemapHelper', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(`Errors 2 for url ${testSitemapUrl}`)
       expect(result).toEqual(['https://cdn.example.com/uk/page1'])
-      
+
       consoleSpy.mockRestore()
     })
 
     it('should handle network errors', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
       const error = new Error('Network timeout')
-      
+
       mockSitemapper.fetch.mockRejectedValue(error)
 
       await expect(helper.fetchSitemap(testSitemapUrl)).rejects.toThrow('Network timeout')
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        `Failed to fetch sitemap from ${testSitemapUrl}:`,
-        error
-      )
+      expect(consoleErrorSpy).toHaveBeenCalledWith(`Failed to fetch sitemap from ${testSitemapUrl}:`, error)
 
       consoleErrorSpy.mockRestore()
     })
@@ -108,11 +108,11 @@ describe('SitemapHelper', () => {
       const mockResponse: SitemapperResponse = {
         url: testSitemapUrl,
         sites: [
-          'https://example.com/uk/page1',    // Allowed
-          'https://example.com/de/page2',    // Allowed
-          'https://example.com/fr/page3',    // Not allowed
-          'https://example.com/es/page4',    // Not allowed
-          'https://example.com/at/page5'     // Allowed
+          'https://example.com/uk/page1', // Allowed
+          'https://example.com/de/page2', // Allowed
+          'https://example.com/fr/page3', // Not allowed
+          'https://example.com/es/page4', // Not allowed
+          'https://example.com/at/page5' // Allowed
         ],
         errors: []
       }
@@ -130,19 +130,22 @@ describe('SitemapHelper', () => {
     })
 
     it('should handle custom tenants', async () => {
-      const customHelper = new SitemapHelper({
-        siteUrl: mockSiteUrl,
-        proxyUrl: mockProxyUrl,
-        tenants: ['us', 'ca']
-      }, mockSitemapper as any)
+      const customHelper = new SitemapHelper(
+        {
+          siteUrl: mockSiteUrl,
+          proxyUrl: mockProxyUrl,
+          tenants: ['us', 'ca']
+        },
+        mockSitemapper as any
+      )
 
       const mockResponse: SitemapperResponse = {
         url: testSitemapUrl,
         sites: [
-          'https://example.com/us/page1',    // Should be included
-          'https://example.com/ca/page2',    // Should be included
-          'https://example.com/uk/page3',    // Should be filtered out
-          'https://example.com/de/page4'     // Should be filtered out
+          'https://example.com/us/page1', // Should be included
+          'https://example.com/ca/page2', // Should be included
+          'https://example.com/uk/page3', // Should be filtered out
+          'https://example.com/de/page4' // Should be filtered out
         ],
         errors: []
       }
@@ -151,10 +154,7 @@ describe('SitemapHelper', () => {
 
       const result = await customHelper.fetchSitemap(testSitemapUrl)
 
-      expect(result).toEqual([
-        'https://cdn.example.com/us/page1',
-        'https://cdn.example.com/ca/page2'
-      ])
+      expect(result).toEqual(['https://cdn.example.com/us/page1', 'https://cdn.example.com/ca/page2'])
     })
   })
 })

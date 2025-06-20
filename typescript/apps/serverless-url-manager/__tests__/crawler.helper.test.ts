@@ -22,10 +22,10 @@ describe('CrawlerHelper', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     // Mock the createAxiosInstance method to return our mock instance
     jest.spyOn(CrawlerHelper.prototype as any, 'createAxiosInstance').mockReturnValue(mockAxiosInstance)
-    
+
     crawlerHelper = new CrawlerHelper(3)
   })
 
@@ -78,10 +78,10 @@ describe('CrawlerHelper', () => {
 
       const result = await crawlerHelper.crawlPage(mockCrawlParams)
 
-      expect(result?.code).toEqual(500) 
-      expect(result?.urlKeyword).toEqual('test-keyword') 
-      expect(result?.url).toEqual('https://example.com') 
-      expect(result?.previousCode).toEqual(200) 
+      expect(result?.code).toEqual(500)
+      expect(result?.urlKeyword).toEqual('test-keyword')
+      expect(result?.url).toEqual('https://example.com')
+      expect(result?.previousCode).toEqual(200)
     })
   })
 
@@ -101,7 +101,7 @@ describe('CrawlerHelper', () => {
       mockAxiosInstance.get.mockResolvedValue(mockResponse)
 
       const fetchPromise = crawlerHelper['fetchWithRetry']('https://example.com', 1000)
-      
+
       // Fast-forward through all delays
       for (let i = 0; i < 3; i++) {
         await jest.advanceTimersByTimeAsync(1000)
@@ -134,7 +134,7 @@ describe('CrawlerHelper', () => {
       mockAxiosInstance.get.mockRejectedValue(mockError)
 
       const fetchPromise = crawlerHelper['fetchWithRetry']('https://example.com', 1000)
-      
+
       // Fast-forward through all delays
       for (let i = 0; i < 3; i++) {
         await jest.advanceTimersByTimeAsync(1000)
@@ -164,7 +164,7 @@ describe('CrawlerHelper', () => {
       mockAxiosInstance.get.mockRejectedValue(mockError)
 
       const fetchPromise = crawlerHelper['fetchWithRetry']('https://example.com', 1000)
-      
+
       // Fast-forward through all delays
       for (let i = 0; i < 3; i++) {
         await jest.advanceTimersByTimeAsync(1000)
@@ -175,7 +175,7 @@ describe('CrawlerHelper', () => {
       expect(results).toHaveLength(9)
 
       const firstError = results[0]
-      expect(firstError?.status).toEqual(504) 
+      expect(firstError?.status).toEqual(504)
       expect(firstError?.statusText).toEqual('Gateway Timeout')
     })
 
@@ -187,7 +187,7 @@ describe('CrawlerHelper', () => {
       mockAxiosInstance.get.mockRejectedValue(mockError)
 
       const fetchPromise = crawlerHelper['fetchWithRetry']('https://example.com', 1000)
-      
+
       // Fast-forward through all delays
       for (let i = 0; i < 3; i++) {
         await jest.advanceTimersByTimeAsync(1000)

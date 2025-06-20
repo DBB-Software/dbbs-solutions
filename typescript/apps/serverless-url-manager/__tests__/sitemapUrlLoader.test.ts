@@ -35,18 +35,18 @@ describe('sitemapUrlLoader', () => {
     Object.entries(MOCKED_ENV).forEach(([key, value]) => {
       process.env[key] = value
     })
-    
+
     // Create a new loader instance for each test
-    loader = new SitemapLoader({ 
-      dynamodb: mockDynamoDB, 
-      crawler: mockCrawler, 
-      attempts: 3 
+    loader = new SitemapLoader({
+      dynamodb: mockDynamoDB,
+      crawler: mockCrawler,
+      attempts: 3
     })
   })
 
   afterEach(() => {
     // Clean up environment variables
-    Object.keys(MOCKED_ENV).forEach(key => {
+    Object.keys(MOCKED_ENV).forEach((key) => {
       delete process.env[key]
     })
   })
@@ -68,20 +68,22 @@ describe('sitemapUrlLoader', () => {
       mockCreateItem.mockResolvedValue(undefined)
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/blog/article-1/specialist-type/slug',
-            urlKeyword: 'test-keyword'
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/blog/article-1/specialist-type/slug',
+              urlKeyword: 'test-keyword'
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
@@ -112,7 +114,9 @@ describe('sitemapUrlLoader', () => {
       })
 
       // Verify console logging
-      expect(consoleLogSpy).toHaveBeenCalledWith('Received url https://example.com/blog/article-1/specialist-type/slug with keyword test-keyword')
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        'Received url https://example.com/blog/article-1/specialist-type/slug with keyword test-keyword'
+      )
       expect(consoleInfoSpy).toHaveBeenCalledWith('Finished loading')
 
       consoleLogSpy.mockRestore()
@@ -135,20 +139,22 @@ describe('sitemapUrlLoader', () => {
       mockCreateItem.mockResolvedValue(undefined)
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/products/item-1'
-            // No urlKeyword provided
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/products/item-1'
+              // No urlKeyword provided
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
@@ -196,20 +202,22 @@ describe('sitemapUrlLoader', () => {
       mockCreateItem.mockResolvedValue(undefined)
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/about',
-            urlKeyword: 'about-page'
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/about',
+              urlKeyword: 'about-page'
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await loader.loadUrl(sqsEvent)
@@ -244,20 +252,22 @@ describe('sitemapUrlLoader', () => {
       mockCreateItem.mockResolvedValue(undefined)
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/',
-            urlKeyword: 'homepage'
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/',
+              urlKeyword: 'homepage'
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await loader.loadUrl(sqsEvent)
@@ -281,20 +291,22 @@ describe('sitemapUrlLoader', () => {
       mockCreateItem.mockResolvedValue(undefined)
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/test',
-            urlKeyword: 'test'
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/test',
+              urlKeyword: 'test'
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
@@ -303,7 +315,7 @@ describe('sitemapUrlLoader', () => {
       await loader.loadUrl(sqsEvent)
 
       expect(mockCrawlPage).toHaveBeenCalledTimes(1)
-      
+
       // Should still create item with empty values when crawl fails
       expect(mockCreateItem).toHaveBeenCalledWith({
         url: 'https://example.com/test',
@@ -324,17 +336,19 @@ describe('sitemapUrlLoader', () => {
 
     it('should handle malformed SQS message body', async () => {
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: 'invalid json',
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: 'invalid json',
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await expect(loader.loadUrl(sqsEvent)).rejects.toThrow()
@@ -346,20 +360,22 @@ describe('sitemapUrlLoader', () => {
       mockCrawlPage.mockRejectedValue(new Error('Crawler failed'))
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/test',
-            urlKeyword: 'test'
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/test',
+              urlKeyword: 'test'
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await expect(loader.loadUrl(sqsEvent)).rejects.toThrow('Crawler failed')
@@ -382,20 +398,22 @@ describe('sitemapUrlLoader', () => {
       mockCreateItem.mockRejectedValue(new Error('DynamoDB creation failed'))
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/test',
-            urlKeyword: 'test'
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/test',
+              urlKeyword: 'test'
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await expect(loader.loadUrl(sqsEvent)).rejects.toThrow('DynamoDB creation failed')
@@ -418,20 +436,22 @@ describe('sitemapUrlLoader', () => {
       mockCreateItem.mockResolvedValue(undefined)
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/category/subcategory/item/details',
-            urlKeyword: 'complex-path'
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/category/subcategory/item/details',
+              urlKeyword: 'complex-path'
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await loader.loadUrl(sqsEvent)
@@ -451,9 +471,9 @@ describe('sitemapUrlLoader', () => {
     })
 
     it('should use default attempts when not provided in constructor', async () => {
-      const defaultLoader = new SitemapLoader({ 
-        dynamodb: mockDynamoDB, 
-        crawler: mockCrawler 
+      const defaultLoader = new SitemapLoader({
+        dynamodb: mockDynamoDB,
+        crawler: mockCrawler
         // No attempts provided, should default to 1
       })
 
@@ -472,20 +492,22 @@ describe('sitemapUrlLoader', () => {
       mockCreateItem.mockResolvedValue(undefined)
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            urlInput: 'https://example.com/test',
-            urlKeyword: 'test'
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              urlInput: 'https://example.com/test',
+              urlKeyword: 'test'
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await defaultLoader.loadUrl(sqsEvent)

@@ -34,6 +34,7 @@
     "@dbbs/jest-config": "*",
     "@remix-run/dev": "2.12.1",
     "@remix-run/testing": "2.12.1",
+    "@types/cheerio": "0.22.35",
     "@types/lodash.camelcase": "4",
     "@types/react-dom": "18.2.7",
     "@types/sanitize-html": "2",

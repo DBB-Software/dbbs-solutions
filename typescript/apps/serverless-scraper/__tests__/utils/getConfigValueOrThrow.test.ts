@@ -1,4 +1,4 @@
-import { getConfigValueOrThrow } from "../../src/utils/getConfigValueOrThrow"
+import { getConfigValueOrThrow } from '../../src/utils/getConfigValueOrThrow'
 
 describe('getConfigValueOrThrow', () => {
   const ORIGINAL_ENV = process.env

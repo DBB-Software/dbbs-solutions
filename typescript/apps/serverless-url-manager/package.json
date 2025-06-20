@@ -20,7 +20,7 @@
     "@dbbs/common": "*",
     "axios": "1.9.0",
     "bluebird": "3.7.2",
-    "cheerio": "1.1.0",
+    "cheerio": "1.0.0-rc.12",
     "google-auth-library": "9.15.1",
     "lodash": "4.17.21",
     "middy": "0.36.0",

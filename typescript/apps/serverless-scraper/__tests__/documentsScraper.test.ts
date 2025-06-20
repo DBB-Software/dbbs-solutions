@@ -2,11 +2,11 @@ import { describe, beforeEach, jest, test, expect } from '@jest/globals'
 import { ICustomContext } from '@dbbs/common'
 
 const MOCKED_ENV = {
-  REGION: "region",
-  S3_DOCUMENTS_BUCKET: "bucket",
-  S3_DOCUMENTS_BUCKET_URL: "bucket_url",
-  SQS_QUEUE_URL: "sqs_url",
-  STAGE: "stage"
+  REGION: 'region',
+  S3_DOCUMENTS_BUCKET: 'bucket',
+  S3_DOCUMENTS_BUCKET_URL: 'bucket_url',
+  SQS_QUEUE_URL: 'sqs_url',
+  STAGE: 'stage'
 }
 
 const mockAxiosGetFn = jest.fn()

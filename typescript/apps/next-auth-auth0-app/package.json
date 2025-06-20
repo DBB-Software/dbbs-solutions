@@ -15,20 +15,22 @@
     "check-types": "npx tsc -p ./tsconfig.spec.json --pretty --noEmit"
   },
   "dependencies": {
-    "@auth/core": "^0.37.3",
+    "@auth/core": "0.39.1",
     "@dbbs/tailwind-components": "*",
     "@next/bundle-analyzer": "15.0.1",
-    "lodash.camelcase": "^4.3.0",
+    "cheerio": "1.0.0-rc.12",
+    "lodash.camelcase": "4.3.0",
     "next": "14.2.5",
     "next-auth": "5.0.0-beta.25",
     "react": "18.3.1",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.53.1",
-    "sanitize-html": "^2.13.1"
+    "react-hook-form": "7.53.1",
+    "sanitize-html": "2.13.1"
   },
   "devDependencies": {
     "@dbbs/cypress": "*",
     "@dbbs/jest-config": "*",
+    "@types/cheerio": "0.22.35",
     "@types/lodash.camelcase": "^4",
     "@types/sanitize-html": "^2",
     "autoprefixer": "10.4.19",

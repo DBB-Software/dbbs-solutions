@@ -27,7 +27,7 @@ const mockDynamoDB = {
 
 describe('dynamoUrlWorker', () => {
   let worker: DynamoUrlWorker
-  
+
   function clearEnvVariable(variable: string = '') {
     process.env[variable] = ''
   }
@@ -37,33 +37,35 @@ describe('dynamoUrlWorker', () => {
     Object.entries(MOCKED_ENV).forEach(([key, value]) => {
       process.env[key] = value
     })
-    
+
     // Create a new worker instance for each test
     worker = new DynamoUrlWorker({ dynamodb: mockDynamoDB, crawler: mockCrawler })
   })
 
   describe('urlCheck', () => {
     const mockSQSEvent: SQSEvent = {
-      Records: [{
-        messageId: 'test-message-id',
-        receiptHandle: 'test-receipt-handle',
-        body: JSON.stringify({
-          urlToFetch: [
-            {
-              url: 'https://example1.com',
-              status: 'active',
-              code: '200', // Changed to string to match expected format
-              keyword: 'test-keyword-1'
-            }
-          ]
-        }),
-        attributes: {} as any,
-        messageAttributes: {},
-        md5OfBody: 'test-md5',
-        eventSource: 'aws:sqs',
-        eventSourceARN: 'test-arn',
-        awsRegion: 'eu-central-1'
-      }]
+      Records: [
+        {
+          messageId: 'test-message-id',
+          receiptHandle: 'test-receipt-handle',
+          body: JSON.stringify({
+            urlToFetch: [
+              {
+                url: 'https://example1.com',
+                status: 'active',
+                code: '200', // Changed to string to match expected format
+                keyword: 'test-keyword-1'
+              }
+            ]
+          }),
+          attributes: {} as any,
+          messageAttributes: {},
+          md5OfBody: 'test-md5',
+          eventSource: 'aws:sqs',
+          eventSourceARN: 'test-arn',
+          awsRegion: 'eu-central-1'
+        }
+      ]
     }
 
     test('should successfully process URL checks and update DynamoDB', async () => {
@@ -164,7 +166,7 @@ describe('dynamoUrlWorker', () => {
       // Fix the mock implementation to properly handle the parameters
       mockCrawlPage.mockImplementation(async (params: CrawlParameters) => {
         console.log('Mock crawlPage called with:', params) // Debug log
-        
+
         if (params.url === 'https://example1.com') {
           return {
             url: 'https://example1.com',
@@ -198,7 +200,7 @@ describe('dynamoUrlWorker', () => {
 
       expect(mockCrawlPage).toHaveBeenCalledTimes(2)
       expect(mockUpdateItem).toHaveBeenCalledTimes(2)
-      
+
       // Verify the first call
       expect(mockCrawlPage).toHaveBeenNthCalledWith(1, {
         url: 'https://example1.com',
@@ -206,7 +208,7 @@ describe('dynamoUrlWorker', () => {
         statusCode: '200',
         urlKeyword: 'keyword-1'
       })
-      
+
       // Verify the second call
       expect(mockCrawlPage).toHaveBeenNthCalledWith(2, {
         url: 'https://example2.com',
@@ -218,7 +220,7 @@ describe('dynamoUrlWorker', () => {
 
     test('should handle DynamoDB update failures', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      
+
       mockCrawlPage.mockResolvedValue({
         url: 'https://example1.com',
         status: 'OK',
@@ -262,19 +264,19 @@ describe('dynamoUrlWorker', () => {
 
     test('should handle empty SQS records', async () => {
       const emptySQSEvent: SQSEvent = {
-
-
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({ urlToFetch: [] }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-central-1'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({ urlToFetch: [] }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-central-1'
+          }
+        ]
       }
 
       await worker.urlCheck(emptySQSEvent)
@@ -285,94 +287,100 @@ describe('dynamoUrlWorker', () => {
 
     test('should handle malformed SQS body', async () => {
       const malformedSQSEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: 'invalid json',
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-central-1'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: 'invalid json',
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-central-1'
+          }
+        ]
       }
-    
+
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-    
+
       await worker.urlCheck(malformedSQSEvent)
-    
+
       // Updated to match the exact error logging format from the implementation
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Error parsing record body:', 
-        expect.any(Error), 
-        'Record ID:', 
+        'Error parsing record body:',
+        expect.any(Error),
+        'Record ID:',
         'test-message-id'
       )
       expect(mockCrawlPage).not.toHaveBeenCalled()
       expect(mockUpdateItem).not.toHaveBeenCalled()
-      
+
       consoleSpy.mockRestore()
     })
 
     test('should handle valid JSON with invalid structure', async () => {
       const invalidStructureEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id-2',
-          receiptHandle: 'test-receipt-handle-2',
-          body: JSON.stringify({ someOtherField: 'value' }), // Missing urlToFetch
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5-2',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn-2',
-          awsRegion: 'eu-central-1'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id-2',
+            receiptHandle: 'test-receipt-handle-2',
+            body: JSON.stringify({ someOtherField: 'value' }), // Missing urlToFetch
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5-2',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn-2',
+            awsRegion: 'eu-central-1'
+          }
+        ]
       }
-    
+
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-    
+
       await worker.urlCheck(invalidStructureEvent)
-    
+
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Invalid record structure - urlToFetch is not an array:', 
+        'Invalid record structure - urlToFetch is not an array:',
         'test-message-id-2'
       )
       expect(mockCrawlPage).not.toHaveBeenCalled()
       expect(mockUpdateItem).not.toHaveBeenCalled()
-      
+
       consoleSpy.mockRestore()
     })
-    
+
     test('should handle urlToFetch that is not an array', async () => {
       const nonArrayEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id-3',
-          receiptHandle: 'test-receipt-handle-3',
-          body: JSON.stringify({ urlToFetch: 'not-an-array' }), // urlToFetch is not an array
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5-3',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn-3',
-          awsRegion: 'eu-central-1'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id-3',
+            receiptHandle: 'test-receipt-handle-3',
+            body: JSON.stringify({ urlToFetch: 'not-an-array' }), // urlToFetch is not an array
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5-3',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn-3',
+            awsRegion: 'eu-central-1'
+          }
+        ]
       }
-    
+
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-    
+
       await worker.urlCheck(nonArrayEvent)
-    
+
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Invalid record structure - urlToFetch is not an array:', 
+        'Invalid record structure - urlToFetch is not an array:',
         'test-message-id-3'
       )
       expect(mockCrawlPage).not.toHaveBeenCalled()
       expect(mockUpdateItem).not.toHaveBeenCalled()
-      
+
       consoleSpy.mockRestore()
     })
-    
+
     test('should handle mixed valid and invalid records', async () => {
       const mixedEvent: SQSEvent = {
         Records: [
@@ -380,12 +388,14 @@ describe('dynamoUrlWorker', () => {
             messageId: 'valid-record',
             receiptHandle: 'test-receipt-handle-valid',
             body: JSON.stringify({
-              urlToFetch: [{
-                url: 'https://example.com',
-                status: 'active',
-                code: '200',
-                keyword: 'test-keyword'
-              }]
+              urlToFetch: [
+                {
+                  url: 'https://example.com',
+                  status: 'active',
+                  code: '200',
+                  keyword: 'test-keyword'
+                }
+              ]
             }),
             attributes: {} as any,
             messageAttributes: {},
@@ -407,9 +417,9 @@ describe('dynamoUrlWorker', () => {
           }
         ]
       }
-    
+
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      
+
       mockCrawlPage.mockResolvedValue({
         url: 'https://example.com',
         status: 'OK',
@@ -420,23 +430,23 @@ describe('dynamoUrlWorker', () => {
         previousStatus: 'active',
         urlKeyword: 'test-keyword'
       })
-      
+
       mockUpdateItem.mockResolvedValue(undefined)
-    
+
       await worker.urlCheck(mixedEvent)
-    
+
       // Should log error for invalid record
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Error parsing record body:', 
-        expect.any(Error), 
-        'Record ID:', 
+        'Error parsing record body:',
+        expect.any(Error),
+        'Record ID:',
         'invalid-record'
       )
-      
+
       // Should still process the valid record
       expect(mockCrawlPage).toHaveBeenCalledTimes(1)
       expect(mockUpdateItem).toHaveBeenCalledTimes(1)
-      
+
       consoleSpy.mockRestore()
     })
   })

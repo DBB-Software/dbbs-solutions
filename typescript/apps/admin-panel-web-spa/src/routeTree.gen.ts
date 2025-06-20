@@ -22,31 +22,31 @@ import { Route as ProductProductIdEditImport } from './routes/product/$productId
 const TypeRoute = TypeImport.update({
   id: '/type',
   path: '/type',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 const ProductIndexRoute = ProductIndexImport.update({
   id: '/product/',
   path: '/product/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 const ProductCreateRoute = ProductCreateImport.update({
   id: '/product/create',
   path: '/product/create',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 const ProductProductIdEditRoute = ProductProductIdEditImport.update({
   id: '/product/$productId/edit',
   path: '/product/$productId/edit',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRoute
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -120,26 +120,10 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/type'
-    | '/product/create'
-    | '/product'
-    | '/product/$productId/edit'
+  fullPaths: '/' | '/type' | '/product/create' | '/product' | '/product/$productId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/type'
-    | '/product/create'
-    | '/product'
-    | '/product/$productId/edit'
-  id:
-    | '__root__'
-    | '/'
-    | '/type'
-    | '/product/create'
-    | '/product/'
-    | '/product/$productId/edit'
+  to: '/' | '/type' | '/product/create' | '/product' | '/product/$productId/edit'
+  id: '__root__' | '/' | '/type' | '/product/create' | '/product/' | '/product/$productId/edit'
   fileRoutesById: FileRoutesById
 }
 
@@ -156,12 +140,10 @@ const rootRouteChildren: RootRouteChildren = {
   TypeRoute: TypeRoute,
   ProductCreateRoute: ProductCreateRoute,
   ProductIndexRoute: ProductIndexRoute,
-  ProductProductIdEditRoute: ProductProductIdEditRoute,
+  ProductProductIdEditRoute: ProductProductIdEditRoute
 }
 
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {

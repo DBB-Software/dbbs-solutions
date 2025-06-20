@@ -33,17 +33,17 @@ describe('sitemapCollector', () => {
     Object.entries(MOCKED_ENV).forEach(([key, value]) => {
       process.env[key] = value
     })
-    
+
     // Create a new collector instance for each test
-    collector = new SitemapCollector({ 
-      sitemap: mockSitemapHelper, 
-      sqs: mockSQSHelper 
+    collector = new SitemapCollector({
+      sitemap: mockSitemapHelper,
+      sqs: mockSQSHelper
     })
   })
 
   afterEach(() => {
     // Clean up environment variables
-    Object.keys(MOCKED_ENV).forEach(key => {
+    Object.keys(MOCKED_ENV).forEach((key) => {
       delete process.env[key]
     })
   })
@@ -56,23 +56,19 @@ describe('sitemapCollector', () => {
 
     it('should handle missing SITE_URL environment variable', () => {
       delete process.env.SITE_URL
-      
-      const newCollector = new SitemapCollector({ 
-        sitemap: mockSitemapHelper, 
-        sqs: mockSQSHelper 
+
+      const newCollector = new SitemapCollector({
+        sitemap: mockSitemapHelper,
+        sqs: mockSQSHelper
       })
-      
+
       expect(newCollector).toBeDefined()
     })
   })
 
   describe('startSitemapFetch', () => {
     it('should successfully fetch sitemap URLs and send to SQS', async () => {
-      const mockUrls = [
-        'https://example.com/page1',
-        'https://example.com/page2',
-        'https://example.com/page3'
-      ]
+      const mockUrls = ['https://example.com/page1', 'https://example.com/page2', 'https://example.com/page3']
 
       mockFetchSitemap.mockResolvedValue(mockUrls)
       mockSendBatchToSqs.mockResolvedValue(undefined)
@@ -137,8 +133,8 @@ describe('sitemapCollector', () => {
 
       expect(mockFetchSitemap).toHaveBeenCalledTimes(1)
       expect(mockSendBatchToSqs).toHaveBeenCalledTimes(1)
-      
-      const expectedMessages = mockUrls.map(url => ({ urlInput: url }))
+
+      const expectedMessages = mockUrls.map((url) => ({ urlInput: url }))
       expect(mockSendBatchToSqs).toHaveBeenCalledWith(expectedMessages, 'load-url-sqs-queue')
       expect(consoleLogSpy).toHaveBeenCalledWith('Length of URLS: ', 100)
 
@@ -202,11 +198,11 @@ describe('sitemapCollector', () => {
 
     it('should construct correct sitemap URL with different SITE_URL', async () => {
       process.env.SITE_URL = 'https://different-domain.com'
-      
+
       // Create new collector with updated environment
-      const newCollector = new SitemapCollector({ 
-        sitemap: mockSitemapHelper, 
-        sqs: mockSQSHelper 
+      const newCollector = new SitemapCollector({
+        sitemap: mockSitemapHelper,
+        sqs: mockSQSHelper
       })
 
       mockFetchSitemap.mockResolvedValue(['https://different-domain.com/page1'])
@@ -217,7 +213,9 @@ describe('sitemapCollector', () => {
       await newCollector.startSitemapFetch()
 
       expect(mockFetchSitemap).toHaveBeenCalledWith('https://different-domain.com/sitemap.xml')
-      expect(consoleInfoSpy).toHaveBeenCalledWith('Begin fetch of the urls from domain https://different-domain.com/sitemap.xml')
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        'Begin fetch of the urls from domain https://different-domain.com/sitemap.xml'
+      )
 
       consoleInfoSpy.mockRestore()
     })
@@ -237,7 +235,7 @@ describe('sitemapCollector', () => {
 
       await collector.startSitemapFetch()
 
-      const expectedMessages = mockUrls.map(url => ({ urlInput: url }))
+      const expectedMessages = mockUrls.map((url) => ({ urlInput: url }))
       expect(mockSendBatchToSqs).toHaveBeenCalledWith(expectedMessages, 'load-url-sqs-queue')
 
       consoleInfoSpy.mockRestore()

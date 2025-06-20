@@ -784,11 +784,7 @@ describe('SubscriptionService', () => {
         await expect(pendingResult).resolves.toEqual(expectedResult)
       }
 
-      const {
-        organizationRetrieve,
-        planRetrieve,
-        stripeSubscriptionCheckoutSessionCreate
-      } = expectedParams
+      const { organizationRetrieve, planRetrieve, stripeSubscriptionCheckoutSessionCreate } = expectedParams
 
       if (organizationRetrieve) {
         expect(organizationRepository.getOrganizationById).toHaveBeenCalledWith(organizationRetrieve)

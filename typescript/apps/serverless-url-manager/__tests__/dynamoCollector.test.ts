@@ -44,7 +44,7 @@ describe('dynamoUrlCollector', () => {
     Object.entries(MOCKED_ENV).forEach(([key, value]) => {
       process.env[key] = value
     })
-    
+
     // Create a new collector instance for each test
     collector = new DynamoUrlCollector({ dynamodb: mockDynamoDB, sqs: mockSQS })
   })
@@ -56,7 +56,7 @@ describe('dynamoUrlCollector', () => {
         { url: 'https://b.com', status: 'active', code: '200', keyword: 'k2' }
       ]
       const mockLastEvaluatedKey = { url: { S: 'https://b.com' } }
-      
+
       // Mock the getItemsByTenant method to return our test data
       mockGetItemsByTenant.mockResolvedValue({
         scanResults: mockScanResults,
@@ -87,13 +87,10 @@ describe('dynamoUrlCollector', () => {
         tenant: 'test-tenant',
         lastEvaluatedKey: undefined
       })
-      
+
       // Verify batch was sent to SQS with chunked results
-      expect(mockSendBatchToSqs).toHaveBeenCalledWith(
-        [{ urlToFetch: mockScanResults }],
-        'crawl-sqs-url'
-      )
-      
+      expect(mockSendBatchToSqs).toHaveBeenCalledWith([{ urlToFetch: mockScanResults }], 'crawl-sqs-url')
+
       // Verify continuation message was sent
       expect(mockSendOneToSQS).toHaveBeenCalledWith(
         { lastEvaluatedKey: mockLastEvaluatedKey, tenant: 'test-tenant' },
@@ -102,10 +99,8 @@ describe('dynamoUrlCollector', () => {
     })
 
     it('handles empty body gracefully', async () => {
-      const mockScanResults = [
-        { url: 'https://c.com', status: 'active', code: '200', keyword: 'k3' }
-      ]
-      
+      const mockScanResults = [{ url: 'https://c.com', status: 'active', code: '200', keyword: 'k3' }]
+
       // Mock getAllItems for when no tenant is provided
       mockGetAllItems.mockResolvedValue({
         scanResults: mockScanResults,
@@ -134,19 +129,16 @@ describe('dynamoUrlCollector', () => {
         limit: 100,
         lastEvaluatedKey: undefined
       })
-      
-      expect(mockSendBatchToSqs).toHaveBeenCalledWith(
-        [{ urlToFetch: mockScanResults }],
-        'crawl-sqs-url'
-      )
-      
+
+      expect(mockSendBatchToSqs).toHaveBeenCalledWith([{ urlToFetch: mockScanResults }], 'crawl-sqs-url')
+
       // Should not send continuation message when no lastEvaluatedKey
       expect(mockSendOneToSQS).not.toHaveBeenCalled()
     })
 
     it('handles errors gracefully', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      
+
       mockGetItemsByTenant.mockRejectedValue(new Error('DynamoDB error'))
 
       const event: APIGatewayEvent = {
@@ -167,7 +159,7 @@ describe('dynamoUrlCollector', () => {
       await collector.startDynamoDBFetch(event)
 
       expect(consoleSpy).toHaveBeenCalledWith('Error in startDynamoDBFetch:', expect.any(Error))
-      
+
       consoleSpy.mockRestore()
     })
   })
@@ -187,20 +179,22 @@ describe('dynamoUrlCollector', () => {
       })
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            tenant: 'test-tenant',
-            lastEvaluatedKey: mockLastEvaluatedKey
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              tenant: 'test-tenant',
+              lastEvaluatedKey: mockLastEvaluatedKey
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await collector.continueDynamoFetch(sqsEvent)
@@ -213,10 +207,7 @@ describe('dynamoUrlCollector', () => {
       })
 
       // Verify batch was sent to SQS
-      expect(mockSendBatchToSqs).toHaveBeenCalledWith(
-        [{ urlToFetch: mockScanResults }],
-        'crawl-sqs-url'
-      )
+      expect(mockSendBatchToSqs).toHaveBeenCalledWith([{ urlToFetch: mockScanResults }], 'crawl-sqs-url')
 
       // Verify continuation message was sent with new lastEvaluatedKey
       expect(mockSendOneToSQS).toHaveBeenCalledWith(
@@ -226,9 +217,7 @@ describe('dynamoUrlCollector', () => {
     })
 
     it('continues fetching without tenant (scan all items)', async () => {
-      const mockScanResults = [
-        { url: 'https://f.com', status: 'active', code: '200', keyword: 'k6' }
-      ]
+      const mockScanResults = [{ url: 'https://f.com', status: 'active', code: '200', keyword: 'k6' }]
       const mockLastEvaluatedKey = { url: { S: 'https://e.com' } }
 
       mockGetAllItems.mockResolvedValue({
@@ -237,20 +226,22 @@ describe('dynamoUrlCollector', () => {
       })
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            lastEvaluatedKey: mockLastEvaluatedKey
-            // No tenant provided
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              lastEvaluatedKey: mockLastEvaluatedKey
+              // No tenant provided
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await collector.continueDynamoFetch(sqsEvent)
@@ -261,10 +252,7 @@ describe('dynamoUrlCollector', () => {
         lastEvaluatedKey: mockLastEvaluatedKey
       })
 
-      expect(mockSendBatchToSqs).toHaveBeenCalledWith(
-        [{ urlToFetch: mockScanResults }],
-        'crawl-sqs-url'
-      )
+      expect(mockSendBatchToSqs).toHaveBeenCalledWith([{ urlToFetch: mockScanResults }], 'crawl-sqs-url')
 
       // Should not send continuation message when no more items
       expect(mockSendOneToSQS).not.toHaveBeenCalled()
@@ -285,20 +273,22 @@ describe('dynamoUrlCollector', () => {
       })
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            tenant: 'test-tenant',
-            lastEvaluatedKey: { url: { S: 'https://start.com' } }
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              tenant: 'test-tenant',
+              lastEvaluatedKey: { url: { S: 'https://start.com' } }
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await collector.continueDynamoFetch(sqsEvent)
@@ -310,27 +300,26 @@ describe('dynamoUrlCollector', () => {
         { urlToFetch: mockScanResults.slice(6, 7) }
       ]
 
-      expect(mockSendBatchToSqs).toHaveBeenCalledWith(
-        expectedChunks,
-        'crawl-sqs-url'
-      )
+      expect(mockSendBatchToSqs).toHaveBeenCalledWith(expectedChunks, 'crawl-sqs-url')
     })
 
     it('handles malformed SQS message body', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: 'invalid json', // Malformed JSON
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: 'invalid json', // Malformed JSON
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await collector.continueDynamoFetch(sqsEvent)
@@ -349,20 +338,22 @@ describe('dynamoUrlCollector', () => {
       mockGetItemsByTenant.mockRejectedValue(new Error('DynamoDB scan failed'))
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            tenant: 'test-tenant',
-            lastEvaluatedKey: { url: { S: 'https://test.com' } }
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              tenant: 'test-tenant',
+              lastEvaluatedKey: { url: { S: 'https://test.com' } }
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await collector.continueDynamoFetch(sqsEvent)
@@ -377,9 +368,7 @@ describe('dynamoUrlCollector', () => {
     it('handles SQS sending errors gracefully', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
-      const mockScanResults = [
-        { url: 'https://test.com', status: 'active', code: '200', keyword: 'test' }
-      ]
+      const mockScanResults = [{ url: 'https://test.com', status: 'active', code: '200', keyword: 'test' }]
 
       mockGetItemsByTenant.mockResolvedValue({
         scanResults: mockScanResults,
@@ -390,20 +379,22 @@ describe('dynamoUrlCollector', () => {
       mockSendBatchToSqs.mockImplementation(() => Promise.reject(new Error('SQS send failed')))
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            tenant: 'test-tenant',
-            lastEvaluatedKey: { url: { S: 'https://test.com' } }
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              tenant: 'test-tenant',
+              lastEvaluatedKey: { url: { S: 'https://test.com' } }
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await collector.continueDynamoFetch(sqsEvent)
@@ -420,20 +411,22 @@ describe('dynamoUrlCollector', () => {
       })
 
       const sqsEvent: SQSEvent = {
-        Records: [{
-          messageId: 'test-message-id',
-          receiptHandle: 'test-receipt-handle',
-          body: JSON.stringify({
-            tenant: 'test-tenant',
-            lastEvaluatedKey: { url: { S: 'https://test.com' } }
-          }),
-          attributes: {} as any,
-          messageAttributes: {},
-          md5OfBody: 'test-md5',
-          eventSource: 'aws:sqs',
-          eventSourceARN: 'test-arn',
-          awsRegion: 'eu-west-2'
-        }]
+        Records: [
+          {
+            messageId: 'test-message-id',
+            receiptHandle: 'test-receipt-handle',
+            body: JSON.stringify({
+              tenant: 'test-tenant',
+              lastEvaluatedKey: { url: { S: 'https://test.com' } }
+            }),
+            attributes: {} as any,
+            messageAttributes: {},
+            md5OfBody: 'test-md5',
+            eventSource: 'aws:sqs',
+            eventSourceARN: 'test-arn',
+            awsRegion: 'eu-west-2'
+          }
+        ]
       }
 
       await collector.continueDynamoFetch(sqsEvent)
@@ -445,10 +438,7 @@ describe('dynamoUrlCollector', () => {
       })
 
       // Should still send empty batch to SQS
-      expect(mockSendBatchToSqs).toHaveBeenCalledWith(
-        [],
-        'crawl-sqs-url'
-      )
+      expect(mockSendBatchToSqs).toHaveBeenCalledWith([], 'crawl-sqs-url')
 
       // Should not send continuation message
       expect(mockSendOneToSQS).not.toHaveBeenCalled()

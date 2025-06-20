@@ -1,7 +1,6 @@
-import { createUniqueFileName } from "../../src/utils/createUniqueFileName"
+import { createUniqueFileName } from '../../src/utils/createUniqueFileName'
 
 describe('createUniqueFileName', () => {
-
   it('should generate unique names for consecutive calls', () => {
     const name1 = createUniqueFileName('file', 'log')
     // Wait a millisecond to ensure different timestamps
