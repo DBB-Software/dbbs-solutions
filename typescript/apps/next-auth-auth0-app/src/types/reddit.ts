@@ -282,7 +282,7 @@ export interface RedditListResponseData {
   after: string // e.g., "t5_2cneq"
   dist: number // e.g., 25
   modhash: string // e.g., "jlcigr7w5562475bd3f4b2dc52541fd4980469f4f0c5b2d7f2"
-  geo_filter: string // e.g., ""
+  product_filter: string // e.g., ""
   children: RedditListResponseItem[]
 }
 

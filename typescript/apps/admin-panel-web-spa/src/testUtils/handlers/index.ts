@@ -1,2 +1,2 @@
-export * from './geo'
-export * from './meetingType'
+export * from './product'
+export * from './type'

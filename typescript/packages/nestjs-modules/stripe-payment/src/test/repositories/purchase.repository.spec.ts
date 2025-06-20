@@ -2,7 +2,12 @@ import knex from 'knex'
 
 import { PurchaseRepository } from '../../repositories/index.js'
 import { createOrganizationsTable, createPlansTable, createPurchasesTable } from '../factories/database.js'
-import { dbOrganizationsList, dbPlansList, mockCreatePurchasePayload, dbPurchasesList } from '../mocks/index.js'
+import {
+  dbOrganizationsList,
+  dbPlansList,
+  mockCreatePurchasePayload,
+  dbPurchasesList
+} from '../mocks/index.js'
 import { TEST_DB_PATH } from '../../constants.js'
 
 describe('PurchaseRepository', () => {
@@ -62,7 +67,7 @@ describe('PurchaseRepository', () => {
     })
   })
 
-  describe(PurchaseRepository.prototype.createPurchase.name, () => {
+  describe(PurchaseRepository.prototype.createPurchase.name, ()  => {
     it('should successfully create a purchase', async () => {
       const countPurchases = async (): Promise<number> => {
         const result = await db('purchases').count({ count: '*' }).first<{ count: string | number }>()

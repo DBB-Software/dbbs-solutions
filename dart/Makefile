@@ -11,7 +11,7 @@ setup:
 	make asdf-install
 	make check-jdk
 	make check-versions
-	sh ./../scripts/flutter-mobile-env.sh
+	sh ./../scripts/flutter-mobile-env.sh  # this script will create empty .env files for flutter mobile app
 
 # Install dependencies for Flutter
 install-flutter-dependencies:

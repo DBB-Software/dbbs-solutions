@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fast-api-server"
+name = "admin-panel-back-end"
 version = "0.1.0"
 description = "Simple FastAPI application"
 authors = [

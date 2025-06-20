@@ -358,3 +358,6 @@ app.*.map.json
 !**/ios/**/default.perspectivev3
 !**/windows/**/*.[Cc]ache/
 /.scannerwork/
+
+# Firebase
+google-credentials.json

@@ -18,15 +18,15 @@ export const DEFAULT_CONFIG_PAGE_GRID_SIZE = { xs: 12, md: 6 }
 
 export const SIDEBAR_DATA_PAGES_LINKS: NavigationLink[] = [
   {
-    label: 'Geo',
-    link: '/geo',
-    key: 'geo',
+    label: 'Product',
+    link: '/product',
+    key: 'product',
     icon: <MapPin />
   },
   {
-    label: 'Meeting Type',
-    link: '/meeting-type',
-    key: 'meetingType',
+    label: 'Type',
+    link: '/type',
+    key: 'type',
     icon: <Users />
   }
 ]

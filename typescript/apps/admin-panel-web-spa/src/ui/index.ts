@@ -1,5 +1,5 @@
 export * from './SidebarLink'
 export * from './Layout'
 export * from './CustomAutocomplete'
-export * from './GeoConfigForm'
+export * from './ProductConfigForm'
 export * from './DataTable'

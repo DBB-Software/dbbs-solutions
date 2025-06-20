@@ -18,7 +18,7 @@ describe('validateSendEmailPayload', () => {
   it('should throw an error if neither text nor html is provided', () => {
     const invalidInput: SendEmailInput = {
       subject: 'Test Subject',
-      to: 'recipient@example.com'
+      to: 'recipient@example.com',
     }
 
     const error = new ValidationError('Missing required fields: text or html must be provided')
@@ -29,7 +29,7 @@ describe('validateSendEmailPayload', () => {
     const validInput: SendEmailInput = {
       subject: 'Test Subject',
       to: 'valid@example.com',
-      text: 'Email content'
+      text: 'Email content',
     }
 
     // No need to mock validateEmail, as it's already working correctly
@@ -40,7 +40,7 @@ describe('validateSendEmailPayload', () => {
     const invalidInput: SendEmailInput = {
       subject: 'Test Subject',
       to: 'invalid-email',
-      text: 'Email content'
+      text: 'Email content',
     }
 
     const invalidEmailError = new ValidationError('Invalid email format: invalid-email')
@@ -52,7 +52,7 @@ describe('validateSendEmailPayload', () => {
       subject: 'Test Subject',
       to: 'recipient@example.com',
       cc: 'cc@example.com',
-      text: 'Email content'
+      text: 'Email content',
     }
 
     expect(() => validateSendEmailPayload(validInput)).not.toThrow()
@@ -63,7 +63,7 @@ describe('validateSendEmailPayload', () => {
       subject: 'Test Subject',
       to: 'recipient@example.com',
       bcc: 'bcc@example.com',
-      text: 'Email content'
+      text: 'Email content',
     }
 
     expect(() => validateSendEmailPayload(validInput)).not.toThrow()
@@ -75,7 +75,7 @@ describe('validateSendEmailPayload', () => {
       to: ['recipient1@example.com', 'recipient2@example.com'],
       cc: ['cc1@example.com', 'cc2@example.com'],
       bcc: ['bcc1@example.com', 'bcc2@example.com'],
-      text: 'Email content'
+      text: 'Email content',
     }
 
     expect(() => validateSendEmailPayload(validInput)).not.toThrow()

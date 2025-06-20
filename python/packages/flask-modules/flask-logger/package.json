@@ -1,0 +1,13 @@
+{
+  "name": "@dbbs/flask-logger",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Flask Logger module",
+  "type": "module",
+  "scripts": {
+    "build": "poetry build",
+    "install:deps": "poetry install",
+    "lint": "poetry run ruff check .",
+    "test": "poetry run coverage run -m pytest && poetry run coverage xml"
+  }
+}

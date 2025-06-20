@@ -20,3 +20,9 @@ runs:
     - name: Install poetry
       run: curl -sSL https://install.python-poetry.org | python3 - --version 1.7.1
       shell: bash
+
+    - name: Modify poetry config
+      run: |
+        poetry config virtualenvs.in-project true
+        poetry config installer.parallel false
+      shell: bash

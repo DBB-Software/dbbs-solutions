@@ -1,0 +1,20 @@
+{
+    "extends": "./tsconfig.json",  
+    "include": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/.server/**/*.ts",
+      "**/.server/**/*.tsx",
+      "**/.client/**/*.ts",
+      "**/.client/**/*.tsx"
+    ],
+    "exclude": [
+      "dist/",
+      "jest.config.ts",
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/*.test.tsx",
+      "**/*.spec.tsx",
+      "./__tests__/testUtils/**/*",
+    ]
+}

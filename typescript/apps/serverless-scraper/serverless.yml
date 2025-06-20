@@ -1,0 +1,109 @@
+service: <COUNTRY_CODE>-scraper
+useDotenv: true
+variablesResolutionMode: 20210219
+
+plugins:
+  - serverless-offline
+  - serverless-deployment-bucket
+  - serverless-esm-layer
+  - serverless-plugin-aws-alerts
+  - serverless-plugin-monorepo
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  architecture: arm64
+  stage: ${opt:stage}
+  region: ${env:REGION}
+  versionFunctions: false
+  memorySize: 128
+  timeout: 300
+  tracing:
+    lambda: true
+  logRetentionInDays: 14
+  lambdaHashingVersion: 20201221
+  environment:
+    STAGE: ${opt:stage}
+    REGION: ${env:REGION}
+    ACCOUNT_ID: ${env:ACCOUNT_ID}
+    NODE_ENV: ${env:NODE_ENV}
+    DEPLOYMENT_BUCKET: ${env:DEPLOYMENT_BUCKET}
+    SQS_QUEUE_URL: ${env:SQS_QUEUE_URL}
+    SQS_QUEUE_NAME: ${env:SQS_QUEUE_NAME}
+    S3_DOCUMENTS_BUCKET: ${env:S3_DOCUMENTS_BUCKET}
+    S3_DOCUMENTS_BUCKET_URL: ${env:S3_DOCUMENTS_BUCKET_URL}
+  deploymentBucket:
+    name: ${env:DEPLOYMENT_BUCKET}
+  apiGateway:
+    apiKeys:
+      - <COUNTRY_CODE>ScraperApiKey-${env:STAGE}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: arn:aws:logs:*:*:*
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+          Resource:
+            - arn:aws:s3:::${env:S3_DOCUMENTS_BUCKET}
+            - arn:aws:s3:::${env:S3_DOCUMENTS_BUCKET}/*
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+          Resource:
+            - arn:aws:sqs:${env:REGION}:${env:ACCOUNT_ID}:${env:SQS_QUEUE_NAME}
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+            - xray:PutTelemetryRecords
+          Resource: '*'
+package:
+  excludeDevDependencies: true
+  patterns:
+    - package.json
+    - dist/**
+    - '!.*'
+    - '!node_modules'
+    - '!__tests__/**'
+    - '!src/**'
+    - '!static/**'
+    - '!*.sh'
+    - '!*config*'
+    - '!coverage'
+    - '!package-lock.json'
+    - '.build'
+
+custom:
+  serverless-offline:
+    httpPort: 3003
+  alerts:
+    stages: # Optionally - select which stages to deploy alarms to
+      - ${opt:stage, 'local'}
+    dashboards: true
+    nameTemplate: $[functionName]-$[metricName]-Alarm # Optionally - naming template for alarms, can be overwritten in definitions
+    prefixTemplate: $[stackName] # Optionally - override the alarm name prefix
+  dotenv:
+    path: .env
+
+layers:
+  <COUNTRY_CODE>ScraperNodeModules:
+    path: ../../../serverless-layer
+    compatibleRuntimes:
+      - nodejs20.x
+
+functions:
+  scrapeDocuments:
+    handler: dist/documentsScraper.handler
+    layers:
+      - { Ref: <COUNTRY_CODE>ScraperNodeModulesLambdaLayer }
+    events:
+      - http:
+          path: service
+          method: get
+      - schedule: cron(0 12 * * ? *)

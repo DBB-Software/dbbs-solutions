@@ -1,4 +1,4 @@
 import { setupServer } from 'msw/node'
-import { geoHandlers, meetingTypeHandlers } from './handlers'
+import { productHandlers, typeHandlers } from './handlers'
 
-export const mswServer = setupServer(...geoHandlers, ...meetingTypeHandlers)
+export const mswServer = setupServer(...productHandlers, ...typeHandlers)

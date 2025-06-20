@@ -40,3 +40,8 @@ modify-poetry-config:
 # Install python dependencies
 install-python-deps:
 	npx turbo run install:deps
+
+# Modify poetry config
+modify-poetry-config:
+    poetry config virtualenvs.in-project true
+    poetry config installer.parallel false

@@ -1,0 +1,9 @@
+{
+  "root": true,
+  "extends": ["@dbbs/eslint-config/node"],
+  "rules": {
+    "import/no-extraneous-dependencies": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "no-await-in-loop": "off"
+  }
+}
