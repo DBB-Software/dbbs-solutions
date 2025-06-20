@@ -25,7 +25,7 @@ describe('AppService', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn((key: string) => {
-              const config: {[key: string]: string} = {
+              const config: { [key: string]: string } = {
                 METABASE_URL: 'http://metabase-url',
                 METABASE_API_KEY: 'tests-api-key',
                 REDIS_TTL: '3600'
@@ -54,16 +54,16 @@ describe('AppService', () => {
         },
         {
           provide: 'NestLogger:AppService',
-          useClass: Logger,
+          useClass: Logger
         },
         {
           provide: 'pino-params',
-          useValue: {},
+          useValue: {}
         },
         {
           provide: SENTRY_PROVIDER,
-          useValue: mockSentry,
-        },
+          useValue: mockSentry
+        }
       ]
     }).compile()
 
@@ -95,9 +95,10 @@ describe('AppService', () => {
 
       const result = await appService.hasAccessToCollection('2', ['test org'])
       expect(appService.getAllCollectionsFromMetabase).toHaveBeenCalled()
-      expect(mockRedis.set).toHaveBeenCalledWith('collections', expect.stringMatching(
-        JSON.stringify(mockCollectionsFromMetabase)
-      ))
+      expect(mockRedis.set).toHaveBeenCalledWith(
+        'collections',
+        expect.stringMatching(JSON.stringify(mockCollectionsFromMetabase))
+      )
       expect(result).toBe(true)
     })
   })
@@ -110,8 +111,7 @@ describe('AppService', () => {
 
       const result = await appService.hasAccessToDashboard('1', ['Test Org'])
       expect(appService.getAllDashboardsFromMetabase).toHaveBeenCalled()
-      expect(mockRedis.set).toHaveBeenCalledWith('dashboards', expect.stringMatching(
-        JSON.stringify(mockDashboards)))
+      expect(mockRedis.set).toHaveBeenCalledWith('dashboards', expect.stringMatching(JSON.stringify(mockDashboards)))
       expect(result).toBe(true)
     })
 
