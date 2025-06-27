@@ -60757,7 +60757,6 @@ __metadata:
     "@dbbs/tsconfig": "npm:*"
     "@types/aws-lambda": "npm:8.10.147"
     "@types/bluebird": "npm:3.5.42"
-    "@types/cheerio": "npm:0.22.35"
     "@types/lodash.isobject": "npm:3.0.9"
     "@types/webpagetest": "npm:0.3.6"
     axios: "npm:1.9.0"

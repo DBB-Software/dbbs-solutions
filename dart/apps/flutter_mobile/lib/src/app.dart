@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:firebase/main.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 // Project imports:
+import '../gen_l10n/app_localizations.dart';
 import 'presentation/remote_config_feature/remote_config_item_list_view.dart';
 import 'presentation/settings/settings_controller.dart';
 import 'presentation/settings/settings_view.dart';
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
             // The appTitle is defined in .arb files found in the localization
             // directory.
             onGenerateTitle: (BuildContext context) =>
-                AppLocalizations.of(context)!.appTitle,
+                AppLocalizations.of(context).appTitle,
 
             // Define a light and dark color theme. Then, read the user's
             // preferred ThemeMode (light, dark, or system default) from the

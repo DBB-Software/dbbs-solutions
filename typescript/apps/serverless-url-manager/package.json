@@ -36,7 +36,6 @@
     "@dbbs/tsconfig": "*",
     "@types/aws-lambda": "8.10.147",
     "@types/bluebird": "3.5.42",
-    "@types/cheerio": "0.22.35",
     "@types/lodash.isobject": "3.0.9",
     "@types/webpagetest": "0.3.6"
   }
