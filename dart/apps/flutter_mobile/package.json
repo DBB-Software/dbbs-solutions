@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "install:deps": "flutter pub get",
-    "build": "flutter pub run build_runner build && yarn bundle",
+    "build": "flutter pub get && flutter gen-l10n && dart run build_runner build && yarn bundle",
     "test": "flutter test",
     "lint": "dart fix --apply && flutter pub run import_sorter:main",
     "lint:show": "dart fix --dry-run",

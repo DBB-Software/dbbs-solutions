@@ -280,6 +280,7 @@ build/
 dart/**/firebase.json
 dart/**/google-services.json
 dart/**/GoogleService-Info.plist
+gen_l10n/
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -358,3 +359,6 @@ app.*.map.json
 !**/ios/**/default.perspectivev3
 !**/windows/**/*.[Cc]ache/
 /.scannerwork/
+
+# Firebase
+google-credentials.json

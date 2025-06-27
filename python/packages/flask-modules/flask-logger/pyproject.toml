@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "flask-logger"
+version = "0.1.0"
+description = ""
+authors = ["Anton Skazko <anton.skazko@dbbsoftware.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.11.6"
+common = {path = "../../common"}
+packaging = "24.2"
+flask = "3.1.0"
+logging = "0.4.9.6"
+pytest = "8.3.2"
+
+[tool.ruff]
+extend = "../../common/pyproject.toml"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

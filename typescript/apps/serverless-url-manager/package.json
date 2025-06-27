@@ -1,0 +1,42 @@
+{
+  "name": "serverless-url-manager",
+  "version": "2.0.3",
+  "description": "Serverless DBBs sitemap URL manager",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc --build tsconfig.json",
+    "clean": "npx rimraf .serverless .turbo node_modules dist bin coverage && find . -name '*.tsbuildinfo' -type f -delete || exit 0",
+    "dev": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3001",
+    "lint": "npx eslint . --ext ts,tsx --max-warnings 0 --fix",
+    "start": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3001",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --forceExit --coverage --verbose --testTimeout=10000000 --detectOpenHandles",
+    "watch": "npx tsc -w --preserveWatchOutput",
+    "start:localstack": "yarn build && npx sls offline start --noTimeout --stage local --lambdaPort 3032",
+    "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.812.0",
+    "@aws-sdk/client-sqs": "3.812.0",
+    "@dbbs/common": "*",
+    "axios": "1.9.0",
+    "bluebird": "3.7.2",
+    "cheerio": "1.0.0-rc.12",
+    "google-auth-library": "9.15.1",
+    "lodash": "4.17.21",
+    "middy": "0.36.0",
+    "p-queue": "8.1.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.1",
+    "sitemapper": "3.2.20",
+    "webpagetest": "0.7.6"
+  },
+  "devDependencies": {
+    "@dbbs/eslint-config": "*",
+    "@dbbs/jest-config": "*",
+    "@dbbs/tsconfig": "*",
+    "@types/aws-lambda": "8.10.147",
+    "@types/bluebird": "3.5.42",
+    "@types/lodash.isobject": "3.0.9",
+    "@types/webpagetest": "0.3.6"
+  }
+}

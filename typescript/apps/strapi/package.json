@@ -21,7 +21,6 @@
     "@ckeditor/strapi-plugin-ckeditor": "0.0.13",
     "@dbbs/common": "*",
     "@dbbs/strapi-plugin-permissions-manager": "*",
-    "@dbbs/strapi-plugin-stripe-payment": "*",
     "@strapi/plugin-cloud": "4.25.8",
     "@strapi/plugin-graphql": "4.25.8",
     "@strapi/plugin-i18n": "4.25.8",

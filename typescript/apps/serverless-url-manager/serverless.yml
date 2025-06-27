@@ -1,0 +1,196 @@
+service: serverless-url-manager
+useDotenv: true
+variablesResolutionMode: 20210219
+configValidationMode: error
+
+plugins:
+  - serverless-offline
+  - serverless-deployment-bucket
+  - serverless-esm-layer
+  - serverless-plugin-monorepo
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  architecture: arm64
+  stage: ${opt:stage, 'development'}
+  region: ${env:REGION}
+  versionFunctions: false
+  memorySize: 256
+  timeout: 30
+  tracing:
+    lambda: true
+  logRetentionInDays: 30
+  lambdaHashingVersion: 20201221
+  environment:
+    STAGE: ${env:STAGE, 'development'}
+    REGION: ${env:REGION, 'eu-central-1'}
+    SITE_URL: ${env:SITE_URL}
+    DB_TABLE: ${env:DB_TABLE, 'sitemap-urls-development'}
+    CRAWL_URL_SQS: ${env:CRAWL_URL_SQS, 'https://sqs.eu-central-1.amazonaws.com/339334668713/url-manager-queue-development'}
+    LOAD_URL_SQS: ${env:LOAD_URL_SQS, 'https://sqs.eu-central-1.amazonaws.com/339334668713/url-loader-queue-development'}
+    NUMBER_OF_ATTEMPTS: ${env:NUMBER_OF_ATTEMPTS, 1}
+    CHUNK_COUNT: ${env:CHUNK_COUNT, 10}
+  deploymentBucket:
+    name: ${env:DEPLOYMENT_BUCKET}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: arn:aws:logs:*:*:*
+        - Effect: Allow
+          Action:
+            - ec2:CreateNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DeleteNetworkInterface
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+            - ssm:GetParameters
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+            - xray:PutTelemetryRecords
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:GetQueueUrl
+          Resource:
+            - Fn::GetAtt: [ UrlManagerQueue, Arn ]
+            - Fn::GetAtt: [ UrlLoaderQueue, Arn ]
+            - Fn::GetAtt: [ DynamoQueryQueue, Arn ]
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [ UrlManagerTable, Arn ]
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DB_TABLE}/index/*
+  vpc:
+    securityGroupIds:
+      - ${env:SECURITY_GROUP_ID}
+    subnetIds:
+      - ${env:SUBNET_ID}
+
+resources:
+  Resources:
+    UrlManagerTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: url
+            AttributeType: S
+        KeySchema:
+          - AttributeName: url
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    UrlManagerQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: url-manager-queue-${self:provider.stage}
+        VisibilityTimeout: 300
+    DynamoQueryQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: dynamo-query-queue-${self:provider.stage}
+        VisibilityTimeout: 300
+    UrlLoaderQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: url-loader-queue-${self:provider.stage}
+        VisibilityTimeout: 300
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - dist/**
+    - package.json
+    - '!src/**'
+    - '!node_modules/**'
+    - '!__tests__/**'
+    - '!*.md'
+
+layers:
+  ServerlessUrlManagerNodeModules:
+    path: ../../../serverless-layer
+    compatibleRuntimes:
+      - nodejs20.x
+
+functions:
+  upsert-urls-into-dynamo:
+    handler: dist/handlers/index.loadUrl
+    reservedConcurrency: 5
+    memorySize: 128
+    timeout: 30
+    layers:
+      - { Ref: ServerlessUrlManagerNodeModulesLambdaLayer }
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [ UrlLoaderQueue, Arn ]
+          batchSize: 1
+  query-urls-from-dynamo:
+    handler: dist/handlers/index.continueDynamoFetch
+    reservedConcurrency: 2
+    memorySize: 128
+    timeout: 30
+    layers:
+      - { Ref: ServerlessUrlManagerNodeModulesLambdaLayer }
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [ DynamoQueryQueue, Arn ]
+          batchSize: 1
+  check-urls-from-dynamo:
+    handler: dist/handlers/index.urlCheck
+    reservedConcurrency: 5
+    memorySize: 128
+    timeout: 30
+    layers:
+      - { Ref: ServerlessUrlManagerNodeModulesLambdaLayer }
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [ UrlManagerQueue, Arn ]
+          batchSize: 1
+  collect-urls-from-sitemap:
+    handler: dist/handlers/index.startSitemapFetch
+    reservedConcurrency: 1
+    memorySize: 2048
+    timeout: 900
+    layers:
+      - { Ref: ServerlessUrlManagerNodeModulesLambdaLayer }
+    events:
+      - http:
+          path: collect-url
+          method: post
+          cors: true
+  collect-urls-from-dynamo:
+    handler: dist/handlers/index.startDynamoDBFetch
+    reservedConcurrency: 1
+    memorySize: 128
+    timeout: 30
+    layers:
+      - { Ref: ServerlessUrlManagerNodeModulesLambdaLayer }
+    events:
+      - http:
+          path: collect-dynamo-url
+          method: post
+          cors: true

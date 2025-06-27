@@ -1,4 +1,12 @@
-import { SQSClient, SendMessageCommand, SendMessageCommandInput, SendMessageCommandOutput } from '@aws-sdk/client-sqs'
+import {
+  SQSClient,
+  SendMessageCommand,
+  SendMessageCommandInput,
+  SendMessageCommandOutput,
+  SendMessageBatchCommand,
+  SendMessageBatchCommandInput,
+  SendMessageBatchCommandOutput
+} from '@aws-sdk/client-sqs'
 import AWSXRayCore from 'aws-xray-sdk-core'
 
 /**
@@ -41,6 +49,26 @@ export class CustomSqsHandler {
     }
     const command = new SendMessageCommand(commandInput)
 
+    return this.client.send(command)
+  }
+
+  /**
+   * Sends a batch of messages to an SQS queue. If the queue URL is not specified, it uses the default queue URL set during initialization.
+   * @async
+   * @param {Array<object>} messages The message data to send.
+   * @param {string} [queueUrl] The URL of the SQS queue to which the message should be sent.
+   * @returns {Promise<SendMessageCommandOutput>} A promise that resolves to the result of the send operation.
+   */
+  async sendBatchToSQS(messages: object[], queueUrl?: string): Promise<SendMessageBatchCommandOutput> {
+    const entries = messages.map((msg, index) => ({
+      Id: index.toString(),
+      MessageBody: JSON.stringify(msg)
+    }))
+    const commandInput: SendMessageBatchCommandInput = {
+      Entries: entries,
+      QueueUrl: queueUrl ?? this.queueUrl
+    }
+    const command = new SendMessageBatchCommand(commandInput)
     return this.client.send(command)
   }
 }

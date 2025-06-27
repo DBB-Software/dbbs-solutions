@@ -84,9 +84,6 @@ export default ({ env }) => ({
       }
     }
   },
-  'stripe-payment': {
-    enabled: true
-  },
   sentry: {
     enabled: true,
     config: {

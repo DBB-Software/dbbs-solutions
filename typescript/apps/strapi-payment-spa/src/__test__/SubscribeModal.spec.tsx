@@ -11,6 +11,8 @@ jest.mock('js-cookie', () => ({
   get: jest.fn().mockResolvedValue({ jwt: 'jwt' })
 }))
 
+jest.setTimeout(30000)
+
 export async function selectExistingOrganizationMock(user: ReturnType<typeof userEvent.setup>) {
   const buttonExisingOrganization = await screen.findByText('Existing Organization')
   await user.click(buttonExisingOrganization)

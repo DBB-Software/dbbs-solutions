@@ -11,17 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as MeetingTypeImport } from './routes/meeting-type'
+import { Route as TypeImport } from './routes/type'
 import { Route as IndexImport } from './routes/index'
-import { Route as GeoIndexImport } from './routes/geo/index'
-import { Route as GeoCreateImport } from './routes/geo/create'
-import { Route as GeoGeoIdEditImport } from './routes/geo/$geoId/edit'
+import { Route as ProductIndexImport } from './routes/product/index'
+import { Route as ProductCreateImport } from './routes/product/create'
+import { Route as ProductProductIdEditImport } from './routes/product/$productId/edit'
 
 // Create/Update Routes
 
-const MeetingTypeRoute = MeetingTypeImport.update({
-  id: '/meeting-type',
-  path: '/meeting-type',
+const TypeRoute = TypeImport.update({
+  id: '/type',
+  path: '/type',
   getParentRoute: () => rootRoute
 } as any)
 
@@ -31,21 +31,21 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute
 } as any)
 
-const GeoIndexRoute = GeoIndexImport.update({
-  id: '/geo/',
-  path: '/geo/',
+const ProductIndexRoute = ProductIndexImport.update({
+  id: '/product/',
+  path: '/product/',
   getParentRoute: () => rootRoute
 } as any)
 
-const GeoCreateRoute = GeoCreateImport.update({
-  id: '/geo/create',
-  path: '/geo/create',
+const ProductCreateRoute = ProductCreateImport.update({
+  id: '/product/create',
+  path: '/product/create',
   getParentRoute: () => rootRoute
 } as any)
 
-const GeoGeoIdEditRoute = GeoGeoIdEditImport.update({
-  id: '/geo/$geoId/edit',
-  path: '/geo/$geoId/edit',
+const ProductProductIdEditRoute = ProductProductIdEditImport.update({
+  id: '/product/$productId/edit',
+  path: '/product/$productId/edit',
   getParentRoute: () => rootRoute
 } as any)
 
@@ -60,32 +60,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/meeting-type': {
-      id: '/meeting-type'
-      path: '/meeting-type'
-      fullPath: '/meeting-type'
-      preLoaderRoute: typeof MeetingTypeImport
+    '/type': {
+      id: '/type'
+      path: '/type'
+      fullPath: '/type'
+      preLoaderRoute: typeof TypeImport
       parentRoute: typeof rootRoute
     }
-    '/geo/create': {
-      id: '/geo/create'
-      path: '/geo/create'
-      fullPath: '/geo/create'
-      preLoaderRoute: typeof GeoCreateImport
+    '/product/create': {
+      id: '/product/create'
+      path: '/product/create'
+      fullPath: '/product/create'
+      preLoaderRoute: typeof ProductCreateImport
       parentRoute: typeof rootRoute
     }
-    '/geo/': {
-      id: '/geo/'
-      path: '/geo'
-      fullPath: '/geo'
-      preLoaderRoute: typeof GeoIndexImport
+    '/product/': {
+      id: '/product/'
+      path: '/product'
+      fullPath: '/product'
+      preLoaderRoute: typeof ProductIndexImport
       parentRoute: typeof rootRoute
     }
-    '/geo/$geoId/edit': {
-      id: '/geo/$geoId/edit'
-      path: '/geo/$geoId/edit'
-      fullPath: '/geo/$geoId/edit'
-      preLoaderRoute: typeof GeoGeoIdEditImport
+    '/product/$productId/edit': {
+      id: '/product/$productId/edit'
+      path: '/product/$productId/edit'
+      fullPath: '/product/$productId/edit'
+      preLoaderRoute: typeof ProductProductIdEditImport
       parentRoute: typeof rootRoute
     }
   }
@@ -95,52 +95,52 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/meeting-type': typeof MeetingTypeRoute
-  '/geo/create': typeof GeoCreateRoute
-  '/geo': typeof GeoIndexRoute
-  '/geo/$geoId/edit': typeof GeoGeoIdEditRoute
+  '/type': typeof TypeRoute
+  '/product/create': typeof ProductCreateRoute
+  '/product': typeof ProductIndexRoute
+  '/product/$productId/edit': typeof ProductProductIdEditRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/meeting-type': typeof MeetingTypeRoute
-  '/geo/create': typeof GeoCreateRoute
-  '/geo': typeof GeoIndexRoute
-  '/geo/$geoId/edit': typeof GeoGeoIdEditRoute
+  '/type': typeof TypeRoute
+  '/product/create': typeof ProductCreateRoute
+  '/product': typeof ProductIndexRoute
+  '/product/$productId/edit': typeof ProductProductIdEditRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/meeting-type': typeof MeetingTypeRoute
-  '/geo/create': typeof GeoCreateRoute
-  '/geo/': typeof GeoIndexRoute
-  '/geo/$geoId/edit': typeof GeoGeoIdEditRoute
+  '/type': typeof TypeRoute
+  '/product/create': typeof ProductCreateRoute
+  '/product/': typeof ProductIndexRoute
+  '/product/$productId/edit': typeof ProductProductIdEditRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/meeting-type' | '/geo/create' | '/geo' | '/geo/$geoId/edit'
+  fullPaths: '/' | '/type' | '/product/create' | '/product' | '/product/$productId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/meeting-type' | '/geo/create' | '/geo' | '/geo/$geoId/edit'
-  id: '__root__' | '/' | '/meeting-type' | '/geo/create' | '/geo/' | '/geo/$geoId/edit'
+  to: '/' | '/type' | '/product/create' | '/product' | '/product/$productId/edit'
+  id: '__root__' | '/' | '/type' | '/product/create' | '/product/' | '/product/$productId/edit'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  MeetingTypeRoute: typeof MeetingTypeRoute
-  GeoCreateRoute: typeof GeoCreateRoute
-  GeoIndexRoute: typeof GeoIndexRoute
-  GeoGeoIdEditRoute: typeof GeoGeoIdEditRoute
+  TypeRoute: typeof TypeRoute
+  ProductCreateRoute: typeof ProductCreateRoute
+  ProductIndexRoute: typeof ProductIndexRoute
+  ProductProductIdEditRoute: typeof ProductProductIdEditRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  MeetingTypeRoute: MeetingTypeRoute,
-  GeoCreateRoute: GeoCreateRoute,
-  GeoIndexRoute: GeoIndexRoute,
-  GeoGeoIdEditRoute: GeoGeoIdEditRoute
+  TypeRoute: TypeRoute,
+  ProductCreateRoute: ProductCreateRoute,
+  ProductIndexRoute: ProductIndexRoute,
+  ProductProductIdEditRoute: ProductProductIdEditRoute
 }
 
 export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
@@ -152,26 +152,26 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/meeting-type",
-        "/geo/create",
-        "/geo/",
-        "/geo/$geoId/edit"
+        "/type",
+        "/product/create",
+        "/product/",
+        "/product/$productId/edit"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/meeting-type": {
-      "filePath": "meeting-type.tsx"
+    "/type": {
+      "filePath": "type.tsx"
     },
-    "/geo/create": {
-      "filePath": "geo/create.tsx"
+    "/product/create": {
+      "filePath": "product/create.tsx"
     },
-    "/geo/": {
-      "filePath": "geo/index.tsx"
+    "/product/": {
+      "filePath": "product/index.tsx"
     },
-    "/geo/$geoId/edit": {
-      "filePath": "geo/$geoId/edit.tsx"
+    "/product/$productId/edit": {
+      "filePath": "product/$productId/edit.tsx"
     }
   }
 }

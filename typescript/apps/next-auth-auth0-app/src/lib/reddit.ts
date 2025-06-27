@@ -40,11 +40,11 @@ export const transformSnakeCaseToCamelCaseObject = <T extends Record<string, any
 const transformPostDescription = (description?: string | null, medias: RedditPostNormalized['mediaMetadata'] = {}) => {
   if (!description) return ''
 
-  const sanitized = cheerioLoad(sanitizeHtml(description)).text()
+  const sanitized = cheerioLoad(sanitizeHtml(description)).html()
   const $ = cheerioLoad(sanitized)
 
   Object.values(medias).forEach((media) => {
-    const url = cheerioLoad(media.s.u).text()
+    const url = cheerioLoad(media.s.u).html()
     $(`a[href="${url}"]`)?.html(`<img src="${url}" class="max-h-[440px]" />`)
   })
 
@@ -62,7 +62,7 @@ export const normalizeRedditPosts = (redditPosts: RedditPost[]): RedditPostNorma
             ...mediaValue,
             s: {
               ...mediaValue.s,
-              u: cheerioLoad(mediaValue.s.u).text()
+              u: cheerioLoad(mediaValue.s.u).html()
             }
           }
 
@@ -76,9 +76,9 @@ export const normalizeRedditPosts = (redditPosts: RedditPost[]): RedditPostNorma
         mediaMetadata: transformedMediaMetadata,
         selftextHtml: transformPostDescription(post.selftextHtml, transformedMediaMetadata),
         mediaEmbed: post?.mediaEmbed?.content
-          ? { ...post.mediaEmbed, content: cheerioLoad(post.mediaEmbed.content).text() }
+          ? { ...post.mediaEmbed, content: cheerioLoad(post.mediaEmbed.content).html() }
           : null,
-        linkFlairText: post?.linkFlairText ? cheerioLoad(post.linkFlairText).text() : ''
+        linkFlairText: post?.linkFlairText ? cheerioLoad(post.linkFlairText).html() : ''
       }
     })
 }

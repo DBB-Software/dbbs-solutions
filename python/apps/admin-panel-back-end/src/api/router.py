@@ -1,17 +1,17 @@
 from fastapi import APIRouter
 
-from src.api import geo, meeting_type
+from src.api import product, type
 
 
 api_router = APIRouter()
 
 api_router.include_router(
-    geo.router,
-    prefix="/geos",
-    tags=["geos"]
+    product.router,
+    prefix="/products",
+    tags=["products"]
 )
 api_router.include_router(
-    meeting_type.router,
-    prefix="/meeting-types",
-    tags=["meeting-types"]
+    type.router,
+    prefix="/types",
+    tags=["types"]
 )

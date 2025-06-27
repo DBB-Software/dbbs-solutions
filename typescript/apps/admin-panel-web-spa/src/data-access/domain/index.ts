@@ -1,3 +1,3 @@
 export * from './apiSlice'
-export * from './geosSlice'
-export * from './meetingTypeSlice'
+export * from './productsSlice'
+export * from './typeSlice'

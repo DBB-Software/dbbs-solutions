@@ -73,9 +73,9 @@ export const selectViewByName = (key: string, viewName: string) =>
   createSelector(selectFilterState, (gridState) => gridState.views[key]?.[viewName])
 
 export const selectCurrentView = (key: string) =>
-  createSelector(selectFilterState, (geoState) => {
-    const viewName = geoState.currentView?.[key] || DEFAULT_STATE
-    return { state: geoState.views[key]?.[viewName], name: viewName }
+  createSelector(selectFilterState, (productState) => {
+    const viewName = productState.currentView?.[key] || DEFAULT_STATE
+    return { state: productState.views[key]?.[viewName], name: viewName }
   })
 
 export const { setGridState, saveView, deleteView, setCurrentView } = filtersSlice.actions
