@@ -104,7 +104,7 @@ jobs:
         run: |
           for dir in $AFFECTED_PATHS; do
             if [ -f "$dir/coverage.xml" ]; then
-              sed -i '' 's#<source>/home/runner/work/platform/platform#<source>/github/workspace#g' "$dir/coverage.xml"
+              sed -i '' 's#<source>/home/runner/work/dbbs-solutions/dbbs-solutions#<source>/github/workspace#g' "$dir/coverage.xml"
             fi
           done
         # change sed -i '' to sed -i if you are using linux runner
