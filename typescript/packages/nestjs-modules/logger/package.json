@@ -18,12 +18,12 @@
     "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "11.0.10",
-    "@types/aws-lambda": "8.10.147",
+    "@nestjs/common": "11.1.6",
+    "@types/aws-lambda": "8.10.152",
     "@types/uuid": "10.0.0",
-    "nestjs-pino": "4.3.1",
-    "pino": "9.6.0",
-    "pino-http": "10.4.0"
+    "nestjs-pino": "4.4.1",
+    "pino": "9.11.0",
+    "pino-http": "10.5.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

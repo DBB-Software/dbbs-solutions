@@ -21,10 +21,10 @@
   },
   "dependencies": {
     "@dbbs/common": "*",
-    "@sendgrid/mail": "8.1.4"
+    "@sendgrid/mail": "8.1.6"
   },
   "devDependencies": {
-    "@compodoc/compodoc": "1.1.26",
+    "@compodoc/compodoc": "1.1.30",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*"

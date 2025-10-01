@@ -73,7 +73,9 @@ const TopicPage = () => {
           />
         )}
       </div>
-      {reddits?.map((post) => <RedditPost key={`post-${post.id}`} post={post} />)}
+      {reddits?.map((post) => (
+        <RedditPost key={`post-${post.id}`} post={post} />
+      ))}
     </div>
   )
 }

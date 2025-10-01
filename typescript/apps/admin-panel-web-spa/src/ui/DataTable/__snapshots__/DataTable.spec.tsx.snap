@@ -96,6 +96,7 @@ exports[`<DataTable /> renders correctly 1`] = `
               class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1d6wzja-MuiButton-startIcon"
             >
               <svg
+                aria-hidden="true"
                 class="lucide lucide-plus"
                 fill="none"
                 height="24"

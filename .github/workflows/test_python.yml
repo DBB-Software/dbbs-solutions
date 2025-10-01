@@ -19,8 +19,7 @@ on:
       - python/**
       - .github/workflows/test_python.yml
       - .github/actions/setup-python.yml
-      - .github/actions/setup-yarn.yml
-      - .github/actions/setup-node.yml
+      - sonar.python.properties
   push:
     branches:
       - main
@@ -99,6 +98,19 @@ jobs:
         if: ${{ env.AFFECTED_PATHS != '' }}
         run: |
           npx turbo run test ${{ env.FILTER_ARGS }}
+
+      - name: Fix coverage.xml source paths
+        if: ${{ env.AFFECTED_PATHS != '' }}
+        run: |
+          for dir in $AFFECTED_PATHS; do
+            if [ -f "$dir/coverage.xml" ]; then
+              sed -i '' 's#<source>/home/runner/work/platform/platform#<source>/github/workspace#g' "$dir/coverage.xml"
+            fi
+          done
+        # change sed -i '' to sed -i if you are using linux runner
+
+      - name: Setup sonarcloud
+        run: mv sonar.python.properties sonar-project.properties
 
       - name: Sonarcloud Scan
         uses: sonarsource/sonarqube-scan-action@v5

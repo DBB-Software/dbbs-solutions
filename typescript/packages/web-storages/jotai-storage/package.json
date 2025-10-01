@@ -13,7 +13,7 @@
     "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
-    "jotai": "2.10.1"
+    "jotai": "2.14.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

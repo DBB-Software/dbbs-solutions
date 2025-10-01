@@ -26,9 +26,9 @@ on:
       - tsconfig.json
       - turbo/**
       - .github/workflows/test_typescript.yml
-      - .github/actions/setup-python.yml
       - .github/actions/setup-yarn.yml
       - .github/actions/setup-node.yml
+      - sonar.ts.properties
   push:
     branches:
       - main
@@ -114,6 +114,9 @@ jobs:
         if: ${{ env.AFFECTED_PATHS != '' }}
         run: |
           npx turbo run test ${{ env.FILTER_ARGS }}
+        
+      - name: Setup sonarcloud
+        run: mv sonar.ts.properties sonar-project.properties
 
       - name: Sonarcloud Scan
         uses: sonarsource/sonarqube-scan-action@v5

@@ -17,7 +17,7 @@
   "dependencies": {
     "@dbbs/common": "*",
     "@middy/core": "4.7.0",
-    "axios": "1.7.8",
+    "axios": "1.12.2",
     "moment": "2.30.1"
   },
   "devDependencies": {

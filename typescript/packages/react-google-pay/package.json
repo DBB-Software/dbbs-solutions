@@ -14,7 +14,7 @@
     "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
-    "@google-pay/button-react": "3.1.0"
+    "@google-pay/button-react": "3.2.1"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

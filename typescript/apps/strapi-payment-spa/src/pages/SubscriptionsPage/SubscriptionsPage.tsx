@@ -27,7 +27,9 @@ const SubscriptionsPage: React.FC = () => {
         Subscription
       </Typography>
       <Box display={'flex'} gap={'60px'} justifyContent={'center'} flexWrap={'wrap'}>
-        {products?.map((product) => <ProductCard buttonHandler={showPlansHandler} key={product.id} data={product} />)}
+        {products?.map((product) => (
+          <ProductCard buttonHandler={showPlansHandler} key={product.id} data={product} />
+        ))}
       </Box>
       <Box display={'flex'} flexDirection={'column'} gap={'20px'}>
         <Typography textAlign={'center'} variant="h3">

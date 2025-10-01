@@ -23,13 +23,13 @@
     "@dbbs/nestjs-module-logger": "*",
     "@dbbs/nestjs-module-sendgrid": "*",
     "@dbbs/nestjs-module-stripe": "*",
-    "@nestjs/common": "11.0.10",
-    "@nestjs/config": "4.0.0"
+    "@nestjs/common": "11.1.6",
+    "@nestjs/config": "4.0.2"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "jest-mock-extended": "3.0.4"
+    "jest-mock-extended": "3.0.7"
   }
 }
