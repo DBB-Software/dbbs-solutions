@@ -49,7 +49,7 @@ export class SomeService {
 
   async generateResponse(promptText: string, input: string): Promise<string> {
     const response = await this.bedrockService.generate(promptText, input);
-    return response.output;
+    return response;
   }
 }
 ```

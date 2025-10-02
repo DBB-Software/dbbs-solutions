@@ -37,7 +37,7 @@ describe('BedrockModule', () => {
     expect(service).toBeDefined()
   })
 
-  it('should import ConfigModule', async () => {
+  it('should exist in the imports', async () => {
     const createTestingModuleSpy = jest.spyOn(Test, 'createTestingModule')
 
     await Test.createTestingModule({
