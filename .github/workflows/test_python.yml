@@ -107,7 +107,7 @@ jobs:
               sed -i 's#<source>/home/runner/work/dbbs-solutions/dbbs-solutions#<source>/github/workspace#g' "$dir/coverage.xml"
             fi
           done
-        # change sed -i '' to sed -i if you are using linux runner
+        # change `sed -i` to `sed -i ''` if you are using macOS runner
 
       - name: Setup sonarcloud
         run: mv sonar.python.properties sonar-project.properties
