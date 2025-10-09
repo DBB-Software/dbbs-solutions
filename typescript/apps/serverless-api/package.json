@@ -35,7 +35,7 @@
     "@nestjs/common": "11.1.6",
     "@nestjs/config": "4.0.2",
     "@nestjs/core": "11.1.6",
-    "@nestjs/mapped-types": "^2.1.0",
+    "@nestjs/mapped-types": "2.1.0",
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "10.4.20",
     "@nestjs/terminus": "10.3.0",

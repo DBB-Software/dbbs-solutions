@@ -11719,7 +11719,7 @@ __metadata:
     "@nestjs/config": "npm:4.0.2"
     "@nestjs/core": "npm:11.1.6"
     "@nestjs/cqrs": "npm:10.2.8"
-    "@nestjs/mapped-types": "npm:^2.1.0"
+    "@nestjs/mapped-types": "npm:2.1.0"
     "@nestjs/passport": "npm:11.0.5"
     "@nestjs/platform-express": "npm:10.4.20"
     "@nestjs/terminus": "npm:10.3.0"
@@ -11764,7 +11764,7 @@ __metadata:
     "@nestjs/common": "npm:11.1.6"
     "@nestjs/config": "npm:4.0.2"
     "@nestjs/core": "npm:11.1.6"
-    "@nestjs/mapped-types": "npm:^2.1.0"
+    "@nestjs/mapped-types": "npm:2.1.0"
     "@nestjs/passport": "npm:11.0.5"
     "@nestjs/platform-express": "npm:10.4.20"
     "@nestjs/terminus": "npm:10.3.0"
@@ -19001,7 +19001,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/mapped-types@npm:^2.1.0":
+"@nestjs/mapped-types@npm:2.1.0":
   version: 2.1.0
   resolution: "@nestjs/mapped-types@npm:2.1.0"
   peerDependencies:
