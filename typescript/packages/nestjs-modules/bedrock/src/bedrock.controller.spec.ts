@@ -9,7 +9,7 @@ describe('BedrockController', () => {
   let controller: BedrockController
   let service: BedrockService
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const mockAIService = {
       generate: jest.fn()
     }
