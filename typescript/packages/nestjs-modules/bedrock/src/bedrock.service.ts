@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Inject, Injectable } from '@nestjs/common'
 import { ChatBedrockConverse } from '@langchain/aws'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 
@@ -17,20 +16,12 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages'
  */
 @Injectable()
 export class BedrockService {
-  private readonly llm: ChatBedrockConverse
-
   /**
    * Initializes the Bedrock service with configuration from environment variables.
    *
    * @param configService - NestJS configuration service for accessing environment variables
    */
-  constructor(private configService: ConfigService) {
-    this.llm = new ChatBedrockConverse({
-      model: this.configService.get<string>('AI_MODEL_NAME') || 'us.meta.llama4-maverick-17b-instruct-v1:0',
-      temperature: this.configService.get<number>('AI_MODEL_TEMPERATURE') || 0.3,
-      maxRetries: this.configService.get<number>('AI_MODEL_MAX_RETRIES') || 4
-    })
-  }
+  constructor(@Inject('BEDROCK_LLM') private readonly llm: ChatBedrockConverse) {}
 
   /**
    * Generates an AI response using AWS Bedrock language model.

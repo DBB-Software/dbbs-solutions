@@ -2,18 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { BedrockService } from './bedrock.service.js'
 import { ConfigService } from '@nestjs/config'
 import { jest } from '@jest/globals'
-import { ChatBedrockConverse } from '@langchain/aws'
 import { AIMessageChunk } from '@langchain/core/messages'
 
 const mockChatBedrockConverse = {
-  invoke: jest.fn()
+  invoke: jest.fn() as jest.MockedFunction<() => Promise<AIMessageChunk>>
 }
-
-jest.mock('@langchain/aws', () => {
-  return {
-    ChatBedrockConverse: jest.fn().mockImplementation(() => mockChatBedrockConverse)
-  }
-})
 
 const mockConfigService = {
   get: (key: string) => null
@@ -25,7 +18,7 @@ describe('BedrockService', () => {
   beforeEach(async () => {
     process.env.AWS_DEFAULT_REGION = 'mock-aws-region'
     const module: TestingModule = await Test.createTestingModule({
-      providers: [BedrockService, { provide: ConfigService, useValue: mockConfigService }]
+      providers: [BedrockService, { provide: ConfigService, useValue: mockConfigService }, { provide: 'BEDROCK_LLM', useValue: mockChatBedrockConverse }]
     }).compile()
 
     service = module.get(BedrockService)
@@ -43,7 +36,7 @@ describe('BedrockService', () => {
       const input = 'User input'
       const mockResponse: AIMessageChunk = { text: 'AI response' } as any
 
-      jest.spyOn(ChatBedrockConverse.prototype, 'invoke').mockResolvedValueOnce(mockResponse)
+      mockChatBedrockConverse.invoke.mockResolvedValueOnce(mockResponse as never)
 
       const result = await service.generate(promptText, input)
 
@@ -69,7 +62,7 @@ describe('BedrockService', () => {
       const input = 'User input'
       const errorMessage = 'AI service error'
 
-      jest.spyOn(ChatBedrockConverse.prototype, 'invoke').mockRejectedValueOnce(new Error(errorMessage))
+      mockChatBedrockConverse.invoke.mockRejectedValueOnce(new Error(errorMessage))
 
       await expect(service.generate(promptText, input)).rejects.toThrow(`AI generation failed: ${errorMessage}`)
     })

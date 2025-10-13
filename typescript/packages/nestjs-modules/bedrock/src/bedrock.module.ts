@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ChatBedrockConverse } from '@langchain/aws'
 import { BedrockService } from './bedrock.service.js'
 import { BedrockController } from './bedrock.controller.js'
 
@@ -27,7 +28,19 @@ import { BedrockController } from './bedrock.controller.js'
 @Module({
   imports: [ConfigModule],
   controllers: [BedrockController],
-  providers: [BedrockService],
+  providers: [
+    BedrockService,
+    {
+      provide: 'BEDROCK_LLM',
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) =>
+        new ChatBedrockConverse({
+          model: config.get<string>('AI_MODEL_NAME') || 'us.meta.llama4-maverick-17b-instruct-v1:0',
+          temperature: config.get<number>('AI_MODEL_TEMPERATURE') || 0.3,
+          maxRetries: config.get<number>('AI_MODEL_MAX_RETRIES') || 4
+        })
+    }
+  ],
   exports: [BedrockService]
 })
 export class BedrockModule {}
