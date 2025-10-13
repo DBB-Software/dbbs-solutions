@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { jest } from '@jest/globals'
 import { BedrockModule } from './bedrock.module.js'
 import { BedrockService } from './bedrock.service.js'
+import { LoggerModule } from '@dbbs/nestjs-module-logger'
 
 describe('BedrockModule', () => {
   const mockConfigService = {
@@ -16,7 +17,7 @@ describe('BedrockModule', () => {
 
   it('should compile the module', async () => {
     const module = await Test.createTestingModule({
-      imports: [BedrockModule]
+      imports: [BedrockModule, LoggerModule]
     })
       .overrideProvider(ConfigService)
       .useValue(mockConfigService)
@@ -27,7 +28,7 @@ describe('BedrockModule', () => {
 
   it('should provide BedrockService', async () => {
     const module = await Test.createTestingModule({
-      imports: [BedrockModule]
+      imports: [BedrockModule, LoggerModule]
     })
       .overrideProvider(ConfigService)
       .useValue(mockConfigService)
@@ -41,7 +42,7 @@ describe('BedrockModule', () => {
     const createTestingModuleSpy = jest.spyOn(Test, 'createTestingModule')
 
     await Test.createTestingModule({
-      imports: [BedrockModule]
+      imports: [BedrockModule, LoggerModule]
     })
       .overrideProvider(ConfigService)
       .useValue(mockConfigService)

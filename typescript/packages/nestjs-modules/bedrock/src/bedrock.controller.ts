@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common'
+import { InjectLogger, Logger } from '@dbbs/nestjs-module-logger'
 import { BedrockService } from './bedrock.service.js'
 import { ChatRequestDto } from './dtos/bedrock-request.dto.js'
 import { ChatResponseDto } from './dtos/bedrock-response.dto.js'
@@ -9,7 +10,10 @@ import { ChatResponseDto } from './dtos/bedrock-response.dto.js'
  */
 @Controller('ai-chats')
 export class BedrockController {
-  constructor(private readonly aiIntegrationService: BedrockService) {}
+  constructor(
+    @InjectLogger(BedrockService.name) private readonly logger: Logger,
+    private readonly aiIntegrationService: BedrockService
+  ) {}
 
   /**
    * Generates an AI response based on the provided prompt and user input.
@@ -27,6 +31,7 @@ export class BedrockController {
         output: aiResponse
       }
     } catch (error) {
+      this.logger.error('Error during AI generation', { error })
       throw new HttpException('AI service unavailable', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }

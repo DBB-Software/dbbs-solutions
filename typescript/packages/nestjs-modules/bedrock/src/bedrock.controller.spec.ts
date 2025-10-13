@@ -4,6 +4,7 @@ import { jest } from '@jest/globals'
 import { BedrockController } from './bedrock.controller.js'
 import { BedrockService } from './bedrock.service.js'
 import { ChatRequestDto } from './dtos/bedrock-request.dto.js'
+import { LoggerModule } from '@dbbs/nestjs-module-logger'
 
 describe('BedrockController', () => {
   let controller: BedrockController
@@ -15,6 +16,7 @@ describe('BedrockController', () => {
     }
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot({})],
       controllers: [BedrockController],
       providers: [
         {

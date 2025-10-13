@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ChatBedrockConverse } from '@langchain/aws'
+import { LoggerModule } from '@dbbs/nestjs-module-logger'
 import { BedrockService } from './bedrock.service.js'
 import { BedrockController } from './bedrock.controller.js'
 
@@ -26,7 +27,7 @@ import { BedrockController } from './bedrock.controller.js'
  * @see {@link BedrockController} for REST API endpoints
  */
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, LoggerModule.forRoot({})],
   controllers: [BedrockController],
   providers: [
     BedrockService,

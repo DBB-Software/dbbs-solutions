@@ -11169,6 +11169,7 @@ __metadata:
     "@compodoc/compodoc": "npm:1.1.30"
     "@dbbs/eslint-config": "npm:*"
     "@dbbs/jest-config": "npm:*"
+    "@dbbs/nestjs-module-logger": "npm:*"
     "@dbbs/tsconfig": "npm:*"
     "@langchain/aws": "npm:0.1.15"
     "@langchain/core": "npm:0.3.77"

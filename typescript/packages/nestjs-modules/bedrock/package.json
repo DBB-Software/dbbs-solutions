@@ -20,6 +20,7 @@
     "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
+    "@dbbs/nestjs-module-logger": "*",
     "@langchain/aws": "0.1.15",
     "@langchain/core": "0.3.77",
     "@nestjs/common": "11.1.6",

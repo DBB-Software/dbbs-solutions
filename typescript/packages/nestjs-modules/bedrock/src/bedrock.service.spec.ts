@@ -18,7 +18,11 @@ describe('BedrockService', () => {
   beforeEach(async () => {
     process.env.AWS_DEFAULT_REGION = 'mock-aws-region'
     const module: TestingModule = await Test.createTestingModule({
-      providers: [BedrockService, { provide: ConfigService, useValue: mockConfigService }, { provide: 'BEDROCK_LLM', useValue: mockChatBedrockConverse }]
+      providers: [
+        BedrockService,
+        { provide: ConfigService, useValue: mockConfigService },
+        { provide: 'BEDROCK_LLM', useValue: mockChatBedrockConverse },
+        ]
     }).compile()
 
     service = module.get(BedrockService)
