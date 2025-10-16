@@ -22,11 +22,11 @@
   "dependencies": {
     "@dbbs/common": "*",
     "@dbbs/nestjs-module-logger": "*",
-    "@nestjs/common": "11.0.10",
-    "nestjs-cls": "4.4.1"
+    "@nestjs/common": "11.1.6",
+    "nestjs-cls": "4.5.0"
   },
   "devDependencies": {
-    "@compodoc/compodoc": "1.1.26",
+    "@compodoc/compodoc": "1.1.30",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*"

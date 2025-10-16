@@ -180,7 +180,7 @@ export const TypeList: FC = () => {
         saveView({ key: PAGE_FILTER_KEY, viewName: DEFAULT_STATE, state: { ...stateToSave, isDefaultView: true } })
       )
     }
-  }, [])
+  }, [availableViews, dispatch, gridApiRef])
 
   useEffect(() => {
     if (currentView && currentView.state) gridApiRef.current.restoreState(currentView.state)

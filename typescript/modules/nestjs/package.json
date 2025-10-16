@@ -21,13 +21,13 @@
   },
   "dependencies": {
     "@nestjs-modules/ioredis": "2.0.2",
-    "@nestjs/common": "11.0.10",
-    "@nestjs/config": "4.0.0",
+    "@nestjs/common": "11.1.6",
+    "@nestjs/config": "4.0.2",
     "@nestjs/mongoose": "10.1.0",
-    "mongoose": "8.9.1"
+    "mongoose": "8.18.2"
   },
   "devDependencies": {
-    "@compodoc/compodoc": "1.1.26",
+    "@compodoc/compodoc": "1.1.30",
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*"

@@ -43,7 +43,7 @@
     "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
-    "next-intl": "3.19.1"
+    "next-intl": "3.26.5"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

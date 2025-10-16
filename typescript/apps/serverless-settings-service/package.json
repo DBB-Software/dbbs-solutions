@@ -20,13 +20,13 @@
     "@dbbs/common": "*",
     "@middy/core": "4.7.0",
     "reflect-metadata": "0.2.2",
-    "rxjs": "7.8.1",
+    "rxjs": "7.8.2",
     "source-map-support": "0.5.21"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "@types/aws-lambda": "8.10.147"
+    "@types/aws-lambda": "8.10.152"
   }
 }

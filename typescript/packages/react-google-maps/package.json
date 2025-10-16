@@ -13,8 +13,8 @@
     "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
-    "@googlemaps/markerclusterer": "2.5.3",
-    "@vis.gl/react-google-maps": "1.4.2"
+    "@googlemaps/markerclusterer": "2.6.2",
+    "@vis.gl/react-google-maps": "1.5.5"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

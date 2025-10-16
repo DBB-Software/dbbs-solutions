@@ -14,15 +14,15 @@
   "dependencies": {
     "@dbbs/mui-components": "*",
     "@dbbs/web-features": "*",
-    "@mui/x-data-grid": "7.18.0",
-    "@reduxjs/toolkit": "2.2.7",
+    "@mui/x-data-grid": "7.29.9",
+    "@reduxjs/toolkit": "2.9.0",
     "@tanstack/react-router": "1.58.7",
     "@tanstack/router-plugin": "1.58.4",
-    "lucide-react": "0.475.0",
-    "moment-timezone": "0.5.46",
+    "lucide-react": "0.544.0",
+    "moment-timezone": "0.6.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-redux": "9.1.2",
+    "react-redux": "9.2.0",
     "react-toastify": "10.0.6",
     "redux-persist": "6.0.0"
   },
@@ -30,7 +30,7 @@
     "@dbbs/eslint-config": "*",
     "@dbbs/jest-config": "*",
     "@dbbs/tsconfig": "*",
-    "@vitejs/plugin-react": "4.3.1",
+    "@vitejs/plugin-react": "4.7.0",
     "msw": "2.4.9"
   }
 }

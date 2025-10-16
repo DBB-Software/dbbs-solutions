@@ -10,6 +10,7 @@ import { setupStore } from '../../testUtils/store'
 import { DATA_TABLE_TEST_IDS } from '../../ui'
 import { rootReducer } from '../../store/reducer'
 import { mswServer } from '../../testUtils/server'
+import { RouterLinkProps } from '../../testUtils/types'
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -17,7 +18,7 @@ jest.mock('@tanstack/react-router', () => ({
   useRouterState: jest.fn(() => ({
     location: { pathname: '/' }
   })),
-  Link: ({ to, ...props }: any) => <a href={to} {...props} />
+  Link: ({ to, ...props }: RouterLinkProps) => <a href={to} {...props} />
 }))
 
 jest.mock('@mui/x-data-grid', () => ({

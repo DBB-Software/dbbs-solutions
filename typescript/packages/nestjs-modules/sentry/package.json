@@ -19,9 +19,9 @@
   },
   "dependencies": {
     "@dbbs/nestjs-module-logger": "*",
-    "@nestjs/common": "11.0.10",
-    "@sentry/nestjs": "9.2.0",
-    "@sentry/profiling-node": "9.2.0"
+    "@nestjs/common": "11.1.6",
+    "@sentry/nestjs": "9.46.0",
+    "@sentry/profiling-node": "9.46.0"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

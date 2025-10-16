@@ -12,8 +12,8 @@
     "check-types": "npx tsc -p ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
-    "i18next": "23.16.4",
-    "react-i18next": "15.0.1"
+    "i18next": "23.16.8",
+    "react-i18next": "15.7.3"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",

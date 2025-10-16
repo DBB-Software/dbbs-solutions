@@ -17,7 +17,7 @@
   "dependencies": {
     "@dbbs/common": "*",
     "@middy/core": "4.7.0",
-    "@nestjs/common": "11.0.10"
+    "@nestjs/common": "11.1.6"
   },
   "devDependencies": {
     "@dbbs/eslint-config": "*",
